@@ -1,8 +1,9 @@
 import { React, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import Home from "../components/home/Home"
-import Map from "../components/home/Map"
-import Events from "../components/home/Events"
+import Home from "../components/home/Home";
+import Map from "../components/home/Map";
+import Events from "../components/home/Events";
+import Footer from "../components/Footer";
 
 const HomePage = () => {
   useEffect(() => {
@@ -10,12 +11,15 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="Home w-full bg-[#F2F4F7] pt-[112px] pb-[32px] px-[32px] flex flex-col gap-[72px]">
+    <>
       <Navbar />
-      <Home/>
-      <Map/>
-      <Events/>
-    </div>
+      <div className="Home w-full bg-[#F2F4F7] pt-[112px] pb-[32px] px-[32px] flex flex-col gap-[72px]">
+        <Home />
+        <Map />
+        <Events />
+      </div>
+      <Footer/>
+    </>
   );
 };
 
