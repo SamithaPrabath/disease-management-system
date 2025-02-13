@@ -4,7 +4,7 @@ const Map = () => {
   return (
     <div
       id="map"
-      className="w-full h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]"
+      className="w-full min-w-[870px] h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]"
     >
       <div className="Header">
         <h2 className="text-[32px] font-medium text-[#080809] text-center">
