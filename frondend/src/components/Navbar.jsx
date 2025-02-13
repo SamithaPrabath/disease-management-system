@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../assets/logo.png";
+import { IoNotifications } from "react-icons/io5";
+import { HiUser } from "react-icons/hi2";
 
 const sections = ["home", "map", "events"];
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("home");
+
+  const pathName = window.location.pathname;
+
+  console.log(pathName);
 
   // Handle smooth scrolling
   const handleClickScroll = (elementId) => {
@@ -31,7 +37,10 @@ const Navbar = () => {
       });
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
 
     sections.forEach((id) => {
       const section = document.getElementById(id);
@@ -49,30 +58,54 @@ const Navbar = () => {
           Health Sentinel
         </h1>
       </div>
+      {pathName === "/home" ? (
+        <>
+          {/* Navbar Links */}
+          <ul className="Links w-[281px] h-[32px] flex flex-row items-center justify-between text-[#65686C]">
+            {sections.map((id) => (
+              <button
+                key={id}
+                className={`text-[24px] font-medium cursor-pointer transition-all duration-300 
+            ${activeSection === id ? "text-[#0866FF]" : "text-[#65686C]"}`}
+                onClick={() => handleClickScroll(id)}
+              >
+                {id.charAt(0).toUpperCase() + id.slice(1)}
+              </button>
+            ))}
+          </ul>
 
-      {/* Navbar Links */}
-      <ul className="Links w-[281px] h-[32px] flex flex-row items-center justify-between text-[#65686C]">
-        {sections.map((id) => (
-          <button
-            key={id}
-            className={`text-[24px] font-medium cursor-pointer transition-all duration-300 
-              ${activeSection === id ? "text-[#0866FF]" : "text-[#65686C]"}`}
-            onClick={() => handleClickScroll(id)}
-          >
-            {id.charAt(0).toUpperCase() + id.slice(1)}
-          </button>
-        ))}
-      </ul>
-
-      {/* Login Button */}
-      <div className="LoginBtns w-[236px] h-[40px] flex flex-row items-center gap-[10px]">
-        <h1 className="text-[16px] text-center font-normal text-[#65686C]">
-          Are you an Officer?
-        </h1>
-        <button className="text-[16px] text-center font-medium text-[#fff] px-[16px] py-[8px] rounded-[6px] bg-[#0866FF] cursor-pointer">
-          <Link to="/login">Login</Link>
-        </button>
-      </div>
+          {/* Login Button */}
+          <div className="LoginBtns w-[236px] h-[40px] flex flex-row items-center gap-[10px]">
+            <h1 className="text-[16px] text-center font-normal text-[#65686C]">
+              Are you an Officer?
+            </h1>
+            <Link to="/login">
+              <button className="text-[16px] text-center font-medium text-[#fff] px-[16px] py-[8px] rounded-[6px] bg-[#0866FF] cursor-pointer">
+                Login
+              </button>
+            </Link>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="w-[100px] h-[40px] flex flex-row items-center gap-[16px]">
+            <button
+              className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
+        flex items-center justify-center
+        "
+            >
+              <IoNotifications />
+            </button>
+            <button
+              className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
+        flex items-center justify-center
+        "
+            >
+              <HiUser />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
