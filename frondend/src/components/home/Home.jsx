@@ -11,8 +11,8 @@ const Home = () => {
   return (
     <div
       id="home"
-      className="w-full h-[552px] bg-linear-to-r from-white to-[#007AFF]
-        flex flex-row items-center justify-between px-[72px] py-[48px]
+      className="w-full min-w-[870px] min-h-[552px] bg-linear-to-r from-white to-[#007AFF]
+        flex flex-row flex-wrap items-center justify-center lg:justify-between px-[72px] py-[48px]
       "
     >
       <div className="w-[550px] flex flex-col gap-[10px]">
