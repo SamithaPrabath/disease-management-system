@@ -6,6 +6,7 @@ import Events from "../components/home/Events";
 import Footer from "../components/Footer";
 
 const HomePage = () => {
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
