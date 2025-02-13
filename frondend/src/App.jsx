@@ -7,13 +7,15 @@ import NotFound from "./pages/NotFound"
 function App() {
 
   return (
-    <Router>
+    <div className="font-roboto">
+      <Router>
       <Routes>
         <Route path="/login" element={<Login/>}/>
         <Route path="/" element={<Home/>}/>
         <Route path="/*" element={<NotFound/>}/>
       </Routes>
     </Router>
+    </div>
   )
 }
 
