@@ -11,8 +11,6 @@ const Navbar = () => {
 
   const pathName = window.location.pathname;
 
-  console.log(pathName);
-
   // Handle smooth scrolling
   const handleClickScroll = (elementId) => {
     const element = document.getElementById(elementId);
