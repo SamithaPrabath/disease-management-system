@@ -5,13 +5,23 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 const testUser = { username: "test", password: "123" };
 const testResponse = {
-    token: "abc1234",
-    name: "John Doe",
-    role: "admin", 
-    regNo: "001",
-    gender: "Male",
-    age: "35",
-    hospital: "Sri Jayawardenepura General Hospital, Sri Jayawardenepura",
+    status: 200,
+    data: {
+      token: "abc1234",
+      name: "John Doe",
+      role: "admin", 
+      regNo: "001",
+      gender: "Male",
+      age: "35",
+      hospital: "Sri Jayawardenepura General Hospital, Sri Jayawardenepura",
+    },
+    message: "Ok",
+  };
+
+  const errorResponse = {
+    status: 401,
+    error:"Unauthorized Access",
+    message: "Invalid Username or Password"
   };
 
 export const handleLogin = async (user) => {
@@ -20,7 +30,7 @@ export const handleLogin = async (user) => {
       if (user.username === testUser.username && user.password === testUser.password) {
         return testResponse;
       } else {
-        return {error:"Invalid Username or Password"};
+        return errorResponse;
       }
     } else {
 
@@ -32,6 +42,6 @@ export const handleLogin = async (user) => {
     }
   } catch (error) {
     console.error("Error logging in:", error);
-    return {error:"Invalid Username or Password"};
+    return error;
   }
 };
