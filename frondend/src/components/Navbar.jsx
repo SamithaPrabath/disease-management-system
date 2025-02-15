@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { IoNotifications } from "react-icons/io5";
 import { HiUser } from "react-icons/hi2";
 
-const sections = ["home", "map", "events"];
-
-const Navbar = () => {
+const Navbar = ({Sections}) => {
   const [activeSection, setActiveSection] = useState("home");
+  const [activeSection2, setActiveSection2] = useState(Sections[0].id)
 
-  const pathName = window.location.pathname;
+  const location = useLocation()
 
   // Handle smooth scrolling
   const handleClickScroll = (elementId) => {
@@ -40,13 +39,20 @@ const Navbar = () => {
       observerOptions
     );
 
-    sections.forEach((id) => {
+    Sections.forEach((id) => {
       const section = document.getElementById(id);
       if (section) observer.observe(section);
     });
 
     return () => observer.disconnect(); // Cleanup observer
   }, []);
+
+  const handleShowSection = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 
   return (
     <div className="Navbar w-full min-w-[870px] h-[80px] px-[40px] py-[16px] flex flex-row items-center justify-between bg-white fixed top-0 left-0 z-50">
@@ -56,11 +62,11 @@ const Navbar = () => {
           Health Sentinel
         </h1>
       </div>
-      {pathName === "/home" ? (
+      {location.pathname === "/home" ? (
         <>
           {/* Navbar Links */}
           <ul className="Links w-[281px] h-[32px] flex flex-row items-center justify-between text-[#65686C]">
-            {sections.map((id) => (
+            {Sections.map((id) => (
               <button
                 key={id}
                 className={`text-[24px] font-medium cursor-pointer transition-all duration-300 
@@ -86,6 +92,19 @@ const Navbar = () => {
         </>
       ) : (
         <>
+          {/* Navbar Links */}
+          <ul className="Links w-[281px] h-[32px] flex flex-row items-center justify-between text-[#65686C]">
+            {Sections.map((id) => (
+              <button
+                key={id}
+                className={`text-[24px] font-medium cursor-pointer transition-all duration-300 
+            ${activeSection2 === id ? "text-[#0866FF]" : "text-[#65686C]"}`}
+                onClick={() => handleShowSection(id)}
+              >
+                {id.charAt(0).toUpperCase() + id.slice(1)}
+              </button>
+            ))}
+          </ul>
           <div className="w-[100px] h-[40px] flex flex-row items-center gap-[16px]">
             <button
               className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
