@@ -6,6 +6,7 @@ import Events from "../components/home/Events";
 import Footer from "../components/Footer";
 
 const HomePage = () => {
+  const Links = ["home", "map","events"];
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -13,15 +14,14 @@ const HomePage = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar Sections={Links} />
       <div className="Home w-full bg-[#F2F4F7] pt-[112px] pb-[32px] px-[32px] flex flex-col gap-[72px]">
         <Home />
         <Map />
         <Events />
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
-
 export default HomePage;
