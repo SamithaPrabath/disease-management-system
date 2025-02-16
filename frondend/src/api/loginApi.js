@@ -26,7 +26,7 @@ const testResponse = {
 
 export const handleLogin = async (user) => {
   try {
-    if (!IS_BACKEND) {
+    if (IS_BACKEND) {
       if (user.username === testUser.username && user.password === testUser.password) {
         return testResponse;
       } else {
