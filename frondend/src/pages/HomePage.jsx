@@ -6,7 +6,7 @@ import Events from "../components/home/Events";
 import Footer from "../components/Footer";
 
 const HomePage = () => {
-  const Links = ["home", "map","events"];
+  const Links = [{id:"home"}, {id:"map"},{id:"events"}];
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -14,7 +14,7 @@ const HomePage = () => {
 
   return (
     <>
-      <Navbar Sections={Links} />
+      <Navbar Sections={Links} setActiveSection={null} activeId={null}/>
       <div className="Home w-full bg-[#F2F4F7] pt-[112px] pb-[32px] px-[32px] flex flex-col gap-[72px]">
         <Home />
         <Map />
