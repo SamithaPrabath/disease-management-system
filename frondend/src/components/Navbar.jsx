@@ -4,11 +4,10 @@ import Logo from "../assets/logo.png";
 import { IoNotifications } from "react-icons/io5";
 import { HiUser } from "react-icons/hi2";
 
-const Navbar = ({Sections}) => {
+const Navbar = ({ Sections, onNavClick, activeId }) => {
   const [activeSection, setActiveSection] = useState("home");
-  const [activeSection2, setActiveSection2] = useState(Sections[0].id)
 
-  const location = useLocation()
+  const location = useLocation();
 
   // Handle smooth scrolling
   const handleClickScroll = (elementId) => {
@@ -39,20 +38,13 @@ const Navbar = ({Sections}) => {
       observerOptions
     );
 
-    Sections.forEach((id) => {
+    Sections.forEach(({ id }) => {
       const section = document.getElementById(id);
       if (section) observer.observe(section);
     });
 
     return () => observer.disconnect(); // Cleanup observer
   }, []);
-
-  const handleShowSection = (elementId) => {
-    const element = document.getElementById(elementId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  }
 
   return (
     <div className="Navbar w-full min-w-[870px] h-[80px] px-[40px] py-[16px] flex flex-row items-center justify-between bg-white fixed top-0 left-0 z-50">
@@ -66,7 +58,7 @@ const Navbar = ({Sections}) => {
         <>
           {/* Navbar Links */}
           <ul className="Links w-[281px] h-[32px] flex flex-row items-center justify-between text-[#65686C]">
-            {Sections.map((id) => (
+            {Sections.map(({ id }) => (
               <button
                 key={id}
                 className={`text-[24px] font-medium cursor-pointer transition-all duration-300 
@@ -93,13 +85,13 @@ const Navbar = ({Sections}) => {
       ) : (
         <>
           {/* Navbar Links */}
-          <ul className="Links w-[281px] h-[32px] flex flex-row items-center justify-between text-[#65686C]">
-            {Sections.map((id) => (
+          <ul className="Links w-[500px] h-[32px] flex flex-row items-center justify-evenly text-[#65686C]">
+            {Sections.map(({ id }) => (
               <button
                 key={id}
                 className={`text-[24px] font-medium cursor-pointer transition-all duration-300 
-            ${activeSection2 === id ? "text-[#0866FF]" : "text-[#65686C]"}`}
-                onClick={() => handleShowSection(id)}
+            ${activeId === id ? "text-[#0866FF]" : "text-[#65686C]"}`}
+                onClick={() => onNavClick(id)}
               >
                 {id.charAt(0).toUpperCase() + id.slice(1)}
               </button>
