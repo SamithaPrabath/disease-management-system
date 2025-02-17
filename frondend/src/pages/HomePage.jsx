@@ -6,7 +6,7 @@ import Events from "../components/home/Events";
 import Footer from "../components/Footer";
 
 const HomePage = () => {
-  const Links = [{id:"home"}, {id:"map"},{id:"events"}];
+  const Links = [{id:"Home"}, {id:"Map"},{id:"Events"}];
 
   useEffect(() => {
     window.scrollTo(0, 0);
