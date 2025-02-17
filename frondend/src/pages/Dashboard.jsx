@@ -6,15 +6,14 @@ import Phi from '../components/epidemiology/Phi';
 import Moh from '../components/epidemiology/Moh'
 import Istitutes from '../components/epidemiology/Institutes'
 import Diseases from '../components/epidemiology/Didseaces'
-import Institutes from '../components/epidemiology/Institutes';
 
 const Dashboard = () => {
   const Links = [
-    { id: "home", component: <Home /> },
-    { id: "phi", component: <Phi /> },
-    { id: "moh", component: <Moh/>},
-    {id: "institutes", component: <Institutes/>},
-    {id: "diseases", component: <Diseases/>}
+    { id: "Home", component: <Home /> },
+    { id: "PHI", component: <Phi /> },
+    { id: "MOH", component: <Moh/>},
+    {id: "Institutes", component: <Istitutes/>},
+    {id: "Diseases", component: <Diseases/>}
   ];
 
   const [activeComponent, setActiveComponent] = useState(Links[0].id);
@@ -33,7 +32,7 @@ const Dashboard = () => {
         activeId={activeComponent}
       />
       {/* Render the active component */}
-      <div className="p-4">{activeSection?.component}</div>
+      <div className="Home w-full bg-[#F2F4F7] pt-[112px] pb-[32px] px-[32px] flex flex-col gap-[72px]">{activeSection?.component}</div>
     </>
   );
 }
