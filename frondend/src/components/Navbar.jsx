@@ -65,7 +65,7 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
             ${activeSection === id ? "text-[#0866FF]" : "text-[#65686C]"}`}
                 onClick={() => handleClickScroll(id)}
               >
-                {id.charAt(0).toUpperCase() + id.slice(1)}
+                {id}
               </button>
             ))}
           </ul>
@@ -93,7 +93,7 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
             ${activeId === id ? "text-[#0866FF]" : "text-[#65686C]"}`}
                 onClick={() => onNavClick(id)}
               >
-                {id.charAt(0).toUpperCase() + id.slice(1)}
+                {id}
               </button>
             ))}
           </ul>
