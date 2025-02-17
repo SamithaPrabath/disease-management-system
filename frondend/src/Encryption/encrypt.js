@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
  
-const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
+const SECRET_KEY = import.meta.env.VITE_SECRET_KEY || "my-secret-key";
 
  // Encrypt and store token in sessionStorage
  export const encryptAndStoreToken = (token) => {
