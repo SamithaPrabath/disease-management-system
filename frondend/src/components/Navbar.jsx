@@ -48,12 +48,12 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
 
   return (
     <div className="Navbar w-full min-w-[870px] h-[80px] px-[40px] py-[16px] flex flex-row items-center justify-between bg-white fixed top-0 left-0 z-50">
-      <div className="Logo w-[201px] h-[48px] flex flex-row items-center justify-between">
+      <Link to="/" className="Logo w-[201px] h-[48px] flex flex-row items-center justify-between">
         <img src={Logo} alt="logo" className="w-[48px] h-[48px]" />
         <h1 className="w-[137px] h-[30px] text-[20px] text-center font-medium text-[#65686C]">
           Health Sentinel
         </h1>
-      </div>
+      </Link>
       {location.pathname === "/home" ? (
         <>
           {/* Navbar Links */}
