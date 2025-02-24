@@ -1,8 +1,16 @@
 import React from "react";
 import HeaderBar from "../components/HeaderBar";
 import Navbar from "../components/Navbar";
+import { openPopUp } from '../redux/actions/popUpAction';
+import { connect } from 'react-redux';
+import ViewLocationPopup from "../components/ViewLocationPopup";
 
-const SingleCaseView = () => {
+const SingleCaseView = (props) => {
+
+  const handlePopUpOpen = () => {
+    props.openPopUp();
+  }
+
   return (
     <>
       <Navbar Sections={[]} setActiveSection={null} activeId={null} />
@@ -14,7 +22,9 @@ const SingleCaseView = () => {
             <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
               <div className="w-full flex flex-row items-center justify-between">
                 <h1 className="text-base text-[#080809]">Location</h1>
-                <button className="text-base text-[#080809] py-[8px] px-[16px] rounded-[6px] bg-[#E2E5E9] cursor-pointer hover:bg-gray-300 transition">
+                <button className="text-base text-[#080809] py-[8px] px-[16px] rounded-[6px] bg-[#E2E5E9] cursor-pointer hover:bg-gray-300 transition"
+                onClick={handlePopUpOpen}
+                >
                   View Location
                 </button>
               </div>
@@ -231,8 +241,13 @@ const SingleCaseView = () => {
           </div>
         </div>
       </div>
+      <ViewLocationPopup/>
     </>
   );
 };
 
-export default SingleCaseView;
+const mapDispatchToProps = (dispatch) => ({
+  openPopUp: () => dispatch(openPopUp()),
+});
+
+export default connect(null, mapDispatchToProps)(SingleCaseView);
