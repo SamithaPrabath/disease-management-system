@@ -1,0 +1,47 @@
+import React from "react";
+import Hero from "../../assets/hero.png";
+
+const Home = () => {
+  const handleClickScroll = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  return (
+    <div
+      id="Home"
+      className="w-full min-w-[870px] min-h-[552px] bg-linear-to-r from-white to-[#007AFF]
+        flex flex-row flex-wrap items-center justify-center lg:justify-between px-[72px] py-[48px]
+      "
+    >
+      <div className="w-[550px] flex flex-col gap-[10px]">
+        <h1 className="text-[48px] text-[#4D4D4D] font-bold">
+          Stay <span className="text-[#0866FF]">Informed.</span> Stay{" "}
+          <span className="text-[#0866FF]">Safe</span>
+        </h1>
+        <p className="text-[16px] text-[#717171]">
+          Track infectious disease cases in your area and stay updated with the
+          latest public health events.
+        </p>
+        <div className="w-[445px] flex flex-row gap-[10px]">
+          <button
+            className="text-[16px] text-center font-medium text-[#fff] px-[16px] py-[8px] rounded-[6px] bg-[#0866FF] cursor-pointer"
+            onClick={() => handleClickScroll("map")}
+          >
+            Explore the Map
+          </button>
+          <button
+            className="text-[16px] text-center font-medium text-[#080809] px-[16px] py-[8px] rounded-[6px] border-[1px] border-[#65686C] bg-[#fff] cursor-pointer"
+            onClick={() => handleClickScroll("events")}
+          >
+            Upcoming Events
+          </button>
+        </div>
+      </div>
+      <img src={Hero} alt="hero" className="w-[456px] h-[456px]" />
+    </div>
+  );
+};
+
+export default Home;
