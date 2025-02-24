@@ -1,12 +1,13 @@
 import React, {useEffect} from "react"
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
-import Home from "./pages/HomePage"
+import Home from "./pages/PublicPage"
 import Login from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound"
 import { connect } from 'react-redux';
 import {encryptAndStoreToken, decryptAndRetrieveToken, isTokenValid} from "./Encryption/encrypt"
+import SingleCaseView from "./pages/SingleCaseView";
 
 const  App = (props) => {
 
@@ -22,7 +23,6 @@ const  App = (props) => {
 
   useEffect(() => {
     if (response?.status == "200") {
-      console.log("Token:", response.data.token); // 
       encryptAndStoreToken(response?.data?.token);
       navigate("/dashboard");
     } else {
@@ -47,6 +47,7 @@ const  App = (props) => {
             )
           }
         />
+        <Route path="/single-case-view/:caseId" element={<SingleCaseView />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </div>
