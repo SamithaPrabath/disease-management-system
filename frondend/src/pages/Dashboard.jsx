@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import Navbar from "../components/Navbar";
 
-import Home from '../components/epidemiology/Home';
-import Phi from '../components/epidemiology/Phi';
-import Moh from '../components/epidemiology/Moh'
-import Istitutes from '../components/epidemiology/Institutes'
-import Diseases from '../components/epidemiology/Didseaces'
+import Home from './epidemiology/Home';
+import Phi from './epidemiology/Phi';
+import Moh from './epidemiology/Moh'
+import Istitutes from './epidemiology/Institutes'
+import Diseases from './epidemiology/Didseaces'
 
 const Dashboard = () => {
   const Links = [
