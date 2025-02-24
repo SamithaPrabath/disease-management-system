@@ -5,7 +5,7 @@ import { IoNotifications } from "react-icons/io5";
 import { HiUser } from "react-icons/hi2";
 
 const Navbar = ({ Sections, onNavClick, activeId }) => {
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState("Home");
 
   const location = useLocation();
 
