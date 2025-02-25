@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import Home from "./pages/PublicPage"
 import Login from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/epidemiology/Dashboard";
 import NotFound from "./pages/NotFound"
 import { connect } from 'react-redux';
 import {encryptAndStoreToken, decryptAndRetrieveToken, isTokenValid} from "./Encryption/encrypt"
@@ -31,6 +31,8 @@ const  App = (props) => {
     }
   }, [response]);
 
+  console.log(response?.data?.role)
+
   return (
     <div className="font-roboto">
       <Routes>
@@ -41,7 +43,8 @@ const  App = (props) => {
           path="/dashboard"
           element={
             decryptAndRetrieveToken() && isTokenValid() ? (
-              <Dashboard />
+              response?.data?.role === "admin" ? <Dashboard />
+              : response?.data?.role === "phi" ?<NotFound /> : null
             ) : (
               <Navigate to="/login" replace />
             )
