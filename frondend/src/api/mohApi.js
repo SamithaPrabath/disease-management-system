@@ -13,6 +13,7 @@ const mohResponse = [
     phoneNumber: "0764524589",
     userName: "testmoh1",
     password: "123",
+    role: "moh",
   },
   {
     id: "002",
@@ -23,6 +24,7 @@ const mohResponse = [
     phoneNumber: "0764524589",
     userName: "testmoh2",
     password: "123",
+    role: "moh",
   },
 ];
 
