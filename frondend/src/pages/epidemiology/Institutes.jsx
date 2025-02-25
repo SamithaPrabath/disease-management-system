@@ -42,7 +42,7 @@ const Institutes = () => {
   
     const handleBack = () => { 
       setIsOpen(true);
-    };
+    }
 
   return (
     <>
