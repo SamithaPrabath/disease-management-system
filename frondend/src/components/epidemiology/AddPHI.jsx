@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import { phiSchema } from "../../yupSchema/phiSchema";
+import { phiSchema } from "../../yupSchema/epidemiologySchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import {registerPhi} from '../../api/phiApi';
 
 const AddPHI = ({ handleBack }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,10 +19,19 @@ const AddPHI = ({ handleBack }) => {
       password: "",
     },
     validationSchema: phiSchema,
-    onSubmit: (values) => {
-      console.log("Form Submitted:", values);
-
-      // Call API here
+    onSubmit: async (values) => {
+      try {
+        const response = await registerPhi(values);
+  
+        if (response && response.message) {
+          alert(response.message);
+        } else {
+          alert("Registration failed");
+        }
+      } catch (error) {
+        console.error("Error during registration:", error);
+        alert("An error occurred during registration.");
+      }
     },
   });
 
