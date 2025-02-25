@@ -15,6 +15,7 @@ const AddInstitutes = ({ handleBack }) => {
       address: "",
       province: "",
       city: "",
+      role: "institute",
     },
     validationSchema: instituteSchema,
     onSubmit: (values) => {
