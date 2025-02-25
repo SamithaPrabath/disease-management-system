@@ -15,6 +15,7 @@ const AddMOH = ({handleBack}) => {
       phoneNumber: "",
       username: "",
       password: "",
+      role: "moh",
     },
     validationSchema: mohSchema,
     onSubmit: (values) => {
