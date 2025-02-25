@@ -11,9 +11,9 @@ const AddInstitutes = ({handleBack}) => {
           </h2>
 
           <form className="space-y-4">
-            {/* Full Name */}
+            {/* Institute Name */}
             <div>
-              <label className="block text-gray-700">Full Name</label>
+              <label className="block text-gray-700">Institute Name</label>
               <input
                 type="text"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
@@ -50,20 +50,29 @@ const AddInstitutes = ({handleBack}) => {
               </div>
             </div>
 
+            {/* Address */}
+            <div>
+              <label className="block text-gray-700">Address</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
+              />
+            </div>
+
             {/* Two-column Layout */}
             <div className="grid grid-cols-2 gap-4">
-              {/* Username */}
+              {/* City */}
               <div>
-                <label className="block text-gray-700">Username</label>
+                <label className="block text-gray-700">City</label>
                 <input
                   type="text"
                   className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
                 />
               </div>
 
-              {/* Password */}
+              {/* Province */}
               <div>
-                <label className="block text-gray-700">Password</label>
+                <label className="block text-gray-700">Provice</label>
                 <input
                   type="password"
                   className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
