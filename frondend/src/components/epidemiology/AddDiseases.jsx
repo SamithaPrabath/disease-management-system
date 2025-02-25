@@ -10,6 +10,7 @@ const AddDiseases = ({ handleBack }) => {
       category: "",
       modeOfTransmission: "",
       description: "",
+      role: "disease",
     },
     validationSchema: diseasesSchema,
     onSubmit: (values) => {
