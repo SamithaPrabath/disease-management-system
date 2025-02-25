@@ -14,6 +14,7 @@ const phiResponse = [
     phoneNumber: "0764524589",
     userName: "testphi1",
     password: "123",
+    role: "phi",
   },
   {
     id: "002",
@@ -25,6 +26,7 @@ const phiResponse = [
     phoneNumber: "0764524589",
     userName: "testphi1",
     password: "123",
+    role: "phi",
   },
 ];
 
