@@ -11,6 +11,7 @@ const diseasesResponse = [
       category: "Viral Infection",
       modeOfTransmission: "Mosquito-borne (Aedes mosquitoes)",
       description: "Dengue fever is a viral illness transmitted by mosquitoes, causing high fever, severe headaches, joint pain, and skin rash. In severe cases, it can lead to hemorrhagic fever or shock syndrome.",
+      role: "disease",
     },
     {
       id: "002",
@@ -19,6 +20,7 @@ const diseasesResponse = [
       category: "Bacterial Infection",
       modeOfTransmission: "Airborne (coughing, sneezing, or talking)",
       description: "Tuberculosis is a contagious bacterial infection that primarily affects the lungs. Symptoms include chronic cough, weight loss, fever, and night sweats. It is spread through airborne droplets when an infected person coughs or sneezes.",
+      role: "disease",
     },
     {
       id: "003",
@@ -27,6 +29,7 @@ const diseasesResponse = [
       category: "Viral Infection",
       modeOfTransmission: "Blood, bodily fluids, unprotected sex, mother-to-child",
       description: "Hepatitis B is a liver infection caused by the Hepatitis B virus. It can lead to chronic liver disease, cirrhosis, and liver cancer. It spreads through contact with infected blood, sexual transmission, or from mother to child during childbirth.",
+      role: "disease",
     },
   ];
 
