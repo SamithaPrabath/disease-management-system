@@ -13,6 +13,7 @@ const institutesResponse = [
     address: "123 Main Street, Colombo",
     province: "Western",
     city: "Colombo",
+    role: "institute",
   },
   {
     id: "002",
@@ -23,6 +24,7 @@ const institutesResponse = [
     address: "456 Health Road, Kandy",
     province: "Central",
     city: "Kandy",
+    role: "institute",
   },
   {
     id: "003",
@@ -33,6 +35,7 @@ const institutesResponse = [
     address: "789 Finance Avenue, Galle",
     province: "Southern",
     city: "Galle",
+    role: "institute",
   },
   {
     id: "004",
@@ -43,6 +46,7 @@ const institutesResponse = [
     address: "25 Sunrise Street, Jaffna",
     province: "Northern",
     city: "Jaffna",
+    role: "institute",
   },
   {
     id: "005",
@@ -53,6 +57,7 @@ const institutesResponse = [
     address: "10 Knowledge Lane, Kurunegala",
     province: "North Western",
     city: "Kurunegala",
+    role: "institute",
   },
 ];
 
