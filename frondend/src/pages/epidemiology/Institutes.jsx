@@ -1,26 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import AddInstitutes from "../../components/epidemiology/AddInstitutes";
-import RegisterTableCard from "../../components/RegisterTableCard";
+import UserTableCard from "../../components/epidemiology/tables/UserTableCard";
+import { connect } from "react-redux";
+import { getAllInstitutesData } from "../../api/institutesApi";
+import EditInstitutes from "../../components/epidemiology/EditInstitutes";
 
-const initialData = [
-  {
-    registationNumber: "0001",
-    name: "John Doe",
-    email: "john.doe@email.com",
-    phoneNumber: "0764524589",
-  },
-  {
-    registationNumber: "0002",
-    name: "John Doe",
-    email: "john.doe@email.com",
-    phoneNumber: "0764524589",
-  },
-]
-
-const Institutes = () => {
+const Institutes = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(true);
+  const [viewEdit, setViewEdit] = useState(true);
+
+  const [institutesData, setInstitutesData] = useState([]);
+
+  // Fetch data when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getAllInstitutesData();
+        setInstitutesData(data);
+      } catch (error) {
+        console.error("Failed to fetch Institutes data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
@@ -30,9 +35,12 @@ const Institutes = () => {
       "Name",
       "Email",
       "Phone Number",
+      "City",
+      "Province",
       "Actions",],
-      tableData: initialData,
+      tableData: institutesData,
       searchQuery: searchQuery,
+      mode: "institutes",
     }
     ]
 
@@ -44,9 +52,21 @@ const Institutes = () => {
       setIsOpen(true);
     }
 
+
+    useEffect(() => {
+      if (
+        props.AllViewEditReducer != null &&
+        props.AllViewEditReducer.length > 0
+      ) {
+        setViewEdit(props.AllViewEditReducer[0]);
+      }
+    }, [props.AllViewEditReducer]);
+
   return (
     <>
-      <div className="Phi w-full min-w-[870px] min-h-[500px] flex flex-col items-center justify-start gap-[32px]">
+      {
+        viewEdit ? (
+          <div className="Phi w-full min-w-[870px] min-h-[500px] flex flex-col items-center justify-start gap-[32px]">
       
       {
         isOpen ? (
@@ -77,15 +97,25 @@ const Institutes = () => {
           </div>
         </div>
 
-        <RegisterTableCard tableData={tableData}/>
+        <UserTableCard tableData={tableData}/>
       </div>
 
         ) : (<AddInstitutes handleBack={handleBack}/>)
       }
 
     </div>
+        ): (
+          <EditInstitutes/>
+        )
+      }
     </>
   );
 };
 
-export default Institutes;
+const mapStateToProps = (state) => {
+  return {
+    AllViewEditReducer: state.allViewEditReducer,
+  };
+};
+
+export default connect(mapStateToProps, null)(Institutes);
