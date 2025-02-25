@@ -1,0 +1,121 @@
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
+
+const diseasesResponse = [
+    {
+      id: "001",
+      diseaseCode: "D001",
+      diseaseName: "Dengue Fever",
+      category: "Viral Infection",
+      modeOfTransmission: "Mosquito-borne (Aedes mosquitoes)",
+      description: "Dengue fever is a viral illness transmitted by mosquitoes, causing high fever, severe headaches, joint pain, and skin rash. In severe cases, it can lead to hemorrhagic fever or shock syndrome.",
+    },
+    {
+      id: "002",
+      diseaseCode: "D002",
+      diseaseName: "Tuberculosis (TB)",
+      category: "Bacterial Infection",
+      modeOfTransmission: "Airborne (coughing, sneezing, or talking)",
+      description: "Tuberculosis is a contagious bacterial infection that primarily affects the lungs. Symptoms include chronic cough, weight loss, fever, and night sweats. It is spread through airborne droplets when an infected person coughs or sneezes.",
+    },
+    {
+      id: "003",
+      diseaseCode: "D003",
+      diseaseName: "Hepatitis B",
+      category: "Viral Infection",
+      modeOfTransmission: "Blood, bodily fluids, unprotected sex, mother-to-child",
+      description: "Hepatitis B is a liver infection caused by the Hepatitis B virus. It can lead to chronic liver disease, cirrhosis, and liver cancer. It spreads through contact with infected blood, sexual transmission, or from mother to child during childbirth.",
+    },
+  ];
+
+export const addDiseases = async (user) => {
+  try {
+    if (IS_BACKEND) {
+      
+      const existingUser = diseasesResponse.find((institutes) => institutes.diseaseName === user.diseaseName || institutes.diseaseCode === user.diseaseCode);
+      
+      if (existingUser) {
+       
+        console.log("User already exists:", existingUser);
+        return existingUser;
+      } else {
+        
+        const newUser = {
+          ...user,
+          id: (diseasesResponse.length + 1).toString().padStart(3, "0"), 
+          message: "Disease registered successfully",
+        };
+        diseasesResponse.push(newUser);
+        console.log("New user registered:", newUser);
+        return newUser;
+      }
+    } else {
+      
+      const response = await axios.post(`${BASE_URL}/register`, user);
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return error;
+  }
+};
+
+export const getAllDiseasesData = async () => {
+  try {
+    if(IS_BACKEND){
+      return diseasesResponse;
+    }else{
+      const response = await axios.get(`${BASE_URL}/getAllDiseasesData`); // Replace with your API endpoint
+      return response.data; // Return the data received from the API
+    }
+  } catch (error) {
+    console.error("Error fetching Institutes data:", error);
+    throw error; // Throw the error if the request fails
+  }
+};
+
+export const deleteDiseases = async (id) => {
+  try {
+    if (IS_BACKEND) {
+      // Simulating deletion from mock data
+      const index = diseasesResponse.findIndex((diseases) => diseases.id === id);
+      if (index !== -1) {
+        diseasesResponse.splice(index, 1); // Remove the item from the array
+        return { status: 200, message: "PHI record deleted successfully" };
+      } else {
+        return { status: 404, message: "PHI record not found" };
+      }
+    } else {
+      // API call to delete PHI record
+      const response = await axios.delete(`${BASE_URL}/deletePhi/${id}`);
+      return response.data; // Return response from backend
+    }
+  } catch (error) {
+    console.error("Error deleting PHI record:", error);
+    throw error; // Throw error for handling in UI
+  }
+};
+
+export const updateDiseases = async (id, updatedData) => {
+  try {
+    if (IS_BACKEND) {
+      // Simulating update in mock data
+      const index = diseasesResponse.findIndex((disease) => disease.id === id);
+      if (index !== -1) {
+        diseasesResponse[index] = { ...diseasesResponse[index], ...updatedData };
+        return { status: 200, message: "Record updated successfully" };
+      } else {
+        return { status: 404, message: "Record not found" };
+      }
+    } else {
+      // API call to update PHI record
+      const response = await axios.put(`${BASE_URL}/updateDisease/${id}`, updatedData);
+      return response.data; // Return response from backend
+    }
+  } catch (error) {
+    console.error("Error updating PHI record:", error);
+    throw error; // Throw error for handling in UI
+  }
+};
