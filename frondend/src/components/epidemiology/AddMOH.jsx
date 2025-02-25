@@ -29,15 +29,6 @@ const AddMOH = ({handleBack}) => {
               />
             </div>
 
-            {/* MOH */}
-            <div>
-              <label className="block text-gray-700">MOH</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              />
-            </div>
-
             {/* Area */}
             <div>
               <label className="block text-gray-700">Area</label>
