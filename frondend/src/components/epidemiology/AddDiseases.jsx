@@ -11,56 +11,39 @@ const AddDiseases = ({handleBack}) => {
           </h2>
 
           <form className="space-y-4">
-            {/* Full Name */}
+            {/* Disease Code */}
             <div>
-              <label className="block text-gray-700">Full Name</label>
+              <label className="block text-gray-700">Disease Code</label>
               <input
                 type="text"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
               />
             </div>
 
-            {/* Registration Number */}
+            {/* Disease Name */}
             <div>
-              <label className="block text-gray-700">Registration Number</label>
+              <label className="block text-gray-700">Disease Name</label>
               <input
                 type="text"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
               />
             </div>
 
-            {/* MOH */}
-            <div>
-              <label className="block text-gray-700">MOH</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              />
-            </div>
-
-            {/* Area */}
-            <div>
-              <label className="block text-gray-700">Area</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              />
-            </div>
 
             {/* Two-column Layout */}
             <div className="grid grid-cols-2 gap-4">
-              {/* Email Address */}
-              <div>
-                <label className="block text-gray-700">Email Address</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                />
-              </div>
+              {/* Category */}
+            <div>
+              <label className="block text-gray-700">Category</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
+              />
+            </div>
 
-              {/* Phone Number */}
+              {/* Mode of Transmission */}
               <div>
-                <label className="block text-gray-700">Phone Number</label>
+                <label className="block text-gray-700"> Mode of Transmission</label>
                 <input
                   type="text"
                   className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
@@ -68,26 +51,14 @@ const AddDiseases = ({handleBack}) => {
               </div>
             </div>
 
-            {/* Two-column Layout */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* Username */}
+              {/* Description */}
               <div>
-                <label className="block text-gray-700">Username</label>
-                <input
+                <label className="block text-gray-700">Description</label>
+                <textarea
                   type="text"
                   className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
                 />
               </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-gray-700">Password</label>
-                <input
-                  type="password"
-                  className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                />
-              </div>
-            </div>
 
             {/* Buttons */}
             <div className="flex gap-4 mt-4">
