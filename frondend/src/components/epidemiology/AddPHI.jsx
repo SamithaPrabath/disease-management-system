@@ -17,6 +17,7 @@ const AddPHI = ({ handleBack }) => {
       phoneNumber: "",
       username: "",
       password: "",
+      role: "phi",
     },
     validationSchema: phiSchema,
     onSubmit: async (values) => {
