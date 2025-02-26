@@ -3,11 +3,15 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import Home from "./pages/PublicPage"
 import Login from "./pages/LoginPage";
-import Dashboard from "./pages/epidemiology/Dashboard";
+
+import DashboardEpi from "./pages/epidemiology/Dashboard";
+import DashboardPhi from "./pages/phi/Dashboard";
+import DashboardDoc from "./pages/doctor/Dashboard";
+
 import NotFound from "./pages/NotFound"
 import { connect } from 'react-redux';
 import {encryptAndStoreToken, decryptAndRetrieveToken, isTokenValid} from "./Encryption/encrypt"
-import SingleCaseView from "./pages/SingleCaseView";
+import SingleCaseView from "./pages/epidemiology/SingleCaseView";
 
 const  App = (props) => {
 
@@ -31,8 +35,6 @@ const  App = (props) => {
     }
   }, [response]);
 
-  console.log(response?.data?.role)
-
   return (
     <div className="font-roboto">
       <Routes>
@@ -43,8 +45,9 @@ const  App = (props) => {
           path="/dashboard"
           element={
             decryptAndRetrieveToken() && isTokenValid() ? (
-              response?.data?.role === "admin" ? <Dashboard />
-              : response?.data?.role === "phi" ?<NotFound /> : null
+              response?.data?.role === "admin" ? <DashboardEpi />
+              : response?.data?.role === "phi" ?<DashboardPhi /> : 
+              response?.data?.role === "doctor" ? <DashboardDoc/> : <Navigate to="/login" replace />
             ) : (
               <Navigate to="/login" replace />
             )
