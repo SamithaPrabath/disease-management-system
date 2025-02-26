@@ -69,14 +69,14 @@ export const registerInstitutes = async (user) => {
       
       if (existingUser) {
        
-        console.log("User already exists:", existingUser);
+        console.log("Already exists:", existingUser);
         return existingUser;
       } else {
         
         const newUser = {
           ...user,
           id: (institutesResponse.length + 1).toString().padStart(3, "0"), 
-          message: "User registered successfully",
+          message: "Institute registered successfully",
         };
         institutesResponse.push(newUser);
         console.log("New user registered:", newUser);
