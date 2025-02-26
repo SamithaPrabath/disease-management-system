@@ -24,8 +24,6 @@ const Home = () => {
     fetchData();
   }, []);
 
-  console.log(allCases);
-
   const tableData = [
     {
       tableHeaders: [
