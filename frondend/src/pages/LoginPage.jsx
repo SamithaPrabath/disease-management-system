@@ -1,5 +1,4 @@
 import React from "react";
-
 import Logo from "../assets/logo.png";
 import loginSchema from "../yupSchema/loginSchema";
 import { useFormik } from "formik";
