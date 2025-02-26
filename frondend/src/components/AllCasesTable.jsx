@@ -152,7 +152,7 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
                                 : "bg-yellow-100 text-yellow-800"
                             }`}
                           >
-                            {patient.status}
+                            {patient.caseStatus}
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
