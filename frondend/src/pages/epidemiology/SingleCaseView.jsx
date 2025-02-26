@@ -73,7 +73,7 @@ const SingleCaseView = (props) => {
             <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
               <h1 className="text-base text-[#080809]">MOH</h1>
               <button className="bg-blue-600 text-white px-4 py-2 rounded text-base hover:bg-blue-700 transition">
-                Assign MDR
+                Assign MOH
               </button>
             </div>
 
