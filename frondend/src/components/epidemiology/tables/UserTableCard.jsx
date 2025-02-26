@@ -41,7 +41,7 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
       else if (mode === "moh") response = await deleteMoh(id);
       else if (mode === "institutes") response = await deleteInstitutes(id);
       else if (mode === "diseases") response = await deleteDiseases(id);
-
+      else if (mode === "doctor") response = await deleteDoctor(id);
       alert(response.message); 
 
       
