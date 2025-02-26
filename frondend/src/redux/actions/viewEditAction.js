@@ -1,6 +1,4 @@
-import { VIEW_EDIT_BUTTON_CLICKED } from "./types";
-import { VIEW_EDIT_CLOSE_BUTTON_CLICKED } from "./types";
-
+import { VIEW_EDIT_BUTTON_CLICKED, VIEW_EDIT_CLOSE_BUTTON_CLICKED } from "./types";
 
 export const viewEdit = () => {
       return{
