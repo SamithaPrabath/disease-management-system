@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import {sriLankaProvinces} from "../../assets/citysAndProvinces";
 import { instituteSchema } from "../../yupSchema/epidemiologySchema";
+import { message } from "antd";
+import { registerInstitutes } from "../../api/institutesApi";
 
 const AddInstitutes = ({ handleBack }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [cities, setCities] = useState([]);
 
   const formik = useFormik({
@@ -18,9 +22,19 @@ const AddInstitutes = ({ handleBack }) => {
       role: "institute",
     },
     validationSchema: instituteSchema,
-    onSubmit: (values) => {
-      console.log("Form Data:", values);
-      alert("Institute Added Successfully!");
+    onSubmit: async (values) => {
+      try {
+        const response = await registerInstitutes(values);
+  
+        if (response && response.message) {
+          messageApi.success(response.message);
+        } else {
+          messageApi.error("Registration failed");
+        }
+      } catch (error) {
+        console.error("Error during registration:", error);
+        alert("An error occurred during registration.");
+      }
     },
   });
 
@@ -37,6 +51,7 @@ const AddInstitutes = ({ handleBack }) => {
 
   return (
     <>
+    {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
           Add Institutes
