@@ -1,0 +1,18 @@
+import * as Yup from "yup";
+
+export const newCaseSchema = Yup.object({
+  patientName: Yup.string().required("Name of the patient is required"),
+  age: Yup.number().required("Age is required").positive().integer(),
+  sex: Yup.string().required("Sex is required"),
+  guardian: Yup.string().required("Guardian is required"),
+  disease: Yup.string().required("Disease is required"),
+  caseStatus: Yup.string().required("Case status is required"),
+  nicNo: Yup.string().required("NIC No is required"),
+  telephone: Yup.string().matches(/^\d+$/, "Must be a valid number").required("Telephone number is required"),
+  institute: Yup.string().required("Institute is required"),
+  dateOfOnset: Yup.date().required("Date of Onset is required"),
+  dateOfAdmission: Yup.date().required("Date of Admission is required"),
+  ward: Yup.string().required("Ward is required"),
+  bhtNumber: Yup.string().required("B.H.T. Number is required"),
+  address: Yup.string().required("Address is required"),
+});
