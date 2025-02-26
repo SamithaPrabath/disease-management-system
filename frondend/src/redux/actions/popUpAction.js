@@ -1,6 +1,4 @@
-import { POPUP_VIEW_BUTTON_CLICKED } from "./types";
-import { POPUP_CLOSE_BUTTON_CLICKED } from "./types";
-
+import { POPUP_VIEW_BUTTON_CLICKED, POPUP_CLOSE_BUTTON_CLICKED } from "./types";
 
 export const openPopUp = () => {
       return{
@@ -15,3 +13,4 @@ export const openPopUp = () => {
       payload: false,
     }
 };
+
