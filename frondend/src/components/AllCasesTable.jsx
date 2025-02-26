@@ -162,6 +162,11 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
                             className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
                           >
                             Confirm Case
+                          </button> : role == "idu" ? <button
+                            type="button"
+                            className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
+                          >
+                            Assign MOH
                           </button> : <p>Mark as Received</p>
                           }
                         </td>
