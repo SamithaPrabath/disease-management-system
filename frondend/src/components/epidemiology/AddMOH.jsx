@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
 import { mohSchema } from "../../yupSchema/epidemiologySchema";
+import { registerMoh } from "../../api/mohApi";
+import { message } from "antd";
 
-const AddMOH = ({handleBack}) => {
+const AddMOH = ({ handleBack }) => {
+
   const [showPassword, setShowPassword] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const formik = useFormik({
     initialValues: {
@@ -18,21 +22,31 @@ const AddMOH = ({handleBack}) => {
       role: "moh",
     },
     validationSchema: mohSchema,
-    onSubmit: (values) => {
-      console.log("Form Submitted:", values);
+    onSubmit: async (values) => {
+      try {
+        const response = await registerMoh(values);
 
-      // Call API here
+        if (response && response.message) {
+          messageApi.success(response.message);
+        } else {
+          messageApi.error("Registration failed");
+        }
+      } catch (error) {
+        console.error("Error during registration:", error);
+        alert("An error occurred during registration.");
+      }
     },
   });
 
   return (
     <>
-        <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
-          <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-            Add MOH
-          </h2>
+      {contextHolder}
+      <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
+        <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
+          Add MOH
+        </h2>
 
-          <form onSubmit={formik.handleSubmit} className="space-y-4">
+        <form onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div>
             <label className="block text-gray-700">Full Name</label>
@@ -185,7 +199,7 @@ const AddMOH = ({handleBack}) => {
             </button>
           </div>
         </form>
-        </div>
+      </div>
     </>
   );
 };
