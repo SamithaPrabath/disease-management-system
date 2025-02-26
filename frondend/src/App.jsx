@@ -8,6 +8,7 @@ import DashboardEpi from "./pages/epidemiology/Dashboard";
 import DashboardPhi from "./pages/phi/Dashboard";
 import DashboardDoc from "./pages/doctor/Dashboard";
 import DashboardIdu from "./pages/idu/Dashboard";
+import DashboardMoh from "./pages/moh/Dashboard";
 
 import NotFound from "./pages/NotFound"
 import { connect } from 'react-redux';
@@ -50,6 +51,7 @@ const  App = (props) => {
               : response?.data?.role === "phi" ?<DashboardPhi /> : 
               response?.data?.role === "doctor" ? <DashboardDoc/> : 
               response?.data?.role === "idu" ? <DashboardIdu/> :
+              response?.data?.role === "moh" ? <DashboardMoh/> :
               <Navigate to="/login" replace />
             ) : (
               <Navigate to="/login" replace />
