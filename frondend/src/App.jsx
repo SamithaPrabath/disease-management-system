@@ -7,6 +7,7 @@ import Login from "./pages/LoginPage";
 import DashboardEpi from "./pages/epidemiology/Dashboard";
 import DashboardPhi from "./pages/phi/Dashboard";
 import DashboardDoc from "./pages/doctor/Dashboard";
+import DashboardIdu from "./pages/idu/Dashboard";
 
 import NotFound from "./pages/NotFound"
 import { connect } from 'react-redux';
@@ -47,7 +48,9 @@ const  App = (props) => {
             decryptAndRetrieveToken() && isTokenValid() ? (
               response?.data?.role === "admin" ? <DashboardEpi />
               : response?.data?.role === "phi" ?<DashboardPhi /> : 
-              response?.data?.role === "doctor" ? <DashboardDoc/> : <Navigate to="/login" replace />
+              response?.data?.role === "doctor" ? <DashboardDoc/> : 
+              response?.data?.role === "idu" ? <DashboardIdu/> :
+              <Navigate to="/login" replace />
             ) : (
               <Navigate to="/login" replace />
             )
