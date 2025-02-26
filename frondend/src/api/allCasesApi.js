@@ -5,34 +5,24 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 const allCasesResponse = [
     {
-      caseId: "0001",
+      id: "001",
+      caseId: "001",
       name: "John Doe",
-      hospital: "General Hospital, Maharashtra",
       age: 35,
-      sex: "M",
+      sex: "Male",
+      guardian: "Jane Doe", // Only applicable if age < 18
       disease: "Dengue",
-      dateOfOnset: "01/14/2025",
-      status: "Suspected",
-    },
-    {
-      caseId: "0002",
-      name: "Jane Smith",
-      hospital: "City Hospital, Maharashtra",
-      age: 28,
-      sex: "F",
-      disease: "Dengue",
-      dateOfOnset: "01/15/2025",
-      status: "Confirmed",
-    },
-    {
-      caseId: "0003",
-      name: "Robert Johnson",
-      hospital: "District Hospital, Maharashtra",
-      age: 45,
-      sex: "M",
-      disease: "Dengue",
-      dateOfOnset: "01/13/2025",
-      status: "Suspected",
+      caseStatus: "Suspected",
+      nicNo: "123456789V", // Only applicable if age >= 18
+      telephone: "0771234567",
+      institute: "General Hospital, Colombo",
+      dateOfOnset: "2023-10-15",
+      dateOfAdmission: "2023-10-16",
+      ward: "Ward 10",
+      bhtNumber: "BHT12345",
+      address: "123 Main Street, Colombo",
+      labResult: "Positive for Dengue IgM",
+      file: null, // Placeholder for file upload
     },
   ];
 
@@ -46,6 +36,24 @@ const allCasesResponse = [
       }
     } catch (error) {
       console.error("Error fetching Institutes data:", error);
+      throw error; // Throw the error if the request fails
+    }
+  };
+
+  export const addNewCase = async (newCase) => {
+    try {
+      if (IS_BACKEND) {
+        // Generate a new caseId
+        const newCaseId = (allCasesResponse.length + 1).toString().padStart(4, "0");
+        const caseToAdd = { ...newCase, caseId: newCaseId };
+        allCasesResponse.push(caseToAdd); // Add the new case to the mock data
+        return { message: "Case added successfully", case: caseToAdd };
+      } else {
+        const response = await axios.post(`${BASE_URL}/addCase`, newCase); // Replace with your API endpoint
+        return response.data; // Return the data received from the API
+      }
+    } catch (error) {
+      console.error("Error adding new case:", error);
       throw error; // Throw the error if the request fails
     }
   };
