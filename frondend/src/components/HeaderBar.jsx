@@ -34,6 +34,12 @@ const HeaderBar = ({AllLogins, viewConfirmPopUp}) => {
           onClick={() => viewConfirmPopUp()}
           >
           Confirm Case
+        </button> : role == "idu" ? 
+          <button
+          type="button"
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-400 cursor-pointer"
+          >
+          Assign MOH
         </button> : <button className='text-[16px] text-white font-medium bg-[#0866FF] px-[16px] py-[8px] rounded-[6px]'>Mark as Recived</button>
         }
       </div>
