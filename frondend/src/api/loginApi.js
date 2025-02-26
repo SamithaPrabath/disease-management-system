@@ -10,7 +10,7 @@ const testResponse = {
       id: "001",
       token: "abc1234",
       name: "John Doe",
-      role: "idu", 
+      role: "admin", 
       regNo: "001",
       gender: "Male",
       age: "35",
