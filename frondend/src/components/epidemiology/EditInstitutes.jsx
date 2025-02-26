@@ -5,18 +5,21 @@ import { useFormik } from "formik";
 import { instituteSchema } from "../../yupSchema/epidemiologySchema";
 import { sriLankaProvinces } from "../../assets/citysAndProvinces";
 import { getAllInstitutesData, updateInstitutes } from "../../api/institutesApi";
+import { message } from "antd";
 
 const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [cities, setCities] = useState([]);
   const [isEnableEdit, setIsEnableEdit] = useState(true);
-  const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getAllInstitutesData();
 
-        const filteredData = data.filter(
+        const filteredData = data.find(
           (item) => item.id == AllViewEditReducer?.[1]
         );
 
@@ -31,31 +34,36 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
 
   const formik = useFormik({
     initialValues: {
-      instituteName: userData[0]?.name || "",
-      registrationNumber: userData[0]?.registrationNumber || "",
-      email: userData[0]?.email || "",
-      phoneNumber: userData[0]?.phoneNumber || "",
-      address: userData[0]?.address || "",
-      province: userData[0]?.province || "",
-      city: userData[0]?.city || "",
+      instituteName: userData?.name || "",
+      registrationNumber: userData?.registrationNumber || "",
+      email: userData?.email || "",
+      phoneNumber: userData?.phoneNumber || "",
+      address: userData?.address || "",
+      province: userData?.province || "",
+      city: userData?.city || "",
     },
     enableReinitialize: true,
     validationSchema: instituteSchema,
     onSubmit: async (values) => {
+      console.log(values)
       try {
-        const id = userData[0]?.id;
-    
+        const id = userData?.id;
+
         if (!id) {
           console.error("ID not found!");
           return;
         }
 
         const response = await updateInstitutes(id, values);
-    
-        alert(response.message);
-    
+
+        if (response && response.message) {
+          messageApi.success(response.message);
+        } else {
+          messageApi.error("Update failed");
+        }
       } catch (error) {
         console.error("Error updating record:", error);
+        messageApi.error("An error occurred during update.");
       }
     },
   });
@@ -73,6 +81,7 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
 
   return (
     <>
+      {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <div className="w-full flex flex-row items-center justify-between">
           {/* Heading */}
@@ -105,9 +114,10 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
               type="text"
               name="instituteName"
               className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-black"
               }`}
               {...formik.getFieldProps("instituteName")}
+              disabled={isEnableEdit}
             />
             {formik.touched.instituteName && formik.errors.instituteName && (
               <p className="text-red-500">{formik.errors.instituteName}</p>
@@ -121,9 +131,10 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
               type="text"
               name="registrationNumber"
               className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-black"
               }`}
               {...formik.getFieldProps("registrationNumber")}
+              disabled={isEnableEdit}
             />
             {formik.touched.registrationNumber &&
               formik.errors.registrationNumber && (
@@ -142,9 +153,10 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                 type="text"
                 name="email"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
+                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-black"
+                }`}
                 {...formik.getFieldProps("email")}
+                disabled={isEnableEdit}
               />
               {formik.touched.email && formik.errors.email && (
                 <p className="text-red-500">{formik.errors.email}</p>
@@ -158,9 +170,10 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                 type="text"
                 name="phoneNumber"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
+                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-black"
+                }`}
                 {...formik.getFieldProps("phoneNumber")}
+                disabled={isEnableEdit}
               />
               {formik.touched.phoneNumber && formik.errors.phoneNumber && (
                 <p className="text-red-500">{formik.errors.phoneNumber}</p>
@@ -175,9 +188,10 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
               type="text"
               name="address"
               className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-black"
               }`}
               {...formik.getFieldProps("address")}
+              disabled={isEnableEdit}
             />
             {formik.touched.address && formik.errors.address && (
               <p className="text-red-500">{formik.errors.address}</p>
@@ -192,11 +206,12 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
               <select
                 name="province"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
+                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-black"
+                }`}
                 value={formik.values.province}
                 onChange={handleProvinceChange}
                 onBlur={formik.handleBlur}
+                disabled={isEnableEdit}
               >
                 <option value="">Select Province</option>
                 {sriLankaProvinces.map((province, index) => (
@@ -216,12 +231,12 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
               <select
                 name="city"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
+                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-black"
+                }`}
                 value={formik.values.city}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={!formik.values.province}
+                disabled={isEnableEdit || !formik.values.province}
               >
                 <option value="">Select City</option>
                 {cities.map((city, index) => (
@@ -238,14 +253,14 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
 
           {/* Buttons */}
           <div className="flex gap-4 mt-4">
-          <button
+            <button
               type="submit"
               className={`px-6 py-2 rounded-md text-white ${
                 !isEnableEdit && formik.isValid
                   ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
-              disabled={isEnableEdit || !formik.isValid}
+              disabled={isEnableEdit}
             >
               Submit
             </button>
