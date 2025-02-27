@@ -1,8 +1,12 @@
 import React from "react";
 import { useFormik } from "formik";
 import { diseasesSchema } from "../../yupSchema/epidemiologySchema";
+import { message } from "antd";
+import { addDiseases } from "../../api/diseasesApi";
 
 const AddDiseases = ({ handleBack }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const formik = useFormik({
     initialValues: {
       diseaseCode: "",
@@ -10,16 +14,27 @@ const AddDiseases = ({ handleBack }) => {
       category: "",
       modeOfTransmission: "",
       description: "",
-      role: "disease",
     },
     validationSchema: diseasesSchema,
-    onSubmit: (values) => {
-      console.log("Form values:", values);
+    onSubmit: async (values) => {
+      try {
+        const response = await addDiseases(values);
+
+        if (response && response.message) {
+          messageApi.success(response.message);
+        } else {
+          messageApi.error("Registration failed");
+        }
+      } catch (error) {
+        console.error("Error during registration:", error);
+        alert("An error occurred during registration.");
+      }
     },
   });
 
   return (
     <>
+      {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
           Add Diseases
@@ -115,13 +130,13 @@ const AddDiseases = ({ handleBack }) => {
           <div className="flex gap-4 mt-4">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer"
             >
               Submit
             </button>
             <button
               type="button"
-              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400"
+              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
               onClick={() => handleBack()}
             >
               Back
