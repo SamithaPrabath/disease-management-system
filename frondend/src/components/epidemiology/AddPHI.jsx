@@ -3,8 +3,10 @@ import { useFormik } from "formik";
 import { phiSchema } from "../../yupSchema/epidemiologySchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import {registerPhi} from '../../api/phiApi';
+import { message } from "antd";
 
 const AddPHI = ({ handleBack }) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
@@ -22,12 +24,12 @@ const AddPHI = ({ handleBack }) => {
     validationSchema: phiSchema,
     onSubmit: async (values) => {
       try {
-        const response = await registerPhi(values);
+        const response = await registerInstitutes(values);
   
         if (response && response.message) {
-          alert(response.message);
+          messageApi.success(response.message);
         } else {
-          alert("Registration failed");
+          messageApi.error("Registration failed");
         }
       } catch (error) {
         console.error("Error during registration:", error);
@@ -38,6 +40,7 @@ const AddPHI = ({ handleBack }) => {
 
   return (
     <>
+    {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
           Add PHI
