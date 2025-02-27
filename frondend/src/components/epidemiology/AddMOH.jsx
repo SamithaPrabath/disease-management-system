@@ -3,7 +3,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
 import { mohSchema } from "../../yupSchema/epidemiologySchema";
 import { registerMoh } from "../../api/mohApi";
-import { message } from "antd";
+import { message } from "antd";''
 
 const AddMOH = ({ handleBack }) => {
 
