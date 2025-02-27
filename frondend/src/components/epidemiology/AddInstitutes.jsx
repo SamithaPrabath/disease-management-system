@@ -19,7 +19,6 @@ const AddInstitutes = ({ handleBack }) => {
       address: "",
       province: "",
       city: "",
-      role: "institute",
     },
     validationSchema: instituteSchema,
     onSubmit: async (values) => {
@@ -183,13 +182,13 @@ const AddInstitutes = ({ handleBack }) => {
           <div className="flex gap-4 mt-4">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer"
             >
               Submit
             </button>
             <button
               type="button"
-              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400"
+              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
               onClick={handleBack}
             >
               Back
