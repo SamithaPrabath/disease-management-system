@@ -4,8 +4,11 @@ import { viewEdit } from "../../redux/actions/viewEditAction";
 import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { getAllDiseasesData, updateDiseases } from "../../api/diseasesApi";
+import { message } from "antd";
 
 const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [userData, setUserData] = useState([]);
   const [isEnableEdit, setIsEnableEdit] = useState(true);
 
@@ -40,16 +43,18 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
     onSubmit: async (values) => {
       try {
         const id = userData[0]?.id;
-    
+
         if (!id) {
           console.error("ID not found!");
           return;
         }
 
         const response = await updateDiseases(id, values);
-    
-        alert(response.message);
-    
+        if (response && response.message) {
+          messageApi.success(response.message);
+        } else {
+          messageApi.error("Registration failed");
+        }
       } catch (error) {
         console.error("Error updating record:", error);
       }
@@ -58,6 +63,7 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
 
   return (
     <>
+      {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <div className="w-full flex flex-row items-center justify-between">
           {/* Heading */}
@@ -89,7 +95,9 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
               type="text"
               name="diseaseCode"
               className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-300 text-black"
               }`}
               value={formik.values.diseaseCode}
               onChange={formik.handleChange}
@@ -106,7 +114,9 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
               type="text"
               name="diseaseName"
               className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-300 text-black"
               }`}
               value={formik.values.diseaseName}
               onChange={formik.handleChange}
@@ -123,8 +133,10 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
               <select
                 name="category"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
+                  isEnableEdit
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-300 text-black"
+                }`}
                 value={formik.values.category}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -148,8 +160,10 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
                 type="text"
                 name="modeOfTransmission"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
+                  isEnableEdit
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-300 text-black"
+                }`}
                 value={formik.values.modeOfTransmission}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -168,7 +182,9 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
             <textarea
               name="description"
               className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-300 text-black"
               }`}
               value={formik.values.description}
               onChange={formik.handleChange}
@@ -180,9 +196,9 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
           </div>
 
           <div className="flex gap-4 mt-4">
-          <button
+            <button
               type="submit"
-              className={`px-6 py-2 rounded-md text-white ${
+              className={`px-6 py-2 rounded-md text-white cursor-pointer ${
                 !isEnableEdit && formik.isValid
                   ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-gray-400 cursor-not-allowed"
