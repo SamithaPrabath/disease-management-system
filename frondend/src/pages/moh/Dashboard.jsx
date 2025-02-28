@@ -1,29 +1,40 @@
-import Navbar from "../../components/Navbar";
 import React, { useState, useEffect } from "react";
-import AllCasesTable from "../../components/AllCasesTable";
-import { getAllCases } from "../../api/allCasesApi";
 import { CiSearch } from "react-icons/ci";
+import TableCard from "../../components/phi/TableCard";
+import SingleCaseView from "../../components/SingleCaseView";
+import { connect } from "react-redux";
+import { getAllCases } from "../../api/allCasesApi";
+import Navbar from "../../components/Navbar";
+import AssignPHIPopup from "../../components/AssignPHIPopup";
 
-const Dashboard = () => {
-    const [allCases, setAllCases] = useState([]);
+const Dashboard = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [allCasesData, setAllCasesData] = useState([]);
+  const [patientId, setPatientId] = useState("");
 
-  const handleSearchChange = (e) =>
-    setSearchQuery(e.target.value.toLowerCase());
+  const [isViewSingleCase, setIsViewSingleCase] = useState(false);
 
-  // Fetch data when the component mounts
   useEffect(() => {
+    // Fetch all cases data
     const fetchData = async () => {
       try {
         const data = await getAllCases();
-        setAllCases(data);
+        setAllCasesData(data);
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.error("Failed to fetch cases data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [props.ViewReport]);
+
+  useEffect(() => {
+    setIsViewSingleCase(props.ViewsSingleCase?.[0]);
+    setPatientId(props.ViewsSingleCase?.[1]);
+  }, [props.ViewsSingleCase]);
+
+  const handleSearchChange = (e) =>
+    setSearchQuery(e.target.value.toLowerCase());
 
   const tableData = [
     {
@@ -37,11 +48,11 @@ const Dashboard = () => {
         "Case Status",
         "Actions",
       ],
-      tableData: allCases,
+      tableData: allCasesData,
       searchQuery: searchQuery,
+      handlePopUpOpen: null,
     },
   ];
-
 
   return (
     <>
@@ -50,35 +61,47 @@ const Dashboard = () => {
         onNavClick={null}
         activeId={null}
       />
-      {/* Render the active component */}
       <div className="Home w-full bg-[#F2F4F7] pt-[112px] pb-[32px] px-[32px] flex flex-col gap-[72px]">
-      <div className="w-full min-w-[870px] min-h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]">
-        {/* Render the active component */}
+      {isViewSingleCase ? (
+        <SingleCaseView patientId={patientId} />
+      ) : (
+        <>
+          <div className="Home w-full min-w-[870px] min-h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]">
+            <div className="w-full flex flex-row items-center justify-between">
+              {/* Heading */}
+              <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
+                Notifications of a communicable disease
+              </h2>
 
-        <div className="w-full flex flex-row items-center justify-between">
-          {/* Heading */}
-          <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-            Notifications of a communicable disease
-          </h2>
-
-          <div className="flex flex-row gap-3">
-            <div className="relative">
-              <input
-                className="bg-[#E2E5E9] w-[250px] h-[50px] rounded-[8px] px-[16px] py-[14px] text-black placeholder-gray-600 focus:outline-none"
-                type="text"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-              <CiSearch className="absolute right-[16px] top-1/2 transform -translate-y-1/2 text-gray-500 text-xl" />
+              {/* Search Input with Icon */}
+              <div className="relative">
+                <input
+                  className="bg-[#E2E5E9] w-[250px] h-[50px] rounded-[8px] px-[16px] py-[14px] text-black placeholder-gray-600 focus:outline-none"
+                  type="text"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <CiSearch className="absolute right-[16px] top-1/2 transform -translate-y-1/2 text-gray-500 text-xl" />
+              </div>
             </div>
+
+            <TableCard tableData={tableData} />
           </div>
-        </div>
-        <AllCasesTable tableData={tableData} />
+        </>
+      )}
       </div>
-      </div>
+      <AssignPHIPopup/>
     </>
   );
-}
+};
 
-export default Dashboard;
+const mapStateToProps = (state) => {
+  return {
+    ViewReport: state.viewReportReducer,
+    ViewsSingleCase: state.viewsSingleCase,
+    AssignphipopupReducer: state.assignphipopupReducer,
+  };
+};
+
+export default connect(mapStateToProps, null)(Dashboard);
