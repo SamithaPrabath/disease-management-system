@@ -5,24 +5,21 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 const diseasesResponse = [
     {
-      id: "001",
-      diseaseCode: "D001",
+      diseaseId: "D001",
       diseaseName: "Dengue Fever",
       category: "Viral Infection",
       modeOfTransmission: "Mosquito-borne (Aedes mosquitoes)",
       description: "Dengue fever is a viral illness transmitted by mosquitoes, causing high fever, severe headaches, joint pain, and skin rash. In severe cases, it can lead to hemorrhagic fever or shock syndrome.",
     },
     {
-      id: "002",
-      diseaseCode: "D002",
+      diseaseId: "D002",
       diseaseName: "Tuberculosis (TB)",
       category: "Bacterial Infection",
       modeOfTransmission: "Airborne (coughing, sneezing, or talking)",
       description: "Tuberculosis is a contagious bacterial infection that primarily affects the lungs. Symptoms include chronic cough, weight loss, fever, and night sweats. It is spread through airborne droplets when an infected person coughs or sneezes.",
     },
     {
-      id: "003",
-      diseaseCode: "D003",
+      diseaseId: "D003",
       diseaseName: "Hepatitis B",
       category: "Viral Infection",
       modeOfTransmission: "Blood, bodily fluids, unprotected sex, mother-to-child",
@@ -30,34 +27,34 @@ const diseasesResponse = [
     },
   ];
 
-export const addDiseases = async (user) => {
+export const addDiseases = async (disease) => {
   try {
     if (IS_BACKEND) {
       
-      const existingUser = diseasesResponse.find((institutes) => institutes.diseaseName === user.diseaseName || institutes.diseaseCode === user.diseaseCode);
+      const existingDisease = diseasesResponse.find((institutes) => institutes.diseaseName === disease.diseaseName || institutes.diseaseCode === disease.diseaseCode);
       
-      if (existingUser) {
+      if (existingDisease) {
        
-        console.log("User already exists:", existingUser);
-        return existingUser;
+        console.log("Disease already exists:", existingDisease);
+        return existingDisease;
       } else {
         
-        const newUser = {
-          ...user,
+        const newDisease = {
+          ...disease,
           id: (diseasesResponse.length + 1).toString().padStart(3, "0"), 
           message: "Disease registered successfully",
         };
-        diseasesResponse.push(newUser);
-        console.log("New user registered:", newUser);
-        return newUser;
+        diseasesResponse.push(newDisease);
+        console.log("New Disease registered:", newDisease);
+        return newDisease;
       }
     } else {
       
-      const response = await axios.post(`${BASE_URL}/register`, user);
+      const response = await axios.post(`${BASE_URL}/register`, disease);
       return response.data;
     }
   } catch (error) {
-    console.error("Error registering user:", error);
+    console.error("Error registering disease:", error);
     return error;
   }
 };
@@ -71,7 +68,7 @@ export const getAllDiseasesData = async () => {
       return response.data; // Return the data received from the API
     }
   } catch (error) {
-    console.error("Error fetching Institutes data:", error);
+    console.error("Error fetching Diseases data:", error);
     throw error; // Throw the error if the request fails
   }
 };
@@ -83,17 +80,17 @@ export const deleteDiseases = async (id) => {
       const index = diseasesResponse.findIndex((diseases) => diseases.id === id);
       if (index !== -1) {
         diseasesResponse.splice(index, 1); // Remove the item from the array
-        return { status: 200, message: "PHI record deleted successfully" };
+        return { status: 200, message: "Disease record deleted successfully" };
       } else {
-        return { status: 404, message: "PHI record not found" };
+        return { status: 404, message: "Disease record not found" };
       }
     } else {
-      // API call to delete PHI record
-      const response = await axios.delete(`${BASE_URL}/deletePhi/${id}`);
+      // API call to delete Disease record
+      const response = await axios.delete(`${BASE_URL}/deleteDisease/${id}`);
       return response.data; // Return response from backend
     }
   } catch (error) {
-    console.error("Error deleting PHI record:", error);
+    console.error("Error deleting Disease record:", error);
     throw error; // Throw error for handling in UI
   }
 };
@@ -115,7 +112,25 @@ export const updateDiseases = async (id, updatedData) => {
       return response.data; // Return response from backend
     }
   } catch (error) {
-    console.error("Error updating PHI record:", error);
+    console.error("Error updating Disease record:", error);
     throw error; // Throw error for handling in UI
+  }
+};
+
+export const geDiseasesList = async () => {
+  try {
+    if(IS_BACKEND){
+      const filteredDiseases = diseasesResponse.map(({ diseaseId, diseaseName }) => ({
+        diseaseId,
+        diseaseName,
+      }));
+      return filteredDiseases;
+    }else{
+      const response = await axios.get(`${BASE_URL}/getDiseasesList`); // Replace with your API endpoint
+      return response.data; // Return the data received from the API
+    }
+  } catch (error) {
+    console.error("Error fetching Diseases data:", error);
+    throw error; // Throw the error if the request fails
   }
 };
