@@ -19,13 +19,7 @@ const  App = (props) => {
 
   const navigate = useNavigate();
   const response = props.AllLogins;
-  
-  // Clear token and redirect to login
-  const logout = () => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("tokenExpiry");
-    navigate("/login");
-  };
+
 
   useEffect(() => {
     if (response?.status == "200") {
