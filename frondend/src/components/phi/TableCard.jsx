@@ -1,19 +1,33 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
+import { viewReport } from "../../redux/actions/viewReportAction";
+import { viewSingleCase } from "../../redux/actions/viewSingleCaseAction";
+import { viewConfirmPopUp } from "../../redux/actions/confirmCasePopUpAction";
+import { connect } from "react-redux";
+import { geDiseasesList } from "../../api/diseasesApi";
 
-const Table = ({ tableData }) => {
-
+const Table = ({
+  AllLogins,
+  tableData,
+  viewReport,
+  viewSingleCase,
+  viewConfirmPopUp,
+}) => {
   if (!tableData || tableData.length === 0) {
     return <p>No data available.</p>;
   }
 
-  const { tableHeaders, tableData: rows, searchQuery: searchQuery, handlePopUpOpen: handlePopUpOpen } = tableData[0];
+  const {
+    tableHeaders,
+    tableData: rows,
+    searchQuery: searchQuery,
+  } = tableData[0];
 
   const [patients, setPatients] = useState(rows);
   const [filters, setFilters] = useState({
-    disease: "",
+    diseaseName: "",
     date: "",
     sex: "",
-    status: "",
+    caseStatus: "",
   });
 
   const handleFilterChange = (e) =>
@@ -25,25 +39,52 @@ const Table = ({ tableData }) => {
         patient.name.toLowerCase().includes(searchQuery) ||
         patient.hospital.toLowerCase().includes(searchQuery) ||
         patient.disease.toLowerCase().includes(searchQuery)) &&
-      (filters.disease === "" || patient.disease === filters.disease) &&
+      (filters.diseaseName === "" ||
+        patient.diseaseName === filters.diseaseName) &&
       (filters.date === "" || patient.dateOfOnset === filters.date) &&
       (filters.sex === "" || patient.sex === filters.sex) &&
-      (filters.status === "" || patient.status === filters.status)
+      (filters.caseStatus === "" || patient.caseStatus === filters.caseStatus)
     );
   });
+
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    setPatients(rows); // Ensure state updates when rows change
+    setRole(AllLogins.data.role);
+  }, [rows]);
+
+  const [diseasesList, setDiseasesList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const diseases = await geDiseasesList();
+        setDiseasesList(diseases);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
       <form className="w-full flex flex-row items-center gap-[26px]">
         <h5 className="text-[16px] font-medium">Filter by :</h5>
         <select
-          name="disease"
-          id="disease"
+          name="diseaseName"
+          id="diseaseName"
           className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
-          <option value="">Disease</option>
-          <option value="Dengue">Dengue</option>
+          <option value="">Select Disease</option>
+          {diseasesList.map((disease, index) => (
+            <option key={index} value={disease.diseaseName}>
+              {disease.diseaseName}
+            </option>
+          ))}
         </select>
 
         <select
@@ -69,15 +110,16 @@ const Table = ({ tableData }) => {
           onChange={handleFilterChange}
         >
           <option value="">Sex</option>
-          <option value="M">Male</option>
-          <option value="F">Female</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
         </select>
         <select
-          name="status"
+          name="caseStatus"
           id="confirmed"
           className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
+          <option value="">Status</option>
           <option value="Confirmed">Confirmed</option>
           <option value="Suspected">Suspected</option>
         </select>
@@ -102,16 +144,17 @@ const Table = ({ tableData }) => {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredPatients.map((patient) => (
-                    <tr key={patient.caseId} className="hover:bg-gray-50 cursor-pointer"
-                    >
+                    <tr key={patient.id} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
                         {patient.caseId}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <div className="font-medium text-[#080809]">
-                          {patient.name}
+                          {patient.patientName}
                         </div>
-                        <div className="text-[#65686C]">{patient.hospital}</div>
+                        <div className="text-[#65686C]">
+                          {patient.instituteName}
+                        </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-[#080809]">
                         {patient.age}
@@ -120,7 +163,7 @@ const Table = ({ tableData }) => {
                         {patient.sex}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-[#080809]">
-                        {patient.disease}
+                        {patient.diseaseName}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-[#080809]">
                         {patient.dateOfOnset}
@@ -128,21 +171,62 @@ const Table = ({ tableData }) => {
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <span
                           className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                            patient.status === "Confirmed"
+                            patient.caseStatus === "Confirmed"
                               ? "bg-green-100 text-green-800"
                               : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
-                          {patient.status}
+                          {patient.caseStatus}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm flex gap-3">
                         <button
-                        className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] cursor-pointer"
-                        onClick={() => handlePopUpOpen()}
-                      >
-                        Add Report
-                      </button>
+                          className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] cursor-pointer"
+                          onClick={() => viewSingleCase(patient.caseId)}
+                        >
+                          View
+                        </button>
+                        {role == "doctor" ? (
+                          <button
+                            type="button"
+                            className={`px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] 
+                          ${
+                            patient.caseStatus == "Suspected"
+                              ? "cursor-pointer"
+                              : "text-gray-400 cursor-not-allowed"
+                          }
+                        `}
+                            onClick={() => viewConfirmPopUp(patient.caseId)}
+                            disabled={
+                              patient.caseStatus == "Suspected" ? false : true
+                            }
+                          >
+                            Confirm Case
+                          </button>
+                        ) : role == "idu" ? (
+                          <button
+                            type="button"
+                            className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
+                          >
+                            Assign MOH
+                          </button>
+                        ) : role == "phi" ? (
+                          <button
+                            className={`px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] 
+                          ${
+                            Object.keys(patient.report).length > 0
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "cursor-pointer"
+                          }
+                        `}
+                            onClick={() => viewReport(patient.id)}
+                            disabled={Object.keys(patient.report).length > 0}
+                          >
+                            Add Report
+                          </button>
+                        ) : (
+                          <p>Mark as Received</p>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -156,4 +240,16 @@ const Table = ({ tableData }) => {
   );
 };
 
-export default Table;
+const mapStateToProps = (state) => {
+  return {
+    AllLogins: state.allLogins,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  viewReport: (values) => dispatch(viewReport(values)),
+  viewSingleCase: (values) => dispatch(viewSingleCase(values)),
+  viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Table);
