@@ -2,19 +2,18 @@ import React, { useState, useEffect } from "react";
 import { IoIosCloseCircle } from "react-icons/io";
 import { connect } from "react-redux";
 import { closeVIewConfirmPopUp } from "../redux/actions/confirmCasePopUpAction";
+import { message } from "antd";
+import { confirmCase } from "../api/allCasesApi";
 
-const ConfirmCasePopup = ({ AllLogins, ConfirmPopUp, closeVIewConfirmPopUp }) => {
-  //Doctor Form
+const ConfirmCasePopup = ({
+  AllLogins,
+  ConfirmPopUp,
+  closeVIewConfirmPopUp,
+}) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [selectedOption, setSelectedOption] = useState("");
   const [remarks, setRemarks] = useState("");
   const [userTypeId, setUserTypeId] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Selected Option:", selectedOption);
-    console.log("Remarks:", remarks);
-    // Add your form submission logic here
-  };
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,11 +25,34 @@ const ConfirmCasePopup = ({ AllLogins, ConfirmPopUp, closeVIewConfirmPopUp }) =>
     setUserTypeId(AllLogins.data.userTypeId);
   }, [AllLogins]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  console.log(userTypeId, isOpen)
+    const values = {
+      natureOfConfirmation: selectedOption,
+      confirmationRemarks: remarks,
+      confirmedBy: userTypeId,
+      caseId: ConfirmPopUp?.[1],
+      confirmedDate: new Date().toISOString().split("T")[0],
+    };
+    
+    try {
+      const response = await confirmCase(values);
+
+      if (response && response.message) {
+        messageApi.success(response.message);
+      } else {
+        messageApi.error("Confirmation failed");
+      }
+    } catch (error) {
+      console.error("Error during confirmation:", error);
+      messageApi.error("An error occurred during confirmation.");
+    }
+  };
 
   return (
     <>
+      {contextHolder}
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
           <div className="bg-white w-[400px] h-[500px] rounded-[8px] shadow-sm flex flex-col">
