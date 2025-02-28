@@ -27,7 +27,7 @@ const AddDiseases = ({ handleBack }) => {
         }
       } catch (error) {
         console.error("Error during registration:", error);
-        alert("An error occurred during registration.");
+        messageApi.error("An error occurred during registration.");
       }
     },
   });
