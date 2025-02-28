@@ -5,17 +5,16 @@ import { closeSingleCase } from "../redux/actions/viewSingleCaseAction";
 import { connect } from "react-redux";
 import ViewLocationPopup from "./ViewLocationPopup";
 import ConfirmCasePopup from "./ConfirmCasePopup";
-import { getAllCases } from "../api/allCasesApi";
+import { getSingleCaseData } from "../api/allCasesApi";
 
 const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
-  const [singleCase, setSingleCase] = useState(null);
+  const [singleCase, setSingleCase] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllCases();
-        const foundCase = data.find((item) => item.id === patientId);
-        setSingleCase(foundCase || null);
+        const response = await getSingleCaseData(patientId);
+        setSingleCase(response.data);
       } catch (error) {
         console.error("Error fetching cases:", error);
       }
@@ -28,7 +27,7 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
     openPopUp();
   };
 
-  console.log(singleCase?.report);
+  console.log(singleCase);
 
   return (
     <>
@@ -56,12 +55,19 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
             <div className="w-full flex flex-row items-center justify-between">
               <h1 className="text-base font-medium text-[#080809]">Notifier</h1>
               <h2 className="text-base font-medium text-[#080809]">
-                14/02/2025
+                {singleCase?.notifiedDate}
               </h2>
             </div>
             <div>
-              <p className="text-xl font-medium">{singleCase?.notifier}</p>
-              <p className="text-base text-[#65686C]">Doctor</p>
+              <p className="text-xl font-medium">
+                {singleCase?.notifierDetails?.name}
+              </p>
+              <p className="text-base text-[#65686C]">
+                {singleCase?.confirmedByDetails?.role
+                  ? singleCase.confirmedByDetails.role.charAt(0).toUpperCase() +
+                    singleCase.confirmedByDetails.role.slice(1)
+                  : ""}
+              </p>
             </div>
           </div>
 
@@ -70,7 +76,7 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
             <div className="w-full flex flex-row items-center justify-between">
               <h1 className="text-base text-[#080809]">Ward</h1>
               <h2 className="text-base font-medium text-[#080809]">
-                14/02/2025
+                {singleCase?.dateOfAdmission}
               </h2>
             </div>
             <div>
@@ -92,6 +98,9 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
           {/* PHI Card */}
           <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
             <h1 className="text-base text-[#080809]">PHI</h1>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded text-base hover:bg-blue-700 transition">
+              Assign PHI
+            </button>
           </div>
 
           {/* Confirmed By Card */}
@@ -99,12 +108,32 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
             <div className="w-full flex flex-row items-center justify-between">
               <h1 className="text-base text-[#080809]">Confirmed by</h1>
               <h2 className="text-base font-medium text-[#080809]">
-                14/02/2025
+                {singleCase?.confirmedDate}
               </h2>
             </div>
             <div>
-              <p className="text-xl font-medium">Tony Kroos</p>
-              <p className="text-base text-[#65686C]">Doctor</p>
+              {singleCase?.caseStatus == "Suspected" ? (
+                <button
+                  className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
+                  onClick={() => viewConfirmPopUp(patientId)}
+                >
+                  Confirm Case
+                </button>
+              ) : (
+                <>
+                  <p className="text-xl font-medium">
+                    {singleCase?.confirmedByDetails?.name}
+                  </p>
+                  <p className="text-base text-[#65686C]">
+                    {singleCase?.confirmedByDetails?.role
+                      ? singleCase.confirmedByDetails.role
+                          .charAt(0)
+                          .toUpperCase() +
+                        singleCase.confirmedByDetails.role.slice(1)
+                      : ""}
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
