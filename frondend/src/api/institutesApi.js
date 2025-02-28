@@ -5,8 +5,8 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 const institutesResponse = [
   {
-    id: "001",
-    name: "ABC Institute of Technology",
+    istituteId: "I001",
+    instituteName: "ABC Institute of Technology",
     registrationNumber: "001",
     email: "contact@abc-tech.com",
     phoneNumber: "0761234567",
@@ -15,8 +15,8 @@ const institutesResponse = [
     city: "Colombo",
   },
   {
-    id: "002",
-    name: "XYZ Medical College",
+    istituteId: "I002",
+    instituteName: "XYZ Medical College",
     registrationNumber: "002",
     email: "info@xyzmed.com",
     phoneNumber: "0719876543",
@@ -25,8 +25,8 @@ const institutesResponse = [
     city: "Kandy",
   },
   {
-    id: "003",
-    name: "Global Business Academy",
+    istituteId: "I003",
+    instituteName: "Global Business Academy",
     registrationNumber: "003",
     email: "admin@gba.edu",
     phoneNumber: "0776543210",
@@ -35,24 +35,14 @@ const institutesResponse = [
     city: "Galle",
   },
   {
-    id: "004",
-    name: "Sunrise International School",
+    istituteId: "I004",
+    instituteName: "Sunrise International School",
     registrationNumber: "004",
     email: "support@sunrise.edu",
     phoneNumber: "0781122334",
     address: "25 Sunrise Street, Jaffna",
     province: "Northern",
     city: "Jaffna",
-  },
-  {
-    id: "005",
-    name: "Bright Future Institute",
-    registrationNumber: "005",
-    email: "hello@brightfuture.com",
-    phoneNumber: "0709988776",
-    address: "10 Knowledge Lane, Kurunegala",
-    province: "North Western",
-    city: "Kurunegala",
   },
 ];
 
@@ -74,16 +64,16 @@ export const registerInstitutes = async (user) => {
           message: "Institute registered successfully",
         };
         institutesResponse.push(newUser);
-        console.log("New user registered:", newUser);
+        console.log("New institute registered:", newUser);
         return newUser;
       }
     } else {
       
-      const response = await axios.post(`${BASE_URL}/register`, user);
+      const response = await axios.post(`${BASE_URL}/registerInstitute`, user);
       return response.data;
     }
   } catch (error) {
-    console.error("Error registering user:", error);
+    console.error("Error registering institute:", error);
     return error;
   }
 };
@@ -114,12 +104,12 @@ export const deleteInstitutes = async (id) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      // API call to delete PHI record
-      const response = await axios.delete(`${BASE_URL}/deletePhi/${id}`);
+      // API call to delete Institute record
+      const response = await axios.delete(`${BASE_URL}/deleteInstitute/${id}`);
       return response.data; // Return response from backend
     }
   } catch (error) {
-    console.error("Error deleting PHI record:", error);
+    console.error("Error deleting Institute record:", error);
     throw error; // Throw error for handling in UI
   }
 };
@@ -136,12 +126,30 @@ export const updateInstitutes = async (id, updatedData) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      // API call to update PHI record
+      // API call to update Institute record
       const response = await axios.put(`${BASE_URL}/updateInstitutes/${id}`, updatedData);
       return response.data; // Return response from backend
     }
   } catch (error) {
-    console.error("Error updating PHI record:", error);
+    console.error("Error updating Institute record:", error);
     throw error; // Throw error for handling in UI
+  }
+};
+
+export const getInstitutesList = async () => {
+  try {
+    if(IS_BACKEND){
+      const filteredInstitutes = institutesResponse.map(({ instituteId, instituteName }) => ({
+        instituteId,
+        instituteName,
+      }));
+      return filteredInstitutes;
+    }else{
+      const response = await axios.get(`${BASE_URL}/getInstitutesList`); // Replace with your API endpoint
+      return response.data; // Return the data received from the API
+    }
+  } catch (error) {
+    console.error("Error fetching Diseases data:", error);
+    throw error; // Throw the error if the request fails
   }
 };
