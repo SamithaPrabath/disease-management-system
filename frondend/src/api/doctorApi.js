@@ -3,10 +3,10 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
-const doctorResponse = [
+export const doctorResponse = [
   {
     doctorId: "D001",
-    doctorName: "John Doe",
+    name: "John Doe",
     registrationNumber: "DC0001",
     moh: "Colombo",
     area: "sample",
@@ -18,7 +18,7 @@ const doctorResponse = [
   },
   {
     doctorId: "D002",
-    doctorName: "Tim Kim",
+    name: "Tim Kim",
     registrationNumber: "DC002",
     moh: "Kandy",
     area: "sample",
