@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import AddInstitutes from "../../components/epidemiology/AddInstitutes";
-import UserTableCard from "../../components/epidemiology/tables/UserTableCard";
+import UserTableCard from "../../components/UserTableCard";
 import { connect } from "react-redux";
 import { getAllInstitutesData } from "../../api/institutesApi";
 import EditInstitutes from "../../components/epidemiology/EditInstitutes";
