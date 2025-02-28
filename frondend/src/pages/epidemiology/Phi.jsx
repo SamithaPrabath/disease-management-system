@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import AddPHI from "../../components/epidemiology/AddPHI";
-import UserTableCard from "../../components/epidemiology/tables/UserTableCard";
+import UserTableCard from "../../components/UserTableCard";
 import { connect } from "react-redux";
 import EditPHI from "../../components/epidemiology/EditPHI";
 import { getAllPhiData } from "../../api/phiApi";
