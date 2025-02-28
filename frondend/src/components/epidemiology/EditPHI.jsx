@@ -5,8 +5,11 @@ import { useFormik } from "formik";
 import { phiSchema } from "../../yupSchema/epidemiologySchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { getAllPhiData, updatePHI } from "../../api/phiApi";
+import { message } from "antd";
 
 const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [showPassword, setShowPassword] = useState(false);
   const [isEnableEdit, setIsEnableEdit] = useState(true);
 
@@ -54,16 +57,21 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
 
         const response = await updatePHI(id, values);
     
-        alert(response.message);
-    
+       if (response && response.message) {
+          messageApi.success(response.message);
+        } else {
+          messageApi.error("Registration failed");
+        }
       } catch (error) {
-        console.error("Error updating record:", error);
+        console.error("Error during registration:", error);
+        messageApi.error("An error occurred during registration.");
       }
     },
   });
 
   return (
     <div>
+      {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <div className="w-full flex flex-row items-center justify-between">
           {/* Heading */}
