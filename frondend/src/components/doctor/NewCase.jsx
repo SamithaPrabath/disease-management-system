@@ -14,6 +14,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
   const [institutesList, setInstitutesList] = useState([]);
   const [remarks, setRemarks] = useState("");
   const [userTypeId, setUserTypeId] = useState("");
+  const [notifier, setNotifier] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +35,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
 
   useEffect(() => {
     setUserTypeId(AllLogins.data.userTypeId);
+    setNotifier(AllLogins.data.userTypeId);
   }, [AllLogins]);
 
   const formik = useFormik({
@@ -78,6 +80,17 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
     },
     onSubmit: async (values, { resetForm }) => {
       const formData = new FormData();
+
+      if (values.caseStatus === "Confirmed") {
+        const currentDate = new Date().toISOString().split("T")[0];
+        values.confirmedDate = currentDate;
+      }
+
+      if (AllLogins) {
+        const currentDate = new Date().toISOString().split("T")[0];
+        values.notifiedDate = currentDate;
+      }
+
       Object.entries(values).forEach(([key, value]) => {
         if (key === "file" && value) {
           formData.append(key, value);
@@ -87,6 +100,8 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
       });
       if (remarks) formData.append("remarks", remarks);
       if (userTypeId) formData.append("confirmedBy", userTypeId);
+      if (notifier) formData.append("notifier", notifier);
+      
       try {
         const response = await addNewCase(formData);
 
