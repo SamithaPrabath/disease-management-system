@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { viewConfirmPopUp } from "../redux/actions/confirmCasePopUpAction";
 import { viewReport } from "../redux/actions/viewReportAction";
-import { getAllCases } from "../api/allCasesApi";
+import { getSingleCaseData } from "../api/allCasesApi";
 import { viewAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
 import { viewUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction";
 
@@ -25,9 +25,8 @@ const HeaderBar = ({
       }
 
       try {
-        const data = await getAllCases();
-        const foundCase = data.find((item) => item.id === patientId);
-        setSingleCase(foundCase || null);
+        const response = await getSingleCaseData(patientId);
+        setSingleCase(response.data);
       } catch (error) {
         console.error("Error fetching cases:", error);
       }
@@ -43,29 +42,29 @@ const HeaderBar = ({
           <div
             className={`w-[144px] h-[144px] rounded-[50%] 
           ${
-            singleCase?.status == "Suspected" ? "bg-[#FFAB00]" : "bg-[#36B37E]"
+            singleCase?.caseStatus == "Suspected" ? "bg-[#FFAB00]" : "bg-[#36B37E]"
           } flex items-center justify-center`}
           >
             <div className="w-[120px] h-[120px] rounded-[50%] bg-white flex items-center justify-center">
-              <h3 className="text-[24px] text-[#171717] font-medium text-center">
-                Dengue
+              <h3 className="text-[18px] text-[#171717] font-medium text-center">
+                {singleCase?.diseaseName}
               </h3>
             </div>
           </div>
           <div>
             <h2 className="text-[32px] text-[#171717] font-medium">
-              {singleCase?.name}
+              {singleCase?.patientName}
             </h2>
             <h5 className="text-[16px] text-[#171717] font-medium">
-              {singleCase?.status}{" "}
-              {singleCase?.natureOfConfamation !== "" &&
-                `(${singleCase?.natureOfConfamation})`}
+              {singleCase?.caseStatus}{" "}
+              {singleCase?.natureOfConfirmation !== "" &&
+                `(${singleCase?.natureOfConfirmation})`}
             </h5>
             <p className="text-[16px] text-[#65686C] font-normal">
               {singleCase?.caseId} | {singleCase?.sex} | {singleCase?.age} Years
             </p>
             <p className="text-[16px] text-[#65686C] font-normal">
-              {singleCase?.hospital}
+              {singleCase?.instituteName}
             </p>
           </div>
         </div>
@@ -84,13 +83,13 @@ const HeaderBar = ({
             <button
               className={`px-[16px] py-[8px] rounded-[6px]
             ${
-              singleCase?.status == "Suspected"
+              singleCase?.caseStatus == "Suspected"
                 ? "text-white bg-blue-600 cursor-pointer"
                 : "text-gray-400 bg-gray-300 cursor-not-allowed"
             }
           `}
-              onClick={() => viewConfirmPopUp()}
-              disabled={singleCase?.status == "Suspected" ? false : true}
+              onClick={() => viewConfirmPopUp(patientId)}
+              disabled={singleCase?.caseStatus == "Suspected" ? false : true}
             >
               Confirm Case
             </button>
