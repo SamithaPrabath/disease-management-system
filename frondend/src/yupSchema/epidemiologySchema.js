@@ -33,7 +33,7 @@ export const instituteSchema = Yup.object().shape({
   instituteName: Yup.string().required("Institute Name is required"),
   registrationNumber: Yup.string().required("Registration Number is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^\d{10}$/, "Phone number must be 10 digits")
     .required("Phone number is required"),
   address: Yup.string().required("Address is required"),
