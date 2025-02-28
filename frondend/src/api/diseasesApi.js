@@ -31,7 +31,7 @@ export const addDiseases = async (disease) => {
   try {
     if (IS_BACKEND) {
       
-      const existingDisease = diseasesResponse.find((institutes) => institutes.diseaseName === disease.diseaseName || institutes.diseaseCode === disease.diseaseCode);
+      const existingDisease = diseasesResponse.find((institutes) => institutes.diseaseName === disease.diseaseName || institutes.diseaseId === disease.diseaseId);
       
       if (existingDisease) {
        
