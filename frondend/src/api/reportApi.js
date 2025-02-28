@@ -6,6 +6,7 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 export const reportResponse = [
   {
     id: "001",
+    caseId: "C001",
     ethnicGroup: "Sinhalese",
     dischargeDate: "2023-10-20",
     isolationDateFrom: "2023-10-16",
@@ -19,6 +20,7 @@ export const reportResponse = [
   },
   {
     id: "002",
+    caseId: "C002",
     ethnicGroup: "Sinhalese",
     dischargeDate: "2023-10-20",
     isolationDateFrom: "2023-10-16",
@@ -35,7 +37,9 @@ export const reportResponse = [
 export const addReport = async (report) => {
   try {
     if (IS_BACKEND) {
+
       return { message: "Report add successfully", case: report };
+      
     } else {
       // Make an API call to update the case
       const response = await axios.put(
