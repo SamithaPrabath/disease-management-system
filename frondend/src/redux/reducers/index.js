@@ -4,6 +4,9 @@ import AllPopupReducer from './popup-reducer'
 import AllViewEditReducer from './viewedit-reducer'
 import ViewReportReducer from './viewreport-reducer'
 import ConfirmPopUpReducer from './confirmpopup-reducer'
+import ViewsSingleCaseReducer from './viewsSingleCase-reducer';
+import AssignphipopupReducer from './assignphipopup-reducer';
+import UnassigncasepopupReducer from './unassigncasepopup-reducer';
 
 const rootReducer = combineReducers(
     {
@@ -12,6 +15,9 @@ const rootReducer = combineReducers(
         allViewEditReducer: AllViewEditReducer,
         viewReportReducer: ViewReportReducer,
         confirmPopUp: ConfirmPopUpReducer,
+        viewsSingleCase: ViewsSingleCaseReducer,
+        assignphipopupReducer: AssignphipopupReducer,
+        unassigncasepopupReducer: UnassigncasepopupReducer,
     }
 )
 
