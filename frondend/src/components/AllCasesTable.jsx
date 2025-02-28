@@ -128,7 +128,7 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
                           <div className="font-medium text-[#080809]">
-                            {patient.name}
+                            {patient.patientName}
                           </div>
                           <div className="text-[#65686C]">{patient.hospital}</div>
                         </td>
