@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { IoNotifications } from "react-icons/io5";
 import { HiUser } from "react-icons/hi2";
 
 const Navbar = ({ Sections, onNavClick, activeId }) => {
   const [activeSection, setActiveSection] = useState("Home");
-
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false); // State for dropdown visibility
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Handle smooth scrolling
   const handleClickScroll = (elementId) => {
@@ -33,10 +34,7 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
       });
     };
 
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions
-    );
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
 
     Sections.forEach(({ id }) => {
       const section = document.getElementById(id);
@@ -46,9 +44,24 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
     return () => observer.disconnect(); // Cleanup observer
   }, []);
 
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setIsDropdownVisible(!isDropdownVisible);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("tokenExpiry");
+    navigate("/");
+  };
+
   return (
     <div className="Navbar w-full min-w-[870px] h-[80px] px-[40px] py-[16px] flex flex-row items-center justify-between bg-white fixed top-0 left-0 z-50">
-      <Link to="/" className="Logo w-[201px] h-[48px] flex flex-row items-center justify-between">
+      <Link
+        to="/"
+        className="Logo w-[201px] h-[48px] flex flex-row items-center justify-between"
+      >
         <img src={Logo} alt="logo" className="w-[48px] h-[48px]" />
         <h1 className="w-[137px] h-[30px] text-[20px] text-center font-medium text-[#65686C]">
           Health Sentinel
@@ -97,7 +110,8 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
               </button>
             ))}
           </ul>
-          <div className="w-[100px] h-[40px] flex flex-row items-center gap-[16px]">
+          <div className="w-[100px] h-[40px] flex flex-row items-center gap-[16px] relative">
+            {/* Notification Button */}
             <button
               className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
         flex items-center justify-center
@@ -105,13 +119,30 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
             >
               <IoNotifications />
             </button>
-            <button
-              className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
+
+            {/* User Button with Dropdown */}
+            <div className="relative">
+              <button
+                className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
         flex items-center justify-center
         "
-            >
-              <HiUser />
-            </button>
+                onClick={toggleDropdown}
+              >
+                <HiUser />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isDropdownVisible && (
+                <div className="absolute right-0 mt-2 w-[120px] bg-white border border-[#E2E5E9] rounded-[6px] shadow-lg">
+                  <button
+                    className="w-full px-4 py-2 text-[14px] text-[#65686C] hover:bg-[#F5F5F5]"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}
