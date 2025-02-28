@@ -3,9 +3,9 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
-const phiResponse = [
+export const phiResponse = [
   {
-    id: "001",
+    phiId: "P001",
     name: "John Doe",
     registrationNumber: "0001",
     moh: "sample",
@@ -17,7 +17,7 @@ const phiResponse = [
     role: "phi",
   },
   {
-    id: "002",
+    phiId: "P002",
     name: "John Doe",
     registrationNumber: "0002",
     moh: "sample",
@@ -44,7 +44,7 @@ export const registerPhi = async (user) => {
         
         const newUser = {
           ...user,
-          id: (phiResponse.length + 1).toString().padStart(3, "0"), 
+          phiId: (phiResponse.length + 1).toString().padStart(3, "0"), 
           message: "User registered successfully",
         };
         phiResponse.push(newUser);
@@ -80,7 +80,7 @@ export const deletePhi = async (id) => {
   try {
     if (IS_BACKEND) {
       // Simulating deletion from mock data
-      const index = phiResponse.findIndex((phi) => phi.id === id);
+      const index = phiResponse.findIndex((phi) => phi.phiId === id);
       if (index !== -1) {
         phiResponse.splice(index, 1); // Remove the item from the array
         return { status: 200, message: "PHI record deleted successfully" };
@@ -102,7 +102,7 @@ export const updatePHI = async (id, updatedData) => {
   try {
     if (IS_BACKEND) {
       // Simulating update in mock data
-      const index = phiResponse.findIndex((phi) => phi.id === id);
+      const index = phiResponse.findIndex((phi) => phi.phiId === id);
       if (index !== -1) {
         phiResponse[index] = { ...phiResponse[index], ...updatedData };
         return { status: 200, message: "Record updated successfully" };
