@@ -45,9 +45,8 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
     enableReinitialize: true,
     validationSchema: instituteSchema,
     onSubmit: async (values) => {
-      console.log(values)
       try {
-        const id = userData?.id;
+        const id = userData.id;
 
         if (!id) {
           console.error("ID not found!");
@@ -55,15 +54,13 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
         }
 
         const response = await updateInstitutes(id, values);
-
         if (response && response.message) {
           messageApi.success(response.message);
         } else {
-          messageApi.error("Update failed");
+          messageApi.error("Registration failed");
         }
       } catch (error) {
         console.error("Error updating record:", error);
-        messageApi.error("An error occurred during update.");
       }
     },
   });
@@ -255,8 +252,8 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
           <div className="flex gap-4 mt-4">
             <button
               type="submit"
-              className={`px-6 py-2 rounded-md text-white ${
-                !isEnableEdit && formik.isValid
+              className={`px-6 py-2 rounded-md text-white cursor-pointer ${
+                !isEnableEdit
                   ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
