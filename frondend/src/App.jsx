@@ -13,7 +13,7 @@ import DashboardMoh from "./pages/moh/Dashboard";
 import NotFound from "./pages/NotFound"
 import { connect } from 'react-redux';
 import {encryptAndStoreToken, decryptAndRetrieveToken, isTokenValid} from "./Encryption/encrypt"
-import SingleCaseView from "./pages/epidemiology/SingleCaseView";
+import SingleCaseView from "./pages/SingleCaseView";
 
 const  App = (props) => {
 
