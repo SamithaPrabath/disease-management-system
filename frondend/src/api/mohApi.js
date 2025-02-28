@@ -3,9 +3,9 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
-const mohResponse = [
+export const mohResponse = [
   {
-    id: "001",
+    mohId: "M001",
     name: "John Doe",
     registrationNumber: "0001",
     area: "Colombo",
@@ -16,7 +16,7 @@ const mohResponse = [
     role: "moh",
   },
   {
-    id: "002",
+    mohId: "M002",
     name: "John Doe",
     registrationNumber: "0002",
     area: "Kandy",
@@ -42,7 +42,7 @@ export const registerMoh = async (user) => {
         
         const newUser = {
           ...user,
-          id: (mohResponse.length + 1).toString().padStart(3, "0"), 
+          mohId: (mohResponse.length + 1).toString().padStart(3, "0"), 
           message: "User registered successfully",
         };
         mohResponse.push(newUser);
@@ -77,8 +77,7 @@ export const getAllMohData = async () => {
 export const deleteMoh = async (id) => {
   try {
     if (IS_BACKEND) {
-      // Simulating deletion from mock data
-      const index = mohResponse.findIndex((moh) => moh.id === id);
+      const index = mohResponse.findIndex((moh) => moh.mohId === id);
       if (index !== -1) {
         mohResponse.splice(index, 1); // Remove the item from the array
         return { status: 200, message: "MOH record deleted successfully" };
@@ -100,7 +99,7 @@ export const updateMoh = async (id, updatedData) => {
   try {
     if (IS_BACKEND) {
       // Simulating update in mock data
-      const index = mohResponse.findIndex((moh) => moh.id === id);
+      const index = mohResponse.findIndex((moh) => moh.mohId === id);
       if (index !== -1) {
         mohResponse[index] = { ...mohResponse[index], ...updatedData };
         return { status: 200, message: "Record updated successfully" };
