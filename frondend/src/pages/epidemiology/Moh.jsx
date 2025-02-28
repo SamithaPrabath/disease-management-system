@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import AddMOH from "../../components/epidemiology/AddMOH";
-import UserTableCard from "../../components/epidemiology/tables/UserTableCard";
+import UserTableCard from "../../components/UserTableCard";
 import { connect } from "react-redux";
 import EditMOH from "../../components/epidemiology/EditMOH";
 import { getAllMohData } from "../../api/mohApi";
