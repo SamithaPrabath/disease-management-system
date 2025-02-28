@@ -1,57 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import TableCard from "../../components/phi/TableCard";
-import SingleCaseView from "../phi/SingleCaseView";
-import HeaderBar from "../../components/phi/HeaderBar";
+import SingleCaseView from "../../components/SingleCaseView";
 import { connect } from "react-redux";
 import Report from "../../components/phi/Report";
-
-const initialData = [
-  {
-    caseId: "0001",
-    name: "John Doe",
-    hospital: "General Hospital, Maharashtra",
-    age: 35,
-    sex: "M",
-    disease: "Dengue",
-    dateOfOnset: "01/14/2025",
-    status: "Suspected",
-  },
-  {
-    caseId: "0002",
-    name: "Jane Smith",
-    hospital: "City Hospital, Maharashtra",
-    age: 28,
-    sex: "F",
-    disease: "Dengue",
-    dateOfOnset: "01/15/2025",
-    status: "Confirmed",
-  },
-  {
-    caseId: "0003",
-    name: "Robert Johnson",
-    hospital: "District Hospital, Maharashtra",
-    age: 45,
-    sex: "M",
-    disease: "Dengue",
-    dateOfOnset: "01/13/2025",
-    status: "Suspected",
-  },
-];
+import { getAllCases } from "../../api/allCasesApi";
+import UnAssignCasePopup from '../../components/UnAssignCasePopup'
 
 const Home = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
+  const [isViewReport, setIsViewReport] = useState(true);
+  const [allCasesData, setAllCasesData] = useState([]);
+  const [patientId, setPatientId] = useState("")
 
-  const [viewReport, setViewReport] = useState(false);
+  const [isViewSingleCase, setIsViewSingleCase] = useState(false);
 
   useEffect(() => {
-    setViewReport(props.ViewReportReducer);
-  }, [props.ViewReportReducer]);
 
-  const handlePopUpOpen = () => {
-    setIsOpen(false);
-  };
+    setIsViewReport(props.ViewReport?.[0]);
+
+    // Fetch all cases data
+    const fetchData = async () => {
+      try {
+        const data = await getAllCases();
+        setAllCasesData(data);
+      } catch (error) {
+        console.error("Failed to fetch cases data:", error);
+      }
+    };
+
+    fetchData();
+  }, [props.ViewReport]);
+
+
+  useEffect(() => {
+    setIsViewSingleCase(props.ViewsSingleCase?.[0]);
+    setPatientId(props.ViewsSingleCase?.[1]);
+  }, [props.ViewsSingleCase])
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
@@ -68,15 +53,20 @@ const Home = (props) => {
         "Case Status",
         "Actions",
       ],
-      tableData: initialData,
+      tableData: allCasesData,
       searchQuery: searchQuery,
-      handlePopUpOpen: handlePopUpOpen,
+      handlePopUpOpen: null,
     },
   ];
 
   return (
     <>
-      {isOpen ? (
+      {
+        isViewSingleCase && !isViewReport ? (<SingleCaseView patientId = {patientId}/>) : (
+          <>
+      {isViewReport ? (
+        <Report />
+      ) : (
         <div className="Home w-full min-w-[870px] min-h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]">
           <div className="w-full flex flex-row items-center justify-between">
             {/* Heading */}
@@ -99,25 +89,19 @@ const Home = (props) => {
 
           <TableCard tableData={tableData} />
         </div>
-      ) : (
-        <>
-          {viewReport ? (
-            <Report />
-          ) : (
-            <>
-              <HeaderBar />
-              <SingleCaseView />
-            </>
-          )}
-        </>
       )}
+    </>
+        )
+      }
+      <UnAssignCasePopup/>
     </>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-    ViewReportReducer: state.viewReportReducer,
+    ViewReport: state.viewReportReducer,
+    ViewsSingleCase: state.viewsSingleCase,
   };
 };
 
