@@ -8,7 +8,7 @@ const mohResponse = [
     id: "001",
     name: "John Doe",
     registrationNumber: "0001",
-    area: "sample",
+    area: "Colombo",
     email: "john.doe@email.com",
     phoneNumber: "0764524589",
     userName: "testmoh1",
@@ -19,7 +19,7 @@ const mohResponse = [
     id: "002",
     name: "John Doe",
     registrationNumber: "0002",
-    area: "sample",
+    area: "Kandy",
     email: "john.doe@email.com",
     phoneNumber: "0764524589",
     userName: "testmoh2",
@@ -81,17 +81,17 @@ export const deleteMoh = async (id) => {
       const index = mohResponse.findIndex((moh) => moh.id === id);
       if (index !== -1) {
         mohResponse.splice(index, 1); // Remove the item from the array
-        return { status: 200, message: "PHI record deleted successfully" };
+        return { status: 200, message: "MOH record deleted successfully" };
       } else {
-        return { status: 404, message: "PHI record not found" };
+        return { status: 404, message: "MOH record not found" };
       }
     } else {
-      // API call to delete PHI record
-      const response = await axios.delete(`${BASE_URL}/deletePhi/${id}`);
+      // API call to delete MOH record
+      const response = await axios.delete(`${BASE_URL}/deleteMOH/${id}`);
       return response.data; // Return response from backend
     }
   } catch (error) {
-    console.error("Error deleting PHI record:", error);
+    console.error("Error deleting MOH record:", error);
     throw error; // Throw error for handling in UI
   }
 };
@@ -108,12 +108,12 @@ export const updateMoh = async (id, updatedData) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      // API call to update PHI record
-      const response = await axios.put(`${BASE_URL}/updateMoh/${id}`, updatedData);
+      // API call to update MOH record
+      const response = await axios.put(`${BASE_URL}/updateMOH/${id}`, updatedData);
       return response.data; // Return response from backend
     }
   } catch (error) {
-    console.error("Error updating PHI record:", error);
+    console.error("Error updating MOH record:", error);
     throw error; // Throw error for handling in UI
   }
 };
