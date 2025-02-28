@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
-import UserTableCard from "../../components/epidemiology/tables/UserTableCard";
-import { getAllPhiData } from "../../api/phiApi";
+import UserTableCard from "../../components/UserTableCard";
+import { getAllDoctorData } from "../../api/doctorApi";
 import AddDoctor from "../../components/idu/AddDoctor";
 import { connect } from "react-redux";
 import EditDoctor from "../../components/idu/EditDoctor";
@@ -11,16 +11,16 @@ const Doctor = (props) => {
   const [isOpen, setIsOpen] = useState(true);
   const [viewEdit, setViewEdit] = useState(true);
 
-  const [phiData, setPhiData] = useState([]);
+  const [doctorData, setDoctorData] = useState([]);
 
   // Fetch data when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllPhiData();
-        setPhiData(data);
+        const data = await getAllDoctorData();
+        setDoctorData(data);
       } catch (error) {
-        console.error("Failed to fetch PHI data:", error);
+        console.error("Failed to fetch Doctor data:", error);
       }
     };
 
@@ -39,9 +39,9 @@ const Doctor = (props) => {
         "Phone Number",
         "Actions",
       ],
-      tableData: phiData,
+      tableData: doctorData,
       searchQuery: searchQuery,
-      mode: "phi",
+      mode: "doctor",
     },
   ];
 
