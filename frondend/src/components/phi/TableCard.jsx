@@ -36,9 +36,9 @@ const Table = ({
   const filteredPatients = patients.filter((patient) => {
     return (
       (searchQuery === "" ||
-        patient.name.toLowerCase().includes(searchQuery) ||
-        patient.hospital.toLowerCase().includes(searchQuery) ||
-        patient.disease.toLowerCase().includes(searchQuery)) &&
+        patient.patientName.toLowerCase().includes(searchQuery) ||
+        patient.instituteName.toLowerCase().includes(searchQuery) ||
+        patient.diseaseName.toLowerCase().includes(searchQuery)) &&
       (filters.diseaseName === "" ||
         patient.diseaseName === filters.diseaseName) &&
       (filters.date === "" || patient.dateOfOnset === filters.date) &&
