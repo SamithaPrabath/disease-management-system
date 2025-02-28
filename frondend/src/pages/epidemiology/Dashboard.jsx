@@ -5,7 +5,7 @@ import Home from './Home';
 import Phi from './Phi';
 import Moh from './Moh'
 import Istitutes from './Institutes'
-import Diseases from './Didseaces'
+import Diseases from './Diseases'
 
 const Dashboard = () => {
   const Links = [
