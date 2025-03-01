@@ -1,18 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { phiSchema } from "../../yupSchema/epidemiologySchema";
+import { doctorSchema } from "../../yupSchema/doctorSchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import {registerPhi} from '../../api/phiApi';
+import { registerDoctor } from "../../api/doctorApi";
 import { message } from "antd";
+import { getAllMOHList } from "../../api/mohApi";
 
 const AddDoctor = ({ handleBack }) => {
   const [messageApi, contextHolder] = message.useMessage();
-
   const [showPassword, setShowPassword] = useState(false);
+  const [mohList, setMohList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const moh = await getAllMOHList();
+        setMohList(moh);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        messageApi.error("Failed to load required data");
+      }
+    };
+
+    fetchData();
+  }, [messageApi]);
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
+      name: "",
       registrationNumber: "",
       moh: "",
       area: "",
@@ -22,11 +37,11 @@ const AddDoctor = ({ handleBack }) => {
       password: "",
       role: "phi",
     },
-    validationSchema: phiSchema,
+    validationSchema: doctorSchema,
     onSubmit: async (values) => {
       try {
-        const response = await registerPhi(values);
-  
+        const response = await registerDoctor(values);
+
         if (response && response.message) {
           messageApi.success(response.message);
         } else {
@@ -41,7 +56,7 @@ const AddDoctor = ({ handleBack }) => {
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
           Add Doctor
@@ -53,14 +68,14 @@ const AddDoctor = ({ handleBack }) => {
             <label className="block text-gray-700">Full Name</label>
             <input
               type="text"
-              name="fullName"
+              name="name"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              value={formik.values.fullName}
+              value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.fullName && formik.errors.fullName && (
-              <p className="text-red-500">{formik.errors.fullName}</p>
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-red-500">{formik.errors.name}</p>
             )}
           </div>
 
@@ -86,14 +101,20 @@ const AddDoctor = ({ handleBack }) => {
           {/* MOH */}
           <div>
             <label className="block text-gray-700">MOH</label>
-            <input
-              type="text"
+            <select
               name="moh"
-              className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
+              className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
               value={formik.values.moh}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-            />
+            >
+              <option value="">Select MOH</option>
+              {mohList.map((moh) => (
+                <option key={moh.mohId} value={moh.name}>
+                  {moh.name}
+                </option>
+              ))}
+            </select>
             {formik.touched.moh && formik.errors.moh && (
               <p className="text-red-500">{formik.errors.moh}</p>
             )}
@@ -199,7 +220,7 @@ const AddDoctor = ({ handleBack }) => {
               type="submit"
               className={`px-6 py-2 rounded-md text-white ${
                 formik.isValid
-                  ? "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
               disabled={!formik.isValid}
@@ -209,7 +230,7 @@ const AddDoctor = ({ handleBack }) => {
 
             <button
               type="button"
-              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400"
+              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
               onClick={handleBack}
             >
               Back
