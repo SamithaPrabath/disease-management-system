@@ -21,8 +21,8 @@ const Home = (props) => {
     // Fetch all cases data
     const fetchData = async () => {
       try {
-        const data = await getAllCases();
-        setAllCasesData(data);
+        const response = await getAllCases();
+        setAllCasesData(response.data);
       } catch (error) {
         console.error("Failed to fetch cases data:", error);
       }
