@@ -7,7 +7,7 @@ import { mohResponse } from "./mohApi";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
-const allCasesResponse = [
+export const allCasesResponse = [
   {
     caseId: "C001",
     patientName: "John Doe",
@@ -32,6 +32,8 @@ const allCasesResponse = [
     file: null,
     notifier: "D001",
     notifiedDate: "2024-02-02",
+    assignedPhi: "P001",
+    assignedMoh: "",
   },
   {
     caseId: "C002",
@@ -57,6 +59,8 @@ const allCasesResponse = [
     file: null,
     notifier: "D001",
     notifiedDate: "2024-02-03",
+    assignedPhi: "",
+    assignedMoh: "",
   },
   {
     caseId: "C003",
@@ -82,6 +86,8 @@ const allCasesResponse = [
     file: null,
     notifier: "D002",
     notifiedDate: "2024-02-02",
+    assignedPhi: "",
+    assignedMoh: "",
   },
   {
     caseId: "C004",
@@ -107,13 +113,28 @@ const allCasesResponse = [
     file: null,
     notifier: "D001",
     notifiedDate: "2024-02-02",
+    assignedPhi: "",
+    assignedMoh: "",
   },
 ];
 
 export const getAllCases = async () => {
   try {
     if (IS_BACKEND) {
-      return allCasesResponse;
+      // Safer version with proper null checks
+
+      const response =  allCasesResponse.map((caseItem) => {
+        const matchingReport = reportResponse.find(
+          (report) => report.caseId === caseItem.caseId // Use caseId for matching
+        );
+        return {
+          ...caseItem,
+          report: matchingReport ? matchingReport : {},
+        };
+      });
+
+      return { status: 200, message: "data fetch successfully", data: response };
+
     } else {
       const response = await axios.get(`${BASE_URL}/getAllCases`);
       return response.data;
@@ -159,6 +180,7 @@ export const confirmCase = async (confirmData) => {
         };
 
         return {
+          status: 200,
           message: "Case confirmed successfully",
         };
       } else {
@@ -200,28 +222,31 @@ export const getSingleCaseData = async (caseId) => {
       }
 
       //ConformationBy Response
-      const conformBy = caseData.confirmedBy.charAt(0)
 
       let confirmedByDetails = [];
 
-      if(caseData.caseStatus === "Confirmed"){
-        switch(caseData.confirmedBy.charAt(0)){
+      if (caseData.caseStatus === "Confirmed") {
+        switch (caseData.confirmedBy.charAt(0)) {
           case "D":
-            confirmedByDetails = doctorResponse.find((doctor) => doctor.id === caseData.confirmedBy);
+            confirmedByDetails = doctorResponse.find(
+              (doctor) => doctor.id === caseData.confirmedBy
+            );
             break;
           case "P":
-            confirmedByDetails = phiResponse.find((phi) => phi.id === caseData.confirmedBy);
+            confirmedByDetails = phiResponse.find(
+              (phi) => phi.id === caseData.confirmedBy
+            );
             break;
           case "M":
-            confirmedByDetails = mohResponse.find((moh) => moh.id === caseData.confirmedBy);
+            confirmedByDetails = mohResponse.find(
+              (moh) => moh.id === caseData.confirmedBy
+            );
             break;
           default:
             confirmedByDetails = [];
             break;
         }
       }
-
-      console.log(confirmedByDetails);
 
       const singleCaseResponse = {
         ...caseData,
