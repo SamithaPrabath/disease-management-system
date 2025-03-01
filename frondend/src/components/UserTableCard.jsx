@@ -38,6 +38,7 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
   }, [filteredUsers]);
 
   const handleDelete = async (id) => {
+    console.log(id)
     try {
       let response;
       if (mode === "phi") response = await deletePhi(id);
