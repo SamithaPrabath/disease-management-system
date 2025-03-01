@@ -5,7 +5,7 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 export const doctorResponse = [
   {
-    doctorId: "D001",
+    id: "D001",
     name: "John Doe",
     registrationNumber: "DC0001",
     moh: "Colombo",
@@ -17,7 +17,7 @@ export const doctorResponse = [
     role: "doctor",
   },
   {
-    doctorId: "D002",
+    id: "D002",
     name: "Tim Kim",
     registrationNumber: "DC002",
     moh: "Kandy",
@@ -47,11 +47,13 @@ export const registerDoctor = async (user) => {
         // Add new user to the mock data
         const newUser = {
           ...user,
-          doctorId: "D" + (doctorResponse.length + 1).toString().padStart(3, "0"), // Generate a new doctorId
+          id: "D" + (doctorResponse.length + 1).toString().padStart(3, "0"), // Generate a new doctorId
           message: "User registered successfully",
         };
         doctorResponse.push(newUser);
-        console.log("New user registered:", newUser);
+
+        console.log(newUser)
+        
         return newUser;
       }
     } else {
@@ -83,7 +85,7 @@ export const deleteDoctor = async (doctorId) => {
   try {
     if (IS_BACKEND) {
       // Simulating deletion from mock data
-      const index = doctorResponse.findIndex((doctor) => doctor.doctorId === doctorId);
+      const index = doctorResponse.findIndex((doctor) => doctor.id === doctorId);
       if (index !== -1) {
         doctorResponse.splice(index, 1); // Remove the item from the array
         return { status: 200, message: "Doctor record deleted successfully" };
@@ -105,7 +107,7 @@ export const updateDoctor = async (doctorId, updatedData) => {
   try {
     if (IS_BACKEND) {
       // Simulating update in mock data
-      const index = doctorResponse.findIndex((doctor) => doctor.doctorId === doctorId);
+      const index = doctorResponse.findIndex((doctor) => doctor.id === doctorId);
       if (index !== -1) {
         doctorResponse[index] = { ...doctorResponse[index], ...updatedData };
         return { status: 200, message: "Record updated successfully" };
