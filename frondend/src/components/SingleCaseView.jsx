@@ -63,9 +63,9 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
                 {singleCase?.notifierDetails?.name}
               </p>
               <p className="text-base text-[#65686C]">
-                {singleCase?.confirmedByDetails?.role
-                  ? singleCase.confirmedByDetails.role.charAt(0).toUpperCase() +
-                    singleCase.confirmedByDetails.role.slice(1)
+                {singleCase?.notifierDetails?.role
+                  ? singleCase.notifierDetails.role.charAt(0).toUpperCase() +
+                    singleCase.notifierDetails.role.slice(1)
                   : ""}
               </p>
             </div>
