@@ -15,6 +15,16 @@ export const reportResponse = [
     isolationStatus: "Home",
     outcome: "Recovered",
     labResults: "Positive for Dengue IgM",
+    householdContacts: [
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+    ],
+    otherContacts: [
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+    ],
     phiRemarks: "Patient responded well to treatment",
     file: null,
   },
@@ -29,6 +39,16 @@ export const reportResponse = [
     isolationStatus: "Home",
     outcome: "Recovered",
     labResults: "Positive for Dengue IgM",
+    householdContacts: [
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+    ],
+    otherContacts: [
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+      { name: "", age: "", date: "", disposition: "" },
+    ],
     phiRemarks: "Patient responded well to treatment",
     file: null,
   },
