@@ -196,7 +196,7 @@ const Table = ({
                               : "text-gray-400 cursor-not-allowed"
                           }
                         `}
-                            onClick={() => viewConfirmPopUp(patient.caseId)}
+                            onClick={() => viewConfirmPopUp(patient?.caseId)}
                             disabled={
                               patient.caseStatus == "Suspected" ? false : true
                             }
