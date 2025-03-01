@@ -6,7 +6,7 @@ export const newCaseSchema = Yup.object({
   sex: Yup.string().required("Sex is required"),
   diseaseName: Yup.string().required("Disease is required"),
   caseStatus: Yup.string().required("Case status is required"),
-  phoneNumber: Yup.string().matches(/^\d+$/, "Must be a valid number").required("Phone number is required"),
+  phoneNumber: Yup.string().matches(/^\d{10}$/, "Phone Number must be 10 digits").required("Phone number is required"),
   instituteId: Yup.string().required("Institute is required"),
   dateOfOnset: Yup.date().required("Date of Onset is required"),
   dateOfAdmission: Yup.date().required("Date of Admission is required"),
