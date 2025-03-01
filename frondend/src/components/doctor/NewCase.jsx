@@ -512,14 +512,14 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
           <div className="flex justify-start gap-3">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 cursor-pointer"
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? "Submitting..." : "Submit"}
             </button>
             <button
               type="button"
-              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 transition duration-200"
+              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 transition duration-200 cursor-pointer"
               onClick={handleViewNewCase}
             >
               Back
