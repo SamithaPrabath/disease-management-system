@@ -8,8 +8,8 @@ export const testResponse = [
   {
     userId: "001",
     token: "abc1234",
-    role: "idu",
-    userTypeId: "D001",
+    role: "phi",
+    userTypeId: "P001",
   },
 ];
 
