@@ -2,9 +2,7 @@ import * as Yup from "yup";
 
 export const phiSchema = Yup.object({
   fullName: Yup.string().required("Full Name is required"),
-  registrationNumber: Yup.string()
-    .matches(/^\d+$/, "Registration Number must be numbers only")
-    .required("Registration Number is required"),
+  registrationNumber: Yup.string().required("Registration Number is required"),
   moh: Yup.string().required("MOH is required"),
   area: Yup.string().required("Area is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
