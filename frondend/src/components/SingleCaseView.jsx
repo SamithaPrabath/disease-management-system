@@ -6,9 +6,17 @@ import { connect } from "react-redux";
 import ViewLocationPopup from "./ViewLocationPopup";
 import ConfirmCasePopup from "./ConfirmCasePopup";
 import { getSingleCaseData } from "../api/allCasesApi";
+import { viewConfirmPopUp } from "../redux/actions/confirmCasePopUpAction";
 
-const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
+const SingleCaseView = ({
+  AllLogins,
+  viewConfirmPopUp,
+  openPopUp,
+  closeSingleCase,
+  patientId,
+}) => {
   const [singleCase, setSingleCase] = useState([]);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,13 +29,15 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
     };
 
     fetchData();
-  }, [patientId]);
+  }, [AllLogins]);
+
+  useEffect(() => {
+    setRole(AllLogins.data.role);
+  }, [singleCase]);
 
   const handlePopUpOpen = () => {
     openPopUp();
   };
-
-  console.log(singleCase);
 
   return (
     <>
@@ -90,7 +100,15 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
           {/* MOH Card */}
           <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
             <h1 className="text-base text-[#080809]">MOH</h1>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded text-base hover:bg-blue-700 transition">
+            <button
+              className={` text-white px-4 py-2 rounded text-base
+            ${
+              role === "idu"
+                ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
+                : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
+            }
+            `}
+            >
               Assign MOH
             </button>
           </div>
@@ -98,7 +116,15 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
           {/* PHI Card */}
           <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
             <h1 className="text-base text-[#080809]">PHI</h1>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded text-base hover:bg-blue-700 transition">
+            <button
+              className={` text-white px-4 py-2 rounded text-base
+            ${
+              role === "idu"
+                ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
+                : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
+            }
+            `}
+            >
               Assign PHI
             </button>
           </div>
@@ -229,62 +255,78 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
               </h3>
 
               <div className="">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-sm text-[#65686C]">
-                      <th className="text-left py-2 px-4">Name</th>
-                      <th className="text-left py-2 px-4">Age</th>
-                      <th className="text-left py-2 px-4">
-                        Date of observation
-                      </th>
-                      <th className="text-left py-2 px-4">Disposition</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[1, 2, 3].map((_, index) => (
-                      <tr
-                        key={index}
-                        className="text-sm bg-[#E2E5E9] border-b-3 border-solid border-white"
-                      >
-                        <td className="py-2 px-4">Test Input</td>
-                        <td className="py-2 px-4">Test Input</td>
-                        <td className="py-2 px-4">Date Picker</td>
-                        <td className="py-2 px-4">Test Input</td>
+                {/* Household Contacts Table */}
+                <div className="">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-sm text-[#65686C]">
+                        <th className="text-left py-2 px-4">Name</th>
+                        <th className="text-left py-2 px-4">Age</th>
+                        <th className="text-left py-2 px-4">
+                          Date of observation
+                        </th>
+                        <th className="text-left py-2 px-4">Disposition</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {singleCase?.report?.householdContacts?.map(
+                        (contact, index) => (
+                          <tr
+                            key={index}
+                            className="text-sm bg-[#E2E5E9] border-b-3 border-solid border-white"
+                          >
+                            <td className="py-2 px-4">{contact.name || "-"}</td>
+                            <td className="py-2 px-4">{contact.age || "-"}</td>
+                            <td className="py-2 px-4">
+                              {contact.date || "N/A"}
+                            </td>
+                            <td className="py-2 px-4">
+                              {contact.disposition || "-"}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
 
-              <div>
-                <h3 className="text-base text-[#080809] font-medium">
-                  Other Contacts
-                </h3>
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-sm text-[#65686C]">
-                      <th className="text-left py-2 px-4">Name</th>
-                      <th className="text-left py-2 px-4">Age</th>
-                      <th className="text-left py-2 px-4">
-                        Date of observation
-                      </th>
-                      <th className="text-left py-2 px-4">Disposition</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[1, 2, 3].map((_, index) => (
-                      <tr
-                        key={index}
-                        className="text-sm bg-[#E2E5E9] border-b-3 border-solid border-white"
-                      >
-                        <td className="py-2 px-4">Test Input</td>
-                        <td className="py-2 px-4">Test Input</td>
-                        <td className="py-2 px-4">Date Picker</td>
-                        <td className="py-2 px-4">Test Input</td>
+                {/* Other Contacts Table */}
+                <div>
+                  <h3 className="text-base text-[#080809] font-medium mt-4">
+                    Other Contacts
+                  </h3>
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-sm text-[#65686C]">
+                        <th className="text-left py-2 px-4">Name</th>
+                        <th className="text-left py-2 px-4">Age</th>
+                        <th className="text-left py-2 px-4">
+                          Date of observation
+                        </th>
+                        <th className="text-left py-2 px-4">Disposition</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {singleCase?.report?.otherContacts?.map(
+                        (contact, index) => (
+                          <tr
+                            key={index}
+                            className="text-sm bg-[#E2E5E9] border-b-3 border-solid border-white"
+                          >
+                            <td className="py-2 px-4">{contact.name || "-"}</td>
+                            <td className="py-2 px-4">{contact.age || "-"}</td>
+                            <td className="py-2 px-4">
+                              {contact.date || "N/A"}
+                            </td>
+                            <td className="py-2 px-4">
+                              {contact.disposition || "-"}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -296,9 +338,16 @@ const SingleCaseView = ({ openPopUp, closeSingleCase, patientId }) => {
   );
 };
 
+const mapStateToProps = (state) => {
+  return {
+    AllLogins: state.allLogins,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => ({
   openPopUp: () => dispatch(openPopUp()),
   closeSingleCase: () => dispatch(closeSingleCase()),
+  viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
 });
 
-export default connect(null, mapDispatchToProps)(SingleCaseView);
+export default connect(mapStateToProps, mapDispatchToProps)(SingleCaseView);
