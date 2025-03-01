@@ -5,8 +5,8 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 const institutesResponse = [
   {
-    istituteId: "I001",
-    instituteName: "ABC Institute of Technology",
+    id: "I001",
+    name: "ABC Institute of Technology",
     registrationNumber: "001",
     email: "contact@abc-tech.com",
     phoneNumber: "0761234567",
@@ -15,8 +15,8 @@ const institutesResponse = [
     city: "Colombo",
   },
   {
-    istituteId: "I002",
-    instituteName: "XYZ Medical College",
+    id: "I002",
+    name: "XYZ Medical College",
     registrationNumber: "002",
     email: "info@xyzmed.com",
     phoneNumber: "0719876543",
@@ -25,8 +25,8 @@ const institutesResponse = [
     city: "Kandy",
   },
   {
-    istituteId: "I003",
-    instituteName: "Global Business Academy",
+    id: "I003",
+    name: "Global Business Academy",
     registrationNumber: "003",
     email: "admin@gba.edu",
     phoneNumber: "0776543210",
@@ -35,8 +35,8 @@ const institutesResponse = [
     city: "Galle",
   },
   {
-    istituteId: "I004",
-    instituteName: "Sunrise International School",
+    id: "I004",
+    name: "Sunrise International School",
     registrationNumber: "004",
     email: "support@sunrise.edu",
     phoneNumber: "0781122334",
@@ -139,9 +139,9 @@ export const updateInstitutes = async (id, updatedData) => {
 export const getInstitutesList = async () => {
   try {
     if(IS_BACKEND){
-      const filteredInstitutes = institutesResponse.map(({ instituteId, instituteName }) => ({
-        instituteId,
-        instituteName,
+      const filteredInstitutes = institutesResponse.map(({ id, name }) => ({
+        id,
+        name,
       }));
       return filteredInstitutes;
     }else{
