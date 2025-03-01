@@ -17,11 +17,13 @@ const HeaderBar = ({
 }) => {
   const [singleCase, setSingleCase] = useState(null);
   const [role, setRole] = useState("");
+  const [userTypeId, setUserTypeId] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      if (AllLogins?.data?.role) {
+      if (AllLogins?.data) {
         setRole(AllLogins.data.role);
+        setUserTypeId(AllLogins.data.userTypeId);
       }
 
       try {
@@ -42,7 +44,9 @@ const HeaderBar = ({
           <div
             className={`w-[144px] h-[144px] rounded-[50%] 
           ${
-            singleCase?.caseStatus == "Suspected" ? "bg-[#FFAB00]" : "bg-[#36B37E]"
+            singleCase?.caseStatus == "Suspected"
+              ? "bg-[#FFAB00]"
+              : "bg-[#36B37E]"
           } flex items-center justify-center`}
           >
             <div className="w-[120px] h-[120px] rounded-[50%] bg-white flex items-center justify-center">
@@ -97,7 +101,7 @@ const HeaderBar = ({
             <div className="flex gap-3">
               <button
                 type="button"
-                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-400 cursor-pointer"
+                className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
               >
                 Assign MOH
               </button>
@@ -119,8 +123,15 @@ const HeaderBar = ({
               </button>
 
               <button
-                className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
+                className={`px-6 py-2 rounded-md
+              ${
+                singleCase?.assignedPhi == userTypeId
+                  ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
+                  : "text-gray-400 bg-gray-300 cursor-not-allowed"
+              }
+              `}
                 onClick={() => viewUnAssignCasePopUp()}
+                disabled={singleCase?.assignedPhi != userTypeId}
               >
                 Un-assign Case
               </button>
@@ -128,21 +139,22 @@ const HeaderBar = ({
               <button
                 className={`px-[16px] py-[8px] rounded-[6px]
                 ${
-                  singleCase?.status == "Suspected"
+                  singleCase?.caseStatus == "Suspected"
                     ? "text-white bg-blue-600 cursor-pointer"
                     : "text-gray-400 bg-gray-300 cursor-not-allowed"
                 }
               `}
                 onClick={() => viewConfirmPopUp()}
-                disabled={singleCase?.status == "Suspected" ? false : true}
+                disabled={singleCase?.caseStatus == "Suspected" ? false : true}
               >
                 Confirm Case
               </button>
             </div>
           ) : role === "moh" ? (
             <div className="flex gap-3">
-              <button className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
-              onClick={() => viewAssignPHIPopUp()}
+              <button
+                className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
+                onClick={() => viewAssignPHIPopUp()}
               >
                 Assign PHI
               </button>
@@ -156,7 +168,7 @@ const HeaderBar = ({
             }
           `}
                 onClick={() => viewConfirmPopUp()}
-                disabled={singleCase?.status == "Suspected" ? false : true}
+                disabled={singleCase?.caseStatus == "Suspected" ? false : true}
               >
                 Confirm Case
               </button>
