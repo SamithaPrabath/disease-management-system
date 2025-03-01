@@ -5,7 +5,7 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 export const phiResponse = [
   {
-    phiId: "P001",
+    id: "P001",
     name: "John Doe",
     registrationNumber: "0001",
     moh: "sample",
@@ -17,7 +17,7 @@ export const phiResponse = [
     role: "phi",
   },
   {
-    phiId: "P002",
+    id: "P002",
     name: "John Doe",
     registrationNumber: "0002",
     moh: "sample",
@@ -44,7 +44,7 @@ export const registerPhi = async (user) => {
         
         const newUser = {
           ...user,
-          phiId: (phiResponse.length + 1).toString().padStart(3, "0"), 
+          id: (phiResponse.length + 1).toString().padStart(3, "0"), 
           message: "User registered successfully",
         };
         phiResponse.push(newUser);
@@ -80,7 +80,7 @@ export const deletePhi = async (id) => {
   try {
     if (IS_BACKEND) {
       // Simulating deletion from mock data
-      const index = phiResponse.findIndex((phi) => phi.phiId === id);
+      const index = phiResponse.findIndex((phi) => phi.id === id);
       if (index !== -1) {
         phiResponse.splice(index, 1); // Remove the item from the array
         return { status: 200, message: "PHI record deleted successfully" };
@@ -102,7 +102,7 @@ export const updatePHI = async (id, updatedData) => {
   try {
     if (IS_BACKEND) {
       // Simulating update in mock data
-      const index = phiResponse.findIndex((phi) => phi.phiId === id);
+      const index = phiResponse.findIndex((phi) => phi.id === id);
       if (index !== -1) {
         phiResponse[index] = { ...phiResponse[index], ...updatedData };
         return { status: 200, message: "Record updated successfully" };
