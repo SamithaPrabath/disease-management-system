@@ -2,9 +2,9 @@ import { viewEdit } from "../../redux/actions/viewEditAction";
 import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { phiSchema } from "../../yupSchema/epidemiologySchema";
+import { doctorSchema } from "../../yupSchema/doctorSchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { getAllPhiData, updatePHI } from "../../api/phiApi";
+import { getAllDoctorData, updateDoctor } from "../../api/doctorApi";
 import { message } from "antd";
 
 const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
@@ -18,7 +18,7 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllPhiData();
+        const data = await getAllDoctorData();
 
         const filteredData = data.filter(
           (item) => item.id == AllViewEditReducer?.[1]
@@ -33,9 +33,11 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
     fetchData();
   }, [AllViewEditReducer]);
 
+  console.log(userData)
+
   const formik = useFormik({
     initialValues: {
-          fullName: userData[0]?.name || "",
+          name: userData[0]?.name || "",
           registrationNumber: userData[0]?.registrationNumber || "",
           moh: userData[0]?.moh || "",
           area: userData[0]?.area || "",
@@ -45,7 +47,7 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
           password: userData[0]?.password || "",
       },
       enableReinitialize: true,
-    validationSchema: phiSchema,
+    validationSchema: doctorSchema,
     onSubmit: async (values) => {
       try {
         const id = userData[0]?.id;
@@ -55,7 +57,7 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
           return;
         }
 
-        const response = await updatePHI(id, values);
+        const response = await updateDoctor(id, values);
         if (response && response.message) {
           messageApi.success(response.message);
         } else {
@@ -102,17 +104,17 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
             <label className="block text-gray-700">Full Name</label>
             <input
               type="text"
-              name="fullName"
+              name="name"
               className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                 isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
               }`}
-              value={formik.values.fullName}
+              value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={isEnableEdit}
             />
-            {formik.touched.fullName && formik.errors.fullName && (
-              <p className="text-red-500">{formik.errors.fullName}</p>
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-red-500">{formik.errors.name}</p>
             )}
           </div>
 
