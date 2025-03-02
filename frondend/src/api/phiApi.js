@@ -1,4 +1,5 @@
 import axios from "axios";
+import { allCasesResponse } from "./allCasesApi";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
@@ -8,8 +9,8 @@ export const phiResponse = [
     id: "P001",
     name: "John Doe",
     registrationNumber: "0001",
-    moh: "sample",
-    area: "sample",
+    moh: "MOH Kandy",
+    area: "Kandy",
     email: "john.doe@email.com",
     phoneNumber: "0764524589",
     userName: "testphi1",
@@ -20,8 +21,8 @@ export const phiResponse = [
     id: "P002",
     name: "John Doe",
     registrationNumber: "0002",
-    moh: "sample",
-    area: "sample",
+    moh: "MOH Colombo",
+    area: "Colombo",
     email: "john.doe@email.com",
     phoneNumber: "0764524589",
     userName: "testphi1",
@@ -65,7 +66,7 @@ export const registerPhi = async (user) => {
 export const getAllPhiData = async () => {
   try {
     if(IS_BACKEND){
-      return phiResponse;
+      return { status: 200, message: "Fetch data successfully", data: phiResponse};
     }else{
       const response = await axios.get(`${BASE_URL}/getAllPhiData`); // Replace with your API endpoint
       return response.data; // Return the data received from the API
@@ -98,7 +99,7 @@ export const deletePhi = async (id) => {
   }
 };
 
-export const updatePHI = async (id, updatedData) => {
+export const updatePhi = async (id, updatedData) => {
   try {
     if (IS_BACKEND) {
       // Simulating update in mock data
@@ -117,5 +118,60 @@ export const updatePHI = async (id, updatedData) => {
   } catch (error) {
     console.error("Error updating PHI record:", error);
     throw error; // Throw error for handling in UI
+  }
+};
+
+export const getPhiListByLocation = async (location) => {
+  try {
+    if (IS_BACKEND) {
+
+      const response = phiResponse.filter((phi) => phi.area === location);
+      return { status: 200, message: "Fetch data successfully", data: response };
+    } else {
+      const response = await axios.put(`${BASE_URL}/getPhiListByLocation/${location}`);
+      return response.data; 
+    }
+  } catch (error) {
+    console.error("Error updating record:", error);
+    throw error;
+  }
+}
+
+
+export const phiAssignToCase = async (value) => {
+  try {
+    if (!value || !value.caseId || !value.assignPhi) {
+      throw new Error("Invalid input: caseId and assignPhi are required");
+    }
+
+    if (IS_BACKEND) {
+ 
+      const caseIndex = allCasesResponse.findIndex(
+        (caseItem) => caseItem.caseId === value.caseId
+      );
+
+      if (caseIndex === -1) {
+        throw new Error(`Case with ID ${value.caseId} not found`);
+      }
+
+  
+      allCasesResponse[caseIndex] = {
+        ...allCasesResponse[caseIndex],
+        assignPhi: value.assignPhi,
+        phiAssignedDate: value.phiAssignedDate,
+      };
+
+      return { status: 200, message: "PHI assigned successfully" };
+    } else {
+
+      const response = await axios.put(
+        `${BASE_URL}/phiAssignToCase/${value.caseId}`,
+        { assignPhi: value.assignPhi }
+      );
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error updating record:", error.message || error);
+    throw error.response?.data || error.message || new Error("Failed to assign PHI");
   }
 };
