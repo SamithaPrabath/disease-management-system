@@ -207,8 +207,9 @@ const Table = ({
                           <button
                             type="button"
                             className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
+                            onClick={() => viewSingleCase(patient.caseId)}
                           >
-                            Assign MOH
+                            Assign Officers
                           </button>
                         ) : role == "phi" ? (
                           <button
