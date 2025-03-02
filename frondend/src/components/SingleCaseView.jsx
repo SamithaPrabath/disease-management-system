@@ -7,6 +7,8 @@ import ViewLocationPopup from "./ViewLocationPopup";
 import ConfirmCasePopup from "./ConfirmCasePopup";
 import { getSingleCaseData } from "../api/allCasesApi";
 import { viewConfirmPopUp } from "../redux/actions/confirmCasePopUpAction";
+import { viewAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
+import { viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 
 const SingleCaseView = ({
   AllLogins,
@@ -14,6 +16,8 @@ const SingleCaseView = ({
   openPopUp,
   closeSingleCase,
   patientId,
+  viewAssignPHIPopUp,
+  viewAssignMOHPopUp,
 }) => {
   const [singleCase, setSingleCase] = useState([]);
   const [role, setRole] = useState("");
@@ -108,6 +112,7 @@ const SingleCaseView = ({
                 : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
             }
             `}
+            onClick={() => viewAssignMOHPopUp()}
             >
               Assign MOH
             </button>
@@ -119,11 +124,12 @@ const SingleCaseView = ({
             <button
               className={` text-white px-4 py-2 rounded text-base
             ${
-              role === "idu"
+              role === "idu" || role === "moh" 
                 ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
                 : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
             }
             `}
+            onClick={() => viewAssignPHIPopUp()}
             >
               Assign PHI
             </button>
@@ -348,6 +354,8 @@ const mapDispatchToProps = (dispatch) => ({
   openPopUp: () => dispatch(openPopUp()),
   closeSingleCase: () => dispatch(closeSingleCase()),
   viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
+  viewAssignPHIPopUp: () => dispatch(viewAssignPHIPopUp()),
+  viewAssignMOHPopUp: () => dispatch(viewAssignMOHPopUp()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleCaseView);
