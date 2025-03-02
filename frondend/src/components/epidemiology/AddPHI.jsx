@@ -24,7 +24,7 @@ const AddPHI = ({ handleBack }) => {
     validationSchema: phiSchema,
     onSubmit: async (values) => {
       try {
-        const response = await registerInstitutes(values);
+        const response = await registerPhi(values);
   
         if (response && response.message) {
           messageApi.success(response.message);
