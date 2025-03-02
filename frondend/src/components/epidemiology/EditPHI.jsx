@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { phiSchema } from "../../yupSchema/epidemiologySchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { getAllPhiData, updatePHI } from "../../api/phiApi";
+import { getAllPhiData, updatePhi } from "../../api/phiApi";
 import { message } from "antd";
 
 const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
@@ -18,9 +18,9 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllPhiData();
+        const response = await getAllPhiData();
 
-        const filteredData = data.filter(
+        const filteredData = response.data.filter(
           (item) => item.id == AllViewEditReducer?.[1]
         );
 
@@ -55,7 +55,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
           return;
         }
 
-        const response = await updatePHI(id, values);
+        const response = await updatePhi(id, values);
     
        if (response && response.message) {
           messageApi.success(response.message);
