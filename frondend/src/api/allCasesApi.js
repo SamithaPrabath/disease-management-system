@@ -33,7 +33,9 @@ export const allCasesResponse = [
     notifier: "D001",
     notifiedDate: "2024-02-02",
     assignedPhi: "P001",
+    phiAssignedDate: "2024-03-02",
     assignedMoh: "",
+    mohAssignedDate: "",
   },
   {
     caseId: "C002",
@@ -60,7 +62,9 @@ export const allCasesResponse = [
     notifier: "D001",
     notifiedDate: "2024-02-03",
     assignedPhi: "",
+    phiAssignedDate: "",
     assignedMoh: "",
+    mohAssignedDate: "",
   },
   {
     caseId: "C003",
@@ -87,7 +91,9 @@ export const allCasesResponse = [
     notifier: "D002",
     notifiedDate: "2024-02-02",
     assignedPhi: "",
+    phiAssignedDate: "",
     assignedMoh: "",
+    mohAssignedDate: "",
   },
   {
     caseId: "C004",
@@ -114,7 +120,9 @@ export const allCasesResponse = [
     notifier: "D001",
     notifiedDate: "2024-02-02",
     assignedPhi: "",
+    phiAssignedDate: "",
     assignedMoh: "",
+    mohAssignedDate: "",
   },
 ];
 
@@ -176,6 +184,7 @@ export const confirmCase = async (confirmData) => {
           natureOfConfirmation: confirmData.natureOfConfirmation,
           confirmationRemarks: confirmData.confirmationRemarks,
           confirmedBy: confirmData.confirmedBy,
+          confirmedDate: confirmData.confirmedDate,
           caseStatus: "Confirmed",
         };
 
