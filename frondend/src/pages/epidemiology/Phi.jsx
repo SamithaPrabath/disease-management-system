@@ -17,8 +17,8 @@ const Phi = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllPhiData();
-        setPhiData(data);
+        const response = await getAllPhiData();
+        setPhiData(response.data);
       } catch (error) {
         console.error("Failed to fetch PHI data:", error);
       }
