@@ -5,6 +5,8 @@ import SingleCaseView from "../../components/SingleCaseView";
 import { connect } from "react-redux";
 import Report from "../../components/phi/Report";
 import { getAllCases } from "../../api/allCasesApi";
+import AssignPHIPopup from "../../components/AssignPHIPopup";
+import AssignMOHPopup from "../../components/AssignMOHPopup";
 
 const Home = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,6 +94,8 @@ const Home = (props) => {
     </>
         )
       }
+      <AssignPHIPopup/>
+      <AssignMOHPopup/>
     </>
   );
 };
