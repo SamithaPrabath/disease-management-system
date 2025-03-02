@@ -1,4 +1,5 @@
 import axios from "axios";
+import { allCasesResponse } from "./allCasesApi";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
@@ -133,5 +134,60 @@ export const getAllMOHList = async () => {
   } catch (error) {
     console.error("Error fetching Diseases data:", error);
     throw error; // Throw the error if the request fails
+  }
+};
+
+export const getMohListByLocation = async (location) => {
+  try {
+    if (IS_BACKEND) {
+
+      const response = mohResponse.filter((moh) => moh.area === location);
+      return { status: 200, message: "Fetch data successfully", data: response };
+    } else {
+      const response = await axios.put(`${BASE_URL}/getMohListByLocation/${location}`);
+      return response.data; 
+    }
+  } catch (error) {
+    console.error("Error updating record:", error);
+    throw error;
+  }
+}
+
+
+export const mohAssignToCase = async (value) => {
+  try {
+    if (!value || !value.caseId || !value.assignMoh) {
+      throw new Error("Invalid input: caseId and assignMoh are required");
+    }
+
+    if (IS_BACKEND) {
+ 
+      const caseIndex = allCasesResponse.findIndex(
+        (caseItem) => caseItem.caseId === value.caseId
+      );
+
+      if (caseIndex === -1) {
+        throw new Error(`Case with ID ${value.caseId} not found`);
+      }
+
+  
+      allCasesResponse[caseIndex] = {
+        ...allCasesResponse[caseIndex],
+        assignMoh: value.assignMoh,
+        mohAssignedDate: value.mohAssignedDate,
+      };
+
+      return { status: 200, message: "MOH assigned successfully" };
+    } else {
+
+      const response = await axios.put(
+        `${BASE_URL}/mohAssignToCase/${value.caseId}`,
+        { assignMoh: value.assignMoh }
+      );
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error updating record:", error.message || error);
+    throw error.response?.data || error.message || new Error("Failed to assign MOH");
   }
 };
