@@ -7,6 +7,7 @@ import ConfirmPopUpReducer from './confirmpopup-reducer'
 import ViewsSingleCaseReducer from './viewsSingleCase-reducer';
 import AssignphipopupReducer from './assignphipopup-reducer';
 import UnassigncasepopupReducer from './unassigncasepopup-reducer';
+import Assignmohpopup from './assignmohpopup-reducer';
 
 const rootReducer = combineReducers(
     {
@@ -18,6 +19,7 @@ const rootReducer = combineReducers(
         viewsSingleCase: ViewsSingleCaseReducer,
         assignphipopupReducer: AssignphipopupReducer,
         unassigncasepopupReducer: UnassigncasepopupReducer,
+        assignmohpopup: Assignmohpopup,
     }
 )
 
