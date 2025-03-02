@@ -5,6 +5,7 @@ import { viewReport } from "../redux/actions/viewReportAction";
 import { getSingleCaseData } from "../api/allCasesApi";
 import { viewAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
 import { viewUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction";
+import { viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 
 const HeaderBar = ({
   AllLogins,
@@ -14,6 +15,7 @@ const HeaderBar = ({
   patientId,
   viewAssignPHIPopUp,
   viewUnAssignCasePopUp,
+  viewAssignMOHPopUp,
 }) => {
   const [singleCase, setSingleCase] = useState(null);
   const [role, setRole] = useState("");
@@ -102,6 +104,7 @@ const HeaderBar = ({
               <button
                 type="button"
                 className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
+                onClick={() => viewAssignMOHPopUp()}
               >
                 Assign MOH
               </button>
@@ -162,12 +165,12 @@ const HeaderBar = ({
               <button
                 className={`px-[16px] py-[8px] rounded-[6px]
             ${
-              singleCase?.status == "Suspected"
+              singleCase?.caseStatus == "Suspected"
                 ? "text-white bg-blue-600 cursor-pointer"
                 : "text-gray-400 bg-gray-300 cursor-not-allowed"
             }
           `}
-                onClick={() => viewConfirmPopUp()}
+                onClick={() => viewConfirmPopUp(patientId)}
                 disabled={singleCase?.caseStatus == "Suspected" ? false : true}
               >
                 Confirm Case
@@ -209,10 +212,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  viewConfirmPopUp: () => dispatch(viewConfirmPopUp()),
+  viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
   viewReport: (value) => dispatch(viewReport(value)),
   viewAssignPHIPopUp: () => dispatch(viewAssignPHIPopUp()),
   viewUnAssignCasePopUp: () => dispatch(viewUnAssignCasePopUp()),
+  viewAssignMOHPopUp: () => dispatch(viewAssignMOHPopUp()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderBar);
