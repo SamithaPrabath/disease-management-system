@@ -148,8 +148,7 @@ const UnAssignCasePopup = ({
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 mt-6 disabled:bg-gray-400 cursor-pointer"
-                  disabled={!selectedOption || !remarks}
+                  className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 mt-6 cursor-pointer"
                 >
                   Confirm Unassignment
                 </button>
