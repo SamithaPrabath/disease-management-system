@@ -36,6 +36,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-03-02",
     assignedMoh: "M001",
     mohAssignedDate: "2024-03-02",
+    sendReport: "true",
+    markAsReceived: "true",
   },
   {
     caseId: "C002",
@@ -61,10 +63,12 @@ export const allCasesResponse = [
     file: null,
     notifier: "D001",
     notifiedDate: "2024-02-03",
-    assignedPhi: "",
-    phiAssignedDate: "",
+    assignedPhi: "P002",
+    phiAssignedDate: "2024-05-30",
     assignedMoh: "",
     mohAssignedDate: "",
+    sendReport: "",
+    markAsReceived: "",
   },
   {
     caseId: "C003",
@@ -94,6 +98,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-03-02",
     assignedMoh: "M001",
     mohAssignedDate: "2024-03-02",
+    sendReport: "",
+    markAsReceived: "",
   },
   {
     caseId: "C004",
@@ -123,6 +129,8 @@ export const allCasesResponse = [
     phiAssignedDate: "",
     assignedMoh: "",
     mohAssignedDate: "",
+    sendReport: "",
+    markAsReceived: "",
   },
 ];
 
@@ -324,27 +332,113 @@ const getColorForDisease = (diseaseName, index) => {
 
 export const getCasesCount = async () => {
   try {
-    const activeCases = allCasesResponse.filter((caseItem) => caseItem.caseStatus === "Confirmed");
+    let activeCasesCount;
 
-    const casesByDisease = activeCases.reduce((acc, caseItem) => {
-      const diseaseName = caseItem.diseaseName || "Unknown";
-      acc[diseaseName] = (acc[diseaseName] || 0) + 1;
-      return acc;
-    }, {});
+    if (IS_BACKEND) {
+      const activeCases = allCasesResponse.filter((caseItem) => caseItem.caseStatus === "Confirmed");
 
-    const activeCasesCount = Object.entries(casesByDisease).map(([diseaseName, count], index) => ({
-      diseaseName,
-      count,
-      color: getColorForDisease(diseaseName, index), // Assign a color
-    }));
+      const casesByDisease = activeCases.reduce((acc, caseItem) => {
+        const diseaseName = caseItem.diseaseName || "Unknown";
+        acc[diseaseName] = (acc[diseaseName] || 0) + 1;
+        return acc;
+      }, {});
 
-    return { status: 200, message: "data fetch successfully", data: activeCasesCount };
+      activeCasesCount = Object.entries(casesByDisease).map(([diseaseName, count], index) => ({
+        diseaseName,
+        count,
+        color: getColorForDisease(diseaseName, index), // Assign a color
+      }));
+
+      return {
+        status: 200,
+        message: "Data fetched successfully",
+        data: activeCasesCount,
+      };
+    } else {
+      // API call to fetch cases count
+      const response = await axios.get(`${BASE_URL}/getCasesCount`);
+      activeCasesCount = response.data.data; // Assumes API returns { status, message, data }
+
+      // Optionally add colors if not provided by API
+      if (activeCasesCount && !activeCasesCount[0]?.color) {
+        activeCasesCount = activeCasesCount.map((item, index) => ({
+          ...item,
+          color: getColorForDisease(item.diseaseName, index),
+        }));
+      }
+
+      return {
+        status: 200,
+        message: "Data fetched successfully",
+        data: activeCasesCount,
+      };
+    }
   } catch (error) {
     console.error("Error calculating cases count:", error);
     return {
-      totalCases: 0,
-      activeCasesCount: [],
-      error: error.message || "Failed to calculate cases count",
+      status: error.response?.status || 500,
+      message: error.message || "Failed to calculate cases count",
+      data: [],
     };
   }
 };
+
+export const sendFinalReport = async (value) => {
+  try {
+    if (IS_BACKEND) {
+      const caseIndex = allCasesResponse.findIndex(
+        (data) => data.caseId === value.caseId
+      );
+
+      if (caseIndex !== -1) {
+        allCasesResponse[caseIndex] = {
+          ...allCasesResponse[caseIndex],
+          sendReport: value.sendReport,
+        };
+
+        return {
+          status: 200,
+          message: "Send final report successfully",
+        };
+      } else {
+        throw new Error("Case not found");
+      }
+    } else {
+      const response = await axios.put(`${BASE_URL}/sendFinalReport`, value);
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error confirming case:", error);
+    throw error;
+  }
+};
+
+export const mark_AsReceived = async (value) => {
+  try {
+    if (IS_BACKEND) {
+      const caseIndex = allCasesResponse.findIndex(
+        (data) => data.caseId === value.caseId
+      );
+
+      if (caseIndex !== -1) {
+        allCasesResponse[caseIndex] = {
+          ...allCasesResponse[caseIndex],
+          markAsReceived: value.markAsReceived,
+        };
+
+        return {
+          status: 200,
+          message: "Mark As Received successfully",
+        };
+      } else {
+        throw new Error("Case not found");
+      }
+    } else {
+      const response = await axios.put(`${BASE_URL}/markAsReceived`, value);
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error confirming case:", error);
+    throw error;
+  }
+}
