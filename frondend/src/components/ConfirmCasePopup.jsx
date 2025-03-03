@@ -41,6 +41,7 @@ const ConfirmCasePopup = ({
 
       if (response && response.message) {
         messageApi.success(response.message);
+        setTimeout(() => closeVIewConfirmPopUp(), 1000);
       } else {
         messageApi.error("Confirmation failed");
       }
