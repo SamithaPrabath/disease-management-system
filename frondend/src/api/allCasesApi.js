@@ -15,11 +15,11 @@ export const allCasesResponse = [
     sex: "Male",
     guardian: "",
     diseaseName: "Tuberculosis (TB)",
-    caseStatus: "Suspected",
-    natureOfConfirmation: "",
-    remarks: "",
-    confirmedBy: "",
-    confirmedDate: "",
+    caseStatus: "Confirmed",
+    onfirmedDate: "2023-11-12",
+    natureOfConfirmation: "Clinical only",
+    remarks: "Lorem sperem lorem lorem",
+    confirmedBy: "P001",
     nicNo: "123456789V",
     phoneNumber: "0771234567",
     instituteName: "XYZ Medical College",
@@ -43,7 +43,7 @@ export const allCasesResponse = [
     age: "5",
     sex: "Male",
     guardian: "Doe Doe",
-    diseaseName: "Dengue Fever",
+    diseaseName: "Hepatitis B",
     caseStatus: "Confirmed",
     confirmedDate: "2023-11-12",
     natureOfConfirmation: "Clinical only",
@@ -101,12 +101,12 @@ export const allCasesResponse = [
     age: "45",
     sex: "Male",
     guardian: "",
-    diseaseName: "Tuberculosis (TB)",
-    caseStatus: "Suspected",
-    natureOfConfirmation: "",
-    remarks: "",
-    confirmedBy: "",
-    confirmedDate: "",
+    diseaseName: "Dengue Fever",
+    caseStatus: "Confirmed",
+    confirmedDate: "2023-11-12",
+    natureOfConfirmation: "Clinical only",
+    remarks: "Lorem sperem lorem lorem",
+    confirmedBy: "M002",
     nicNo: "123456789V",
     phoneNumber: "0771234567",
     instituteName: "XYZ Medical College",
@@ -299,6 +299,52 @@ export const getSingleCaseData = async (caseId) => {
     return {
       status: 500,
       message: "An error occurred while fetching case data",
+    };
+  }
+};
+
+
+const colorPalette = [
+  "#FF5630",
+  "#36B37E",
+  "#FFAB00",
+  "#9966FF",
+  "#FF9F40",
+  "#E7E9ED",
+  "#76D7C4",
+];
+
+// Function to assign a color based on disease name (deterministic)
+const getColorForDisease = (diseaseName, index) => {
+  // Use a simple hash to ensure consistent colors for the same disease
+  const hash = diseaseName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colorIndex = hash % colorPalette.length;
+  return colorPalette[colorIndex] || colorPalette[index % colorPalette.length]; // Fallback to index
+};
+
+export const getCasesCount = async () => {
+  try {
+    const activeCases = allCasesResponse.filter((caseItem) => caseItem.caseStatus === "Confirmed");
+
+    const casesByDisease = activeCases.reduce((acc, caseItem) => {
+      const diseaseName = caseItem.diseaseName || "Unknown";
+      acc[diseaseName] = (acc[diseaseName] || 0) + 1;
+      return acc;
+    }, {});
+
+    const activeCasesCount = Object.entries(casesByDisease).map(([diseaseName, count], index) => ({
+      diseaseName,
+      count,
+      color: getColorForDisease(diseaseName, index), // Assign a color
+    }));
+
+    return { status: 200, message: "data fetch successfully", data: activeCasesCount };
+  } catch (error) {
+    console.error("Error calculating cases count:", error);
+    return {
+      totalCases: 0,
+      activeCasesCount: [],
+      error: error.message || "Failed to calculate cases count",
     };
   }
 };
