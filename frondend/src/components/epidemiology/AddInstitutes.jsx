@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import {sriLankaProvinces} from "../../assets/citysAndProvinces";
+import { sriLankaProvinces } from "../../assets/citysAndProvinces";
 import { instituteSchema } from "../../yupSchema/epidemiologySchema";
 import { message } from "antd";
 import { registerInstitutes } from "../../api/institutesApi";
 
 const AddInstitutes = ({ handleBack }) => {
   const [messageApi, contextHolder] = message.useMessage();
-
   const [cities, setCities] = useState([]);
 
   const formik = useFormik({
     initialValues: {
-      instituteName: "",
+      name: "",
       registrationNumber: "",
       email: "",
       phoneNumber: "",
@@ -21,18 +20,23 @@ const AddInstitutes = ({ handleBack }) => {
       city: "",
     },
     validationSchema: instituteSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      setSubmitting(true);
       try {
         const response = await registerInstitutes(values);
-  
-        if (response && response.message) {
+
+        if (response?.status === 201 && response.message) {
           messageApi.success(response.message);
+          resetForm(); // Clear form on success
+          setTimeout(() => handleBack(), 1000); // Navigate back after success
         } else {
-          messageApi.error("Registration failed");
+          messageApi.error(response?.message || "Registration failed");
         }
       } catch (error) {
         console.error("Error during registration:", error);
-        alert("An error occurred during registration.");
+        messageApi.error(error.message || "An error occurred during registration");
+      } finally {
+        setSubmitting(false);
       }
     },
   });
@@ -40,20 +44,18 @@ const AddInstitutes = ({ handleBack }) => {
   const handleProvinceChange = (event) => {
     const province = event.target.value;
     formik.setFieldValue("province", province);
-    
-    // Find selected province's cities
+
     const selected = sriLankaProvinces.find((p) => p.province === province);
     setCities(selected ? selected.cities : []);
-    
     formik.setFieldValue("city", ""); // Reset city selection
   };
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-          Add Institutes
+          Add Institute
         </h2>
 
         <form onSubmit={formik.handleSubmit} className="space-y-4">
@@ -62,12 +64,14 @@ const AddInstitutes = ({ handleBack }) => {
             <label className="block text-gray-700">Institute Name</label>
             <input
               type="text"
-              name="instituteName"
+              name="name"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              {...formik.getFieldProps("instituteName")}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
-            {formik.touched.instituteName && formik.errors.instituteName && (
-              <p className="text-red-500">{formik.errors.instituteName}</p>
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-red-500 text-sm">{formik.errors.name}</p>
             )}
           </div>
 
@@ -78,40 +82,44 @@ const AddInstitutes = ({ handleBack }) => {
               type="text"
               name="registrationNumber"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              {...formik.getFieldProps("registrationNumber")}
+              value={formik.values.registrationNumber}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
             {formik.touched.registrationNumber && formik.errors.registrationNumber && (
-              <p className="text-red-500">{formik.errors.registrationNumber}</p>
+              <p className="text-red-500 text-sm">{formik.errors.registrationNumber}</p>
             )}
           </div>
 
-          {/* Two-column Layout */}
+          {/* Email & Phone Number - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
-            {/* Email Address */}
             <div>
               <label className="block text-gray-700">Email Address</label>
               <input
-                type="text"
+                type="email" // Corrected from 'text' to 'email'
                 name="email"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                {...formik.getFieldProps("email")}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
               {formik.touched.email && formik.errors.email && (
-                <p className="text-red-500">{formik.errors.email}</p>
+                <p className="text-red-500 text-sm">{formik.errors.email}</p>
               )}
             </div>
 
-            {/* Phone Number */}
             <div>
               <label className="block text-gray-700">Phone Number</label>
               <input
                 type="text"
-                name="phoneNumber"
+                name="phoneNumber" // Corrected from 'phone' to 'phoneNumber'
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                {...formik.getFieldProps("phone")}
+                value={formik.values.phoneNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
-              {formik.touched.phone && formik.errors.phone && (
-                <p className="text-red-500">{formik.errors.phone}</p>
+              {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+                <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
               )}
             </div>
           </div>
@@ -123,16 +131,17 @@ const AddInstitutes = ({ handleBack }) => {
               type="text"
               name="address"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              {...formik.getFieldProps("address")}
+              value={formik.values.address}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
             {formik.touched.address && formik.errors.address && (
-              <p className="text-red-500">{formik.errors.address}</p>
+              <p className="text-red-500 text-sm">{formik.errors.address}</p>
             )}
           </div>
 
-          {/* Two-column Layout */}
+          {/* Province & City - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
-            {/* Province */}
             <div>
               <label className="block text-gray-700">Province</label>
               <select
@@ -143,37 +152,40 @@ const AddInstitutes = ({ handleBack }) => {
                 onBlur={formik.handleBlur}
               >
                 <option value="">Select Province</option>
-                {sriLankaProvinces.map((province, index) => (
-                  <option key={index} value={province.province}>
+                {sriLankaProvinces.map((province) => (
+                  <option key={province.province} value={province.province}>
                     {province.province}
                   </option>
                 ))}
               </select>
               {formik.touched.province && formik.errors.province && (
-                <p className="text-red-500">{formik.errors.province}</p>
+                <p className="text-red-500 text-sm">{formik.errors.province}</p>
               )}
             </div>
 
-            {/* City */}
             <div>
               <label className="block text-gray-700">City</label>
               <select
                 name="city"
-                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
+                className={`w-full px-4 py-2 rounded-md focus:outline-none ${
+                  !formik.values.province
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-200 text-black"
+                }`}
                 value={formik.values.city}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 disabled={!formik.values.province}
               >
                 <option value="">Select City</option>
-                {cities.map((city, index) => (
-                  <option key={index} value={city}>
+                {cities.map((city) => (
+                  <option key={city} value={city}>
                     {city}
                   </option>
                 ))}
               </select>
               {formik.touched.city && formik.errors.city && (
-                <p className="text-red-500">{formik.errors.city}</p>
+                <p className="text-red-500 text-sm">{formik.errors.city}</p>
               )}
             </div>
           </div>
@@ -182,13 +194,18 @@ const AddInstitutes = ({ handleBack }) => {
           <div className="flex gap-4 mt-4">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer"
+              className={`px-6 py-2 rounded-md text-white transition ${
+                formik.isValid && !formik.isSubmitting
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+              disabled={!formik.isValid || formik.isSubmitting}
             >
-              Submit
+              {formik.isSubmitting ? "Submitting..." : "Submit"}
             </button>
             <button
               type="button"
-              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
+              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 transition"
               onClick={handleBack}
             >
               Back
