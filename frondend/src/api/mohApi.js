@@ -169,7 +169,8 @@ export const getMohListByLocation = async (location) => {
 
 export const mohAssignToCase = async (value) => {
   try {
-    if (!value || !value.caseId || !value.assignMoh) {
+    // Validation
+    if (!value || !value.caseId || !value.assignedMoh) {
       throw new Error("Invalid input: caseId and assignMoh are required");
     }
 
@@ -184,15 +185,27 @@ export const mohAssignToCase = async (value) => {
 
       allCasesResponse[caseIndex] = {
         ...allCasesResponse[caseIndex],
-        assignMoh: value.assignMoh,
-        mohAssignedDate: value.mohAssignedDate || new Date().toISOString(), // Default to current date if not provided
+        assignedMoh: value.assignedMoh,
+        mohAssignedDate: value.mohAssignedDate || new Date().toISOString(), // Default to current date
       };
 
-      return { status: 200, message: "MOH assigned successfully" };
+      return {
+        status: 200,
+        message: "MOH assigned successfully",
+        data: allCasesResponse[caseIndex], // Optional: return updated case
+      };
     } else {
       const response = await axios.put(
         `${BASE_URL}/mohAssignToCase/${value.caseId}`,
-        { assignMoh: value.assignMoh, mohAssignedDate: value.mohAssignedDate }
+        {
+          assignedMoh: value.assignedMoh,
+          mohAssignedDate: value.mohAssignedDate,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json", // Explicitly set for plain object
+          },
+        }
       );
       return response.data;
     }
@@ -201,6 +214,7 @@ export const mohAssignToCase = async (value) => {
     return {
       status: error.response?.status || 500,
       message: error.message || "Failed to assign MOH",
+      data: null,
     };
   }
 };
