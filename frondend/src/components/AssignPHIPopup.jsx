@@ -9,17 +9,21 @@ import * as Yup from "yup";
 
 // Validation schema
 const assignPHISchema = Yup.object().shape({
-  assignPhi: Yup.string().required("Please select a PHI"),
+  assignedPhi: Yup.string().required("Please select a PHI"),
 });
 
 const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [phiList, setPhiList] = useState([]);
+  const [caseId, setCaseId] = useState("");
 
   useEffect(() => {
     setIsOpen(Assignphipopup);
+    setCaseId(ViewsSingleCase?.[1]);
   }, [Assignphipopup]);
+
+  console.log(ViewsSingleCase?.[1]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,12 +41,13 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
 
   const formik = useFormik({
     initialValues: {
-      caseId: ViewsSingleCase?.[1] || "",
-      assignPhi: "",
+      caseId: caseId || "",
+      assignedPhi: "",
       phiAssignedDate: new Date().toISOString().split("T")[0],
     },
     validationSchema: assignPHISchema,
     onSubmit: async (values, { resetForm }) => {
+      console.log(values)
       try {
         const response = await phiAssignToCase(values);
 
@@ -86,9 +91,9 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
                     Select a PHI According to Location
                   </label>
                   <select
-                    name="assignPhi"
+                    name="assignedPhi"
                     className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
-                    value={formik.values.assignPhi}
+                    value={formik.values.assignedPhi}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   >
@@ -99,8 +104,8 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
                       </option>
                     ))}
                   </select>
-                  {formik.touched.assignPhi && formik.errors.assignPhi && (
-                    <p className="text-red-500 text-sm">{formik.errors.assignPhi}</p>
+                  {formik.touched.assignedPhi && formik.errors.assignedPhi && (
+                    <p className="text-red-500 text-sm">{formik.errors.assignedPhi}</p>
                   )}
                 </div>
 
