@@ -31,48 +31,53 @@ export const mohResponse = [
 
 export const registerMoh = async (user) => {
   try {
+    if (!user || !user.name || !user.registrationNumber) {
+      throw new Error("Invalid input: Name and Registration Number are required");
+    }
+
     if (IS_BACKEND) {
-      
-      const existingUser = mohResponse.find((moh) => moh.userName === user.userName || moh.registrationNumber === user.registrationNumber);
-      
+      const existingUser = mohResponse.find(
+        (moh) => moh.name === user.name || moh.registrationNumber === user.registrationNumber
+      );
+
       if (existingUser) {
-       
         console.log("User already exists:", existingUser);
-        return existingUser;
+        return { status: 409, message: "User already exists" };
       } else {
-        
         const newUser = {
           ...user,
-          id: (mohResponse.length + 1).toString().padStart(3, "0"), 
-          message: "User registered successfully",
+          id: (mohResponse.length + 1).toString().padStart(3, "0"),
         };
         mohResponse.push(newUser);
-        console.log("New user registered:", newUser);
-        return newUser;
+        return { status: 201, message: "User registered successfully", data: newUser };
       }
     } else {
-      
       const response = await axios.post(`${BASE_URL}/register`, user);
       return response.data;
     }
   } catch (error) {
     console.error("Error registering user:", error);
-    return error;
+    return {
+      status: error.response?.status || 500,
+      message: error.message || "Failed to register MOH",
+    };
   }
 };
 
 export const getAllMohData = async () => {
   try {
-    if(IS_BACKEND){
-
-        return { status: 200, message: "Fetch data successfully", data: mohResponse };
-    }else{
+    if (IS_BACKEND) {
+      return { status: 200, message: "Fetch data successfully", data: mohResponse };
+    } else {
       const response = await axios.get(`${BASE_URL}/getAllMohData`);
       return response.data;
     }
   } catch (error) {
     console.error("Error fetching MOH data:", error);
-    throw error;
+    return {
+      status: error.response?.status || 500,
+      message: error.message || "Failed to fetch MOH data",
+    };
   }
 };
 
@@ -81,26 +86,27 @@ export const deleteMoh = async (id) => {
     if (IS_BACKEND) {
       const index = mohResponse.findIndex((moh) => moh.id === id);
       if (index !== -1) {
-        mohResponse.splice(index, 1); // Remove the item from the array
+        mohResponse.splice(index, 1);
         return { status: 200, message: "MOH record deleted successfully" };
       } else {
         return { status: 404, message: "MOH record not found" };
       }
     } else {
-      // API call to delete MOH record
       const response = await axios.delete(`${BASE_URL}/deleteMOH/${id}`);
-      return response.data; // Return response from backend
+      return response.data;
     }
   } catch (error) {
     console.error("Error deleting MOH record:", error);
-    throw error; // Throw error for handling in UI
+    return {
+      status: error.response?.status || 500,
+      message: error.message || "Failed to delete MOH record",
+    };
   }
 };
 
 export const updateMoh = async (id, updatedData) => {
   try {
     if (IS_BACKEND) {
-      // Simulating update in mock data
       const index = mohResponse.findIndex((moh) => moh.id === id);
       if (index !== -1) {
         mohResponse[index] = { ...mohResponse[index], ...updatedData };
@@ -109,50 +115,57 @@ export const updateMoh = async (id, updatedData) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      // API call to update MOH record
       const response = await axios.put(`${BASE_URL}/updateMOH/${id}`, updatedData);
-      return response.data; // Return response from backend
+      return response.data;
     }
   } catch (error) {
     console.error("Error updating MOH record:", error);
-    throw error; // Throw error for handling in UI
+    return {
+      status: error.response?.status || 500,
+      message: error.message || "Failed to update MOH record",
+    };
   }
 };
 
 export const getAllMOHList = async () => {
   try {
-    if(IS_BACKEND){
+    if (IS_BACKEND) {
       const filteredMOH = mohResponse.map(({ id, name }) => ({
         id,
         name,
       }));
-      return filteredMOH;
-    }else{
-      const response = await axios.get(`${BASE_URL}/getMohList`); // Replace with your API endpoint
-      return response.data; // Return the data received from the API
+      return { status: 200, message: "MOH list retrieved successfully", data: filteredMOH };
+    } else {
+      const response = await axios.get(`${BASE_URL}/getMohList`);
+      return response.data;
     }
   } catch (error) {
-    console.error("Error fetching Diseases data:", error);
-    throw error; // Throw the error if the request fails
+    console.error("Error fetching MOH list:", error);
+    return {
+      status: error.response?.status || 500,
+      message: error.message || "Failed to fetch MOH list",
+    };
   }
 };
 
 export const getMohListByLocation = async (location) => {
   try {
     if (IS_BACKEND) {
-
       const response = mohResponse.filter((moh) => moh.area === location);
       return { status: 200, message: "Fetch data successfully", data: response };
     } else {
-      const response = await axios.put(`${BASE_URL}/getMohListByLocation/${location}`);
-      return response.data; 
+      // Corrected from PUT to GET since this is a retrieval operation
+      const response = await axios.get(`${BASE_URL}/getMohListByLocation/${location}`);
+      return response.data;
     }
   } catch (error) {
-    console.error("Error updating record:", error);
-    throw error;
+    console.error("Error fetching MOH list by location:", error);
+    return {
+      status: error.response?.status || 500,
+      message: error.message || "Failed to fetch MOH list by location",
+    };
   }
-}
-
+};
 
 export const mohAssignToCase = async (value) => {
   try {
@@ -161,33 +174,33 @@ export const mohAssignToCase = async (value) => {
     }
 
     if (IS_BACKEND) {
- 
       const caseIndex = allCasesResponse.findIndex(
         (caseItem) => caseItem.caseId === value.caseId
       );
 
       if (caseIndex === -1) {
-        throw new Error(`Case with ID ${value.caseId} not found`);
+        return { status: 404, message: `Case with ID ${value.caseId} not found` };
       }
 
-  
       allCasesResponse[caseIndex] = {
         ...allCasesResponse[caseIndex],
         assignMoh: value.assignMoh,
-        mohAssignedDate: value.mohAssignedDate,
+        mohAssignedDate: value.mohAssignedDate || new Date().toISOString(), // Default to current date if not provided
       };
 
       return { status: 200, message: "MOH assigned successfully" };
     } else {
-
       const response = await axios.put(
         `${BASE_URL}/mohAssignToCase/${value.caseId}`,
-        { assignMoh: value.assignMoh }
+        { assignMoh: value.assignMoh, mohAssignedDate: value.mohAssignedDate }
       );
       return response.data;
     }
   } catch (error) {
-    console.error("Error updating record:", error.message || error);
-    throw error.response?.data || error.message || new Error("Failed to assign MOH");
+    console.error("Error assigning MOH to case:", error);
+    return {
+      status: error.response?.status || 500,
+      message: error.message || "Failed to assign MOH",
+    };
   }
 };
