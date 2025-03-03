@@ -102,9 +102,15 @@ const HeaderBar = ({
           ) : role === "idu" ? (
             <div className="flex gap-3">
               <button
-                type="button"
-                className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
+                className={`px-6 py-2 rounded-md
+              ${
+                singleCase?.assignedMoh == ""
+                  ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
+                  : "text-gray-400 bg-gray-300 cursor-not-allowed"
+              }
+              `}
                 onClick={() => viewAssignMOHPopUp()}
+                disabled={singleCase?.assignedMoh != ""}
               >
                 Assign MOH
               </button>
