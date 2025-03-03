@@ -4,6 +4,9 @@ import { viewSingleCase } from "../../redux/actions/viewSingleCaseAction";
 import { viewConfirmPopUp } from "../../redux/actions/confirmCasePopUpAction";
 import { connect } from "react-redux";
 import { geDiseasesList } from "../../api/diseasesApi";
+import { viewAssignPHIPopUp } from "../../redux/actions/assginPHIPopupAction";
+import { mark_AsReceived, sendFinalReport } from "../../api/allCasesApi";
+import { message } from "antd";
 
 const Table = ({
   AllLogins,
@@ -11,7 +14,10 @@ const Table = ({
   viewReport,
   viewSingleCase,
   viewConfirmPopUp,
+  viewAssignPHIPopUp,
 }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   if (!tableData || tableData.length === 0) {
     return <p>No data available.</p>;
   }
@@ -54,7 +60,7 @@ const Table = ({
   useEffect(() => {
     setPatients(rows); // Ensure state updates when rows change
     setRole(AllLogins.data.role);
-    setUserTypeId(AllLogins.data.userTypeId)
+    setUserTypeId(AllLogins.data.userTypeId);
   }, [rows]);
 
   const [diseasesList, setDiseasesList] = useState([]);
@@ -70,10 +76,46 @@ const Table = ({
     };
 
     fetchData();
-  }, []);
+  }, [AllLogins]);
+
+  const handleSendFinalReport = async (caseId) => {
+    try {
+      const sendReport = "true";
+      const value = { sendReport, caseId };
+      const response = await sendFinalReport(value);
+  
+      if (response.status === 200 && response.message) {
+        messageApi.success(response.message);
+      } else {
+        throw new Error(response.message || "Failed to send final report");
+      }
+    } catch (error) {
+      console.error("Error sending final report:", error);
+      messageApi.error(error.message || "An error occurred while sending the final report");
+    }
+  };
+
+  const handleMarkAsReceived = async (caseId) => {
+    try {
+      const markAsReceived = "true";
+      const value = { markAsReceived, caseId };
+      const response = await mark_AsReceived(value);
+  
+      if (response.status === 200 && response.message) {
+        messageApi.success(response.message);
+      } else {
+        throw new Error(response.message || "Failed to send final report");
+      }
+    } catch (error) {
+      console.error("Error sending final report:", error);
+      messageApi.error(error.message || "An error occurred while sending the final report");
+    }
+  };
+
 
   return (
     <>
+    {contextHolder}
       <form className="w-full flex flex-row items-center gap-[26px]">
         <h5 className="text-[16px] font-medium">Filter by :</h5>
         <select
@@ -209,36 +251,99 @@ const Table = ({
                         ) : role == "idu" ? (
                           <button
                             type="button"
-                            className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
+                            className="bg-gray-300 text-black px-[16px] py-[8px] rounded-[6px] hover:bg-gray-400 cursor-pointer"
                             onClick={() => viewSingleCase(patient.caseId)}
                           >
                             Assign Officers
                           </button>
                         ) : role == "phi" ? (
                           <>
-                           { patient.assignedPhi != userTypeId ? (
-                            <button
-                            className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
-                            disabled={true}
-                            >Add Report</button>
-                           ) : (
+                            {patient.assignedPhi != userTypeId ? (
                               <button
-                            className={`px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] 
+                                className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                                disabled={true}
+                              >
+                                Add Report
+                              </button>
+                            ) : (
+                              <button
+                                className={`px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] 
                           ${
                             Object.keys(patient.report).length > 0
                               ? "text-gray-400 cursor-not-allowed"
                               : "cursor-pointer"
                           }
                         `}
-                            onClick={() => viewReport(patient.caseId)}
-                            disabled={Object.keys(patient.report).length > 0} //
-                          >
-                            Add Report
-                          </button>
+                                onClick={() => viewReport(patient.caseId)}
+                                disabled={
+                                  Object.keys(patient.report).length > 0
+                                } //
+                              >
+                                Add Report
+                              </button>
                             )}
                           </>
+                        ) : role == "moh" ? (
+                          <>
+                            {!patient?.assignedPhi ? (
+                              <button
+                                className={`text-white px-[16px] py-[8px] rounded-[6px] bg-blue-600 hover:bg-blue-700 transition cursor-pointer`}
+                                onClick={() => viewAssignPHIPopUp()}
+                              >
+                                Assign PHI
+                              </button>
+                            ) :
+
+                            patient?.caseStatus === "Suspected" ? (
+                              <button
+                                type="button"
+                                className={`px-[16px] py-[8px] rounded-[6px]
+                            ${
+                              patient.caseStatus == "Suspected"
+                                ? "bg-blue-600 text-white cursor-pointer"
+                                : "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                            }
+                          `}
+                                onClick={() =>
+                                  viewConfirmPopUp(patient?.caseId)
+                                }
+                                disabled={
+                                  patient.caseStatus == "Suspected"
+                                    ? false
+                                    : true
+                                }
+                              >
+                                Confirm Case
+                              </button>
+                            ) : 
+
+                            
+                              Object.keys(patient.report).length > 0 && 
+                              <button
+                                className={`px-[16px] py-[8px] rounded-[6px] ${
+                                  patient.sendReport ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" :  "bg-blue-600 text-white cursor-pointer"
+                                }
+                                `}
+                                onClick={() => handleSendFinalReport(patient?.caseId)}
+                              >
+                                Send Final Report
+                              </button>
+                            }
+                          </>
                         ) : (
-                          <p>Mark as Received</p>
+                          <button
+                                className={`px-[16px] py-[8px] rounded-[6px] ${
+                                  patient.markAsReceived == "true" ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" :  "bg-blue-600 text-white cursor-pointer"
+                                }
+                                `}
+                                onClick={() => handleMarkAsReceived(patient?.caseId)}
+                                disabled={
+                                  patient.markAsReceived == "true" ? true : false
+                                }
+                              >
+                                Mark as Received
+                              </button>
+        
                         )}
                       </td>
                     </tr>
@@ -263,6 +368,7 @@ const mapDispatchToProps = (dispatch) => ({
   viewReport: (values) => dispatch(viewReport(values)),
   viewSingleCase: (values) => dispatch(viewSingleCase(values)),
   viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
+  viewAssignPHIPopUp: (value) => dispatch(viewAssignPHIPopUp()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
