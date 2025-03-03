@@ -18,9 +18,9 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllDoctorData();
+        const response = await getAllDoctorData();
 
-        const filteredData = data.filter(
+        const filteredData = response.data.filter(
           (item) => item.id == AllViewEditReducer?.[1]
         );
 
@@ -32,8 +32,6 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
 
     fetchData();
   }, [AllViewEditReducer]);
-
-  console.log(userData)
 
   const formik = useFormik({
     initialValues: {
@@ -266,11 +264,11 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
             <button
               type="submit"
               className={`px-6 py-2 rounded-md text-white ${
-                !isEnableEdit && formik.isValid
-                  ? "bg-blue-600 hover:bg-blue-700"
+                !isEnableEdit
+                  ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
-              disabled={isEnableEdit || !formik.isValid}
+              disabled={isEnableEdit}
             >
               Submit
             </button>
