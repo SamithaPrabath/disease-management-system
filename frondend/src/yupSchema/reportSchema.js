@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const reportSchema = Yup.object({
-  id:Yup.string().required("Id is required"),
+  caseId:Yup.string().required("Id is required"),
   ethnicGroup: Yup.string().required("Ethnic Group is required"),
   dischargeDate: Yup.date().required("Date of Discharge is required"),
   isolationDateFrom: Yup.date().required("Isolation start date is required"),
