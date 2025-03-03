@@ -20,10 +20,10 @@ const AddDiseases = ({ handleBack }) => {
       try {
         const response = await addDiseases(values);
 
-        if (response && response.message) {
+        if (response && (response.status === 200 || response.status === 201) && response.message) {
           messageApi.success(response.message);
         } else {
-          messageApi.error("Registration failed");
+          messageApi.error(response?.message || "Registration failed");
         }
       } catch (error) {
         console.error("Error during registration:", error);
