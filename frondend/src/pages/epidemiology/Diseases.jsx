@@ -17,8 +17,8 @@ const Didseaces = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllDiseasesData();
-        setDiseasesData(data);
+        const response = await getAllDiseasesData();
+        setDiseasesData(response.data);
       } catch (error) {
         console.error("Failed to fetch Diseases data:", error);
       }
@@ -33,11 +33,10 @@ const Didseaces = (props) => {
   const tableData = [
     {
       tableHeaders: [
-        "diseaseCode",
-        "diseaseName",
-        "category",
-        "modeOfTransmission",
-        "description",
+        "Disease Code",
+        "Disease Name",
+        "Category",
+        "Mode Of Transmission",
         "Actions",
       ],
       tableData: diseasesData,
