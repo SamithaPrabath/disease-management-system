@@ -233,7 +233,7 @@ const SingleCaseView = ({
               <h1 className="text-2xl font-medium">
                 Communicable Disease report
               </h1>
-              <p className="text-base font-medium">14/02/2024</p>
+              <p className="text-base font-medium">{singleCase?.report.reportCreatedDate}</p>
             </div>
 
             <div className="flex flex-col gap-2 text-[16px] text-[#080809]">
