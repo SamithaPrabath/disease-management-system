@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const phiSchema = Yup.object({
-  fullName: Yup.string().required("Full Name is required"),
+  name: Yup.string().required("Full Name is required"),
   registrationNumber: Yup.string().required("Registration Number is required"),
   moh: Yup.string().required("MOH is required"),
   area: Yup.string().required("Area is required"),
@@ -14,10 +14,8 @@ export const phiSchema = Yup.object({
 });
 
 export const mohSchema = Yup.object({
-  fullName: Yup.string().required("Full Name is required"),
-  registrationNumber: Yup.string()
-    .matches(/^\d+$/, "Registration Number must be numbers only")
-    .required("Registration Number is required"),
+  name: Yup.string().required("Full Name is required"),
+  registrationNumber: Yup.string().required("Registration Number is required"),
   area: Yup.string().required("Area is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   phoneNumber: Yup.string()
@@ -28,7 +26,7 @@ export const mohSchema = Yup.object({
 });
 
 export const instituteSchema = Yup.object().shape({
-  instituteName: Yup.string().required("Institute Name is required"),
+  name: Yup.string().required("Institute Name is required"),
   registrationNumber: Yup.string().required("Registration Number is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   phoneNumber: Yup.string()
@@ -40,7 +38,7 @@ export const instituteSchema = Yup.object().shape({
 });
 
 export const diseasesSchema = Yup.object({
-  diseaseCode: Yup.string().required("Disease Code is required"),
+  id: Yup.string().required("Disease Code is required"),
   diseaseName: Yup.string().required("Disease Name is required"),
   category: Yup.string().required("Category is required"),
   modeOfTransmission: Yup.string().required("Mode of Transmission is required"),
