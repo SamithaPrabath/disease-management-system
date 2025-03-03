@@ -111,19 +111,28 @@ const HeaderBar = ({
             </div>
           ) : role === "phi" ? (
             <div className="flex gap-3">
-              <button
-                className={`px-[16px] py-[8px] rounded-[6px]
-                ${
-                  Object.keys(singleCase?.report ?? {}).length > 0
-                    ? "text-gray-400 bg-gray-300 cursor-not-allowed"
-                    : "text-white bg-blue-600 cursor-pointer"
-                }
-              `}
-                onClick={() => viewReport(singleCase?.id)}
-                disabled={Object.keys(singleCase?.report ?? {}).length > 0}
-              >
-                Add Report
-              </button>
+              {singleCase.assignedPhi != userTypeId ? (
+                <button
+                  className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                  disabled={true}
+                >
+                  Add Report
+                </button>
+              ) : (
+                <button
+                  className={`px-[16px] py-[8px] rounded-[6px] 
+                          ${
+                            Object.keys(singleCase?.report ?? {}).length > 0
+                              ? "bg-[#E2E5E9]  text-gray-400 cursor-not-allowed"
+                              : "text-white bg-blue-600 cursor-pointer"
+                          }
+                        `}
+                  onClick={() => viewReport(singleCase?.id)}
+                  disabled={Object.keys(singleCase?.report ?? {}).length > 0}
+                >
+                  Add Report
+                </button>
+              )}
 
               <button
                 className={`px-6 py-2 rounded-md
