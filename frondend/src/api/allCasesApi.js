@@ -224,14 +224,13 @@ export const getSingleCaseData = async (caseId) => {
       //Notifier Response
       const notifierResponse = doctorResponse
         .filter((doctor) => doctor.id == caseData.notifier)
-        .map(({ area, moh, name, role }) => ({ name, role, area, moh }));
+        .map(({ area, moh, name, role, registrationNumber }) => ({ name, role, area, moh, registrationNumber }));
 
       if (!notifierResponse) {
         return { status: 404, message: "Notifier details not found" };
       }
 
       //ConformationBy Response
-
       let confirmedByDetails = [];
 
       if (caseData.caseStatus === "Confirmed") {
@@ -257,11 +256,30 @@ export const getSingleCaseData = async (caseId) => {
         }
       }
 
+
+      //Assigned PHI
+      let assignedPhiDetails = [{}];
+
+      if(caseData.assignedPhi != ""){
+           assignedPhiDetails = phiResponse.filter((phi) => phi.id == caseData.assignedPhi)
+      .map(({ area, moh, name, role, registrationNumber }) => ({ name, role, area, moh, registrationNumber }));
+      }
+
+      //Assigned MOH
+      let assignedMohDetails = [{}];
+
+      if(caseData.assignedMoh != ""){
+           assignedMohDetails = mohResponse.filter((moh) => moh.id == caseData.assignedMoh)
+      .map(({ area, name, role, registrationNumber }) => ({ name, role, area, registrationNumber }));
+      }
+
       const singleCaseResponse = {
         ...caseData,
         confirmedByDetails: confirmedByDetails, // Will be null if not confirmed
         report: report, // Will be null if no report is found
         notifierDetails: notifierResponse[0],
+        assignedPhiDetails: assignedPhiDetails[0],
+        assignedMohDetails: assignedMohDetails[0],
       };
 
       return {
