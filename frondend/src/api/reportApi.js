@@ -58,7 +58,7 @@ export const addReport = async (report) => {
   try {
     if (IS_BACKEND) {
 
-      return { message: "Report add successfully", case: report };
+      return { status: 200, message: "Report add successfully" };
       
     } else {
       // Make an API call to update the case
