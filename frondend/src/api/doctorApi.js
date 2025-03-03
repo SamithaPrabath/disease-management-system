@@ -70,7 +70,7 @@ export const registerDoctor = async (user) => {
 export const getAllDoctorData = async () => {
   try {
     if (IS_BACKEND) {
-      return doctorResponse;
+      return { status: 200, message: "data fetch successfully", data: doctorResponse };
     } else {
       const response = await axios.get(`${BASE_URL}/getAllDoctorData`); // Replace with your API endpoint
       return response.data; // Return the data received from the API
