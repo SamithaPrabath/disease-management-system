@@ -3,54 +3,31 @@ import { CiSearch } from "react-icons/ci";
 import TableCard from "../../components/phi/TableCard";
 import SingleCaseView from "../../components/SingleCaseView";
 import { connect } from "react-redux";
-import { getAllCases } from "../../api/allCasesApi";
-import CasesCard from "../../components/CasesCard"
-
-const cardData = [
-  {
-    header: "Total Active Cases",
-    chartData: [
-      { name: "dengue", value: 400, active: true },
-      { name: "covid", value: 300, active: true },
-      { name: "other", value: 300, active: true },
-    ],
-    chartColors: ["#FF5630", "#36B37E", "#FFAB00"],
-  },
-  {
-    header: "Dengue Cases",
-    chartData: [
-      { name: "dengue", value: 400, active: true },
-      { name: "covid", value: 300, active: false },
-      { name: "other", value: 300, active: false },
-    ],
-    chartColors: ["#FF5630", "#36B37E", "#FFAB00"],
-  },
-  {
-    header: "Covid Cases",
-    chartData: [
-      { name: "dengue", value: 400, active: false },
-      { name: "covid", value: 300, active: true },
-      { name: "other", value: 300, active: false },
-    ],
-    chartColors: ["#FF5630", "#36B37E", "#FFAB00"],
-  },
-  {
-    header: "Other Cases",
-    chartData: [
-      { name: "dengue", value: 400, active: false },
-      { name: "covid", value: 300, active: false },
-      { name: "other", value: 300, active: true },
-    ],
-    chartColors: ["#FF5630", "#36B37E", "#FFAB00"],
-  },
-];
+import { getAllCases, getCasesCount } from "../../api/allCasesApi";
+import CasesCard from "../../components/CasesCard";
 
 const Home = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [allCasesData, setAllCasesData] = useState([]);
   const [patientId, setPatientId] = useState("");
+  const [caseData, setCaseData] = useState([]);
 
   const [isViewSingleCase, setIsViewSingleCase] = useState(false);
+
+  useEffect(() => {
+    // Fetch all cases data
+    const fetchData = async () => {
+      try {
+        const response = await getCasesCount();
+
+        setCaseData(response.data);
+      } catch (error) {
+        console.error("Failed to fetch cases data:", error);
+      }
+    };
+
+    fetchData();
+  }, [props.ViewReport]);
 
   useEffect(() => {
     // Fetch all cases data
@@ -117,16 +94,7 @@ const Home = (props) => {
               </div>
             </div>
 
-            <div className="w-full flex flex-wrap flex-row items-center justify-left gap-[32px]">
-              {cardData.map((card, index) => (
-                <CasesCard
-                  key={index}
-                  header={card.header}
-                  data={card.chartData}
-                  colors={card.chartColors}
-                />
-              ))}
-            </div>
+            <CasesCard chartData={caseData} />
 
             <TableCard tableData={tableData} />
           </div>
