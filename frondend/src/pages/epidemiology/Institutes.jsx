@@ -17,8 +17,8 @@ const Institutes = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllInstitutesData();
-        setInstitutesData(data);
+        const response = await getAllInstitutesData();
+        setInstitutesData(response.data);
       } catch (error) {
         console.error("Failed to fetch Institutes data:", error);
       }
