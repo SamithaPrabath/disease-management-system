@@ -21,8 +21,8 @@ const Dashboard = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllCases();
-        setAllCases(data);
+        const response = await getAllCases();
+        setAllCases(response.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
