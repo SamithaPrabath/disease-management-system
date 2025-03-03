@@ -109,8 +109,8 @@ const SingleCaseView = ({
                 {singleCase?.mohAssignedDate}
               </h2>
             </div>
-            {
-              singleCase?.assignedMoh == "" ? (<button
+            {singleCase?.assignedMoh == "" ? (
+              <button
                 className={` text-white px-4 py-2 rounded text-base
               ${
                 role === "idu"
@@ -118,32 +118,32 @@ const SingleCaseView = ({
                   : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
               }
               `}
-              onClick={() => viewAssignMOHPopUp()}
+                onClick={() => viewAssignMOHPopUp()}
               >
                 Assign MOH
-              </button>) : (
-                <>
+              </button>
+            ) : (
+              <>
                 <div className="w-full flex flex-row items-center justify-between">
-                <div>
-                <p className="text-xl font-medium">
-                  {singleCase?.assignedMohDetails?.name}
-                </p>
-                <p className="text-base text-[#65686C]">
-                  {singleCase?.assignedMohDetails?.area
-                    ? singleCase.assignedMohDetails.area
-                        .charAt(0)
-                        .toUpperCase() +
-                      singleCase.assignedMohDetails.area.slice(1)
-                    : ""}
-                </p>
-                </div>
-                <p className="text-base text-[#65686C]">
-                  {singleCase?.assignedMohDetails?.registrationNumber}
-                </p>
+                  <div>
+                    <p className="text-xl font-medium">
+                      {singleCase?.assignedMohDetails?.name}
+                    </p>
+                    <p className="text-base text-[#65686C]">
+                      {singleCase?.assignedMohDetails?.area
+                        ? singleCase.assignedMohDetails.area
+                            .charAt(0)
+                            .toUpperCase() +
+                          singleCase.assignedMohDetails.area.slice(1)
+                        : ""}
+                    </p>
+                  </div>
+                  <p className="text-base text-[#65686C]">
+                    {singleCase?.assignedMohDetails?.registrationNumber}
+                  </p>
                 </div>
               </>
-              )
-            }
+            )}
           </div>
 
           {/* PHI Card */}
@@ -154,21 +154,21 @@ const SingleCaseView = ({
                 {singleCase?.phiAssignedDate}
               </h2>
             </div>
-            {
-              singleCase?.assignedPhi == "" ? (<button
+            {singleCase?.assignedPhi == "" ? (
+              <button
                 className={` text-white px-4 py-2 rounded text-base
               ${
-                role === "idu" || role === "moh" 
+                role === "idu" || role === "moh"
                   ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
                   : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
               }
               `}
-              onClick={() => viewAssignPHIPopUp()}
+                onClick={() => viewAssignPHIPopUp()}
               >
                 Assign PHI
-              </button>) : (
-                <>
-                
+              </button>
+            ) : (
+              <>
                 <p className="text-xl font-medium">
                   {singleCase?.assignedPhiDetails?.name}
                 </p>
@@ -180,10 +180,8 @@ const SingleCaseView = ({
                       singleCase.assignedPhiDetails.area.slice(1)
                     : ""}
                 </p>
-              
               </>
-              )
-            }
+            )}
           </div>
 
           {/* Confirmed By Card */}
@@ -200,7 +198,8 @@ const SingleCaseView = ({
                   className={`px-[16px] py-[8px] rounded-[6px]
                   ${
                     role === "idu"
-                      ? "text-gray-400 cursor-not-allowed bg-[#E2E5E9]" : "text-white bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
+                      ? "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
+                      : "text-white bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
                   }
                   `}
                   onClick={() => viewConfirmPopUp(patientId)}
@@ -227,13 +226,15 @@ const SingleCaseView = ({
           </div>
         </div>
 
-        {Object.keys(singleCase?.report || {}).length > 0 && (
+        {(singleCase?.markAsReceived == "true" || role == "admin") && Object.keys(singleCase?.report || {}).length > 0 ? (
           <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
             <div className="flex flex-row items-center justify-between">
               <h1 className="text-2xl font-medium">
                 Communicable Disease report
               </h1>
-              <p className="text-base font-medium">{singleCase?.report.reportCreatedDate}</p>
+              <p className="text-base font-medium">
+                {singleCase?.report?.reportCreatedDate}
+              </p>
             </div>
 
             <div className="flex flex-col gap-2 text-[16px] text-[#080809]">
@@ -393,6 +394,189 @@ const SingleCaseView = ({
               </div>
             </div>
           </div>
+        ) : (
+          singleCase.markAsReceived == "false" &&
+          ((Object.keys(singleCase?.report || {}).length > 0 &&
+            role == "moh") ||
+            (role == "admin" && singleCase.sendReport == "true")) && (
+            <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
+              <div className="flex flex-row items-center justify-between">
+                <h1 className="text-2xl font-medium">
+                  Communicable Disease report
+                </h1>
+                <p className="text-base font-medium">
+                  {singleCase?.report.reportCreatedDate}
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2 text-[16px] text-[#080809]">
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>Ethnic Group of the patient</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">{singleCase?.report?.ethnicGroup}</p>
+                </div>
+
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>Date of discharge</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">
+                    {singleCase?.report?.dischargeDate}
+                  </p>
+                </div>
+
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>Where Isolated</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">
+                    {singleCase?.report?.isolationStatus}
+                  </p>
+                </div>
+
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>Isolation Date</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">
+                    {singleCase?.report?.isolationDateFrom} to{" "}
+                    {singleCase?.report?.isolationDateTo}
+                  </p>
+                </div>
+
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>Outcome</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">{singleCase?.report?.outcome}</p>
+                </div>
+
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>Patient’s movement during three weeks prior to onset</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">
+                    {singleCase?.report?.movementHistory}
+                  </p>
+                </div>
+
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>Laboratory Findings</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">{singleCase?.report?.labResults}</p>
+                </div>
+
+                <div className="flex flex-row">
+                  <div className="text-[#65686C] w-1/2 flex items-center justify-between">
+                    <p>PHI Remarks</p>
+                    <p>:</p>
+                  </div>
+                  <p className="pl-2 w-1/2">{singleCase?.report?.phiRemarks}</p>
+                </div>
+              </div>
+
+              {/* Contacts Section */}
+              <div className="flex flex-col gap-[10px]">
+                <h2 className="text-xl font-medium">Contacts Investigated</h2>
+
+                <h3 className="text-base text-[#080809] font-medium">
+                  Patient's Household
+                </h3>
+
+                <div className="">
+                  {/* Household Contacts Table */}
+                  <div className="">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-sm text-[#65686C]">
+                          <th className="text-left py-2 px-4">Name</th>
+                          <th className="text-left py-2 px-4">Age</th>
+                          <th className="text-left py-2 px-4">
+                            Date of observation
+                          </th>
+                          <th className="text-left py-2 px-4">Disposition</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {singleCase?.report?.householdContacts?.map(
+                          (contact, index) => (
+                            <tr
+                              key={index}
+                              className="text-sm bg-[#E2E5E9] border-b-3 border-solid border-white"
+                            >
+                              <td className="py-2 px-4">
+                                {contact.name || "-"}
+                              </td>
+                              <td className="py-2 px-4">
+                                {contact.age || "-"}
+                              </td>
+                              <td className="py-2 px-4">
+                                {contact.date || "N/A"}
+                              </td>
+                              <td className="py-2 px-4">
+                                {contact.disposition || "-"}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Other Contacts Table */}
+                  <div>
+                    <h3 className="text-base text-[#080809] font-medium mt-4">
+                      Other Contacts
+                    </h3>
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-sm text-[#65686C]">
+                          <th className="text-left py-2 px-4">Name</th>
+                          <th className="text-left py-2 px-4">Age</th>
+                          <th className="text-left py-2 px-4">
+                            Date of observation
+                          </th>
+                          <th className="text-left py-2 px-4">Disposition</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {singleCase?.report?.otherContacts?.map(
+                          (contact, index) => (
+                            <tr
+                              key={index}
+                              className="text-sm bg-[#E2E5E9] border-b-3 border-solid border-white"
+                            >
+                              <td className="py-2 px-4">
+                                {contact.name || "-"}
+                              </td>
+                              <td className="py-2 px-4">
+                                {contact.age || "-"}
+                              </td>
+                              <td className="py-2 px-4">
+                                {contact.date || "N/A"}
+                              </td>
+                              <td className="py-2 px-4">
+                                {contact.disposition || "-"}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
         )}
       </div>
       <ViewLocationPopup />
