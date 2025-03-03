@@ -30,6 +30,8 @@ const Table = ({
     caseStatus: "",
   });
 
+  const [userTypeId, setUserTypeId] = useState("");
+
   const handleFilterChange = (e) =>
     setFilters({ ...filters, [e.target.name]: e.target.value });
 
@@ -52,6 +54,7 @@ const Table = ({
   useEffect(() => {
     setPatients(rows); // Ensure state updates when rows change
     setRole(AllLogins.data.role);
+    setUserTypeId(AllLogins.data.userTypeId)
   }, [rows]);
 
   const [diseasesList, setDiseasesList] = useState([]);
@@ -144,7 +147,7 @@ const Table = ({
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredPatients.map((patient) => (
-                    <tr key={patient.id} className="hover:bg-gray-50">
+                    <tr key={patient.caseId} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
                         {patient.caseId}
                       </td>
@@ -212,7 +215,14 @@ const Table = ({
                             Assign Officers
                           </button>
                         ) : role == "phi" ? (
-                          <button
+                          <>
+                           { patient.assignedPhi != userTypeId ? (
+                            <button
+                            className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                            disabled={true}
+                            >Add Report</button>
+                           ) : (
+                              <button
                             className={`px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] 
                           ${
                             Object.keys(patient.report).length > 0
@@ -220,11 +230,13 @@ const Table = ({
                               : "cursor-pointer"
                           }
                         `}
-                            onClick={() => viewReport(patient.id)}
-                            disabled={Object.keys(patient.report).length > 0}
+                            onClick={() => viewReport(patient.caseId)}
+                            disabled={Object.keys(patient.report).length > 0} //
                           >
                             Add Report
                           </button>
+                            )}
+                          </>
                         ) : (
                           <p>Mark as Received</p>
                         )}
