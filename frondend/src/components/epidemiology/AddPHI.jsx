@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import { phiSchema } from "../../yupSchema/epidemiologySchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import {registerPhi} from '../../api/phiApi';
+import { registerPhi } from "../../api/phiApi";
 import { message } from "antd";
 
 const AddPHI = ({ handleBack }) => {
@@ -11,7 +11,7 @@ const AddPHI = ({ handleBack }) => {
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
+      name: "",
       registrationNumber: "",
       moh: "",
       area: "",
@@ -19,28 +19,33 @@ const AddPHI = ({ handleBack }) => {
       phoneNumber: "",
       username: "",
       password: "",
-      role: "phi",
+      role: "phi", // Fixed role for PHI
     },
     validationSchema: phiSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      setSubmitting(true);
       try {
         const response = await registerPhi(values);
-  
-        if (response && response.message) {
+
+        if (response?.status === 201 && response.message) {
           messageApi.success(response.message);
+          resetForm(); // Clear form on success
+          setTimeout(() => handleBack(), 1000); // Navigate back after success
         } else {
-          messageApi.error("Registration failed");
+          messageApi.error(response?.message || "Registration failed");
         }
       } catch (error) {
         console.error("Error during registration:", error);
-        alert("An error occurred during registration.");
+        messageApi.error(error.message || "An error occurred during registration");
+      } finally {
+        setSubmitting(false);
       }
     },
   });
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
           Add PHI
@@ -52,14 +57,14 @@ const AddPHI = ({ handleBack }) => {
             <label className="block text-gray-700">Full Name</label>
             <input
               type="text"
-              name="fullName"
+              name="name"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              value={formik.values.fullName}
+              value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.fullName && formik.errors.fullName && (
-              <p className="text-red-500">{formik.errors.fullName}</p>
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-red-500 text-sm">{formik.errors.name}</p>
             )}
           </div>
 
@@ -74,12 +79,9 @@ const AddPHI = ({ handleBack }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.registrationNumber &&
-              formik.errors.registrationNumber && (
-                <p className="text-red-500">
-                  {formik.errors.registrationNumber}
-                </p>
-              )}
+            {formik.touched.registrationNumber && formik.errors.registrationNumber && (
+              <p className="text-red-500 text-sm">{formik.errors.registrationNumber}</p>
+            )}
           </div>
 
           {/* MOH */}
@@ -94,7 +96,7 @@ const AddPHI = ({ handleBack }) => {
               onBlur={formik.handleBlur}
             />
             {formik.touched.moh && formik.errors.moh && (
-              <p className="text-red-500">{formik.errors.moh}</p>
+              <p className="text-red-500 text-sm">{formik.errors.moh}</p>
             )}
           </div>
 
@@ -110,7 +112,7 @@ const AddPHI = ({ handleBack }) => {
               onBlur={formik.handleBlur}
             />
             {formik.touched.area && formik.errors.area && (
-              <p className="text-red-500">{formik.errors.area}</p>
+              <p className="text-red-500 text-sm">{formik.errors.area}</p>
             )}
           </div>
 
@@ -127,7 +129,7 @@ const AddPHI = ({ handleBack }) => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.email && formik.errors.email && (
-                <p className="text-red-500">{formik.errors.email}</p>
+                <p className="text-red-500 text-sm">{formik.errors.email}</p>
               )}
             </div>
 
@@ -142,7 +144,7 @@ const AddPHI = ({ handleBack }) => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                <p className="text-red-500">{formik.errors.phoneNumber}</p>
+                <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
               )}
             </div>
           </div>
@@ -160,21 +162,20 @@ const AddPHI = ({ handleBack }) => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.username && formik.errors.username && (
-                <p className="text-red-500">{formik.errors.username}</p>
+                <p className="text-red-500 text-sm">{formik.errors.username}</p>
               )}
             </div>
 
             <div className="relative">
               <label className="block text-gray-700">Password</label>
               <input
-                type={showPassword ? "text" : "password"} // Toggle between text/password
+                type={showPassword ? "text" : "password"}
                 name="password"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none pr-10"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {/* Toggle Button (Eye Icon) */}
               <button
                 type="button"
                 className="absolute top-9 right-3 text-gray-600"
@@ -187,7 +188,7 @@ const AddPHI = ({ handleBack }) => {
                 )}
               </button>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-red-500">{formik.errors.password}</p>
+                <p className="text-red-500 text-sm">{formik.errors.password}</p>
               )}
             </div>
           </div>
@@ -196,19 +197,19 @@ const AddPHI = ({ handleBack }) => {
           <div className="flex gap-4 mt-4">
             <button
               type="submit"
-              className={`px-6 py-2 rounded-md text-white ${
-                formik.isValid
-                  ? "bg-blue-600 hover:bg-blue-700"
+              className={`px-6 py-2 rounded-md text-white transition ${
+                formik.isValid && !formik.isSubmitting
+                  ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
-              disabled={!formik.isValid}
+              disabled={!formik.isValid || formik.isSubmitting}
             >
-              Submit
+              {formik.isSubmitting ? "Submitting..." : "Submit"}
             </button>
 
             <button
               type="button"
-              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400"
+              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 transition cursor-pointer"
               onClick={handleBack}
             >
               Back
