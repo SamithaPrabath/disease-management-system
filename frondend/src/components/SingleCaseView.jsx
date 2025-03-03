@@ -103,36 +103,87 @@ const SingleCaseView = ({
 
           {/* MOH Card */}
           <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
-            <h1 className="text-base text-[#080809]">MOH</h1>
-            <button
-              className={` text-white px-4 py-2 rounded text-base
-            ${
-              role === "idu"
-                ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
-                : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
+            <div className="w-full flex flex-row items-center justify-between">
+              <h1 className="text-base font-medium text-[#080809]">MOH</h1>
+              <h2 className="text-base font-medium text-[#080809]">
+                {singleCase?.mohAssignedDate}
+              </h2>
+            </div>
+            {
+              singleCase?.assignedMoh == "" ? (<button
+                className={` text-white px-4 py-2 rounded text-base
+              ${
+                role === "idu"
+                  ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
+                  : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
+              }
+              `}
+              onClick={() => viewAssignMOHPopUp()}
+              >
+                Assign MOH
+              </button>) : (
+                <>
+                <div className="w-full flex flex-row items-center justify-between">
+                <div>
+                <p className="text-xl font-medium">
+                  {singleCase?.assignedMohDetails?.name}
+                </p>
+                <p className="text-base text-[#65686C]">
+                  {singleCase?.assignedMohDetails?.area
+                    ? singleCase.assignedMohDetails.area
+                        .charAt(0)
+                        .toUpperCase() +
+                      singleCase.assignedMohDetails.area.slice(1)
+                    : ""}
+                </p>
+                </div>
+                <p className="text-base text-[#65686C]">
+                  {singleCase?.assignedMohDetails?.registrationNumber}
+                </p>
+                </div>
+              </>
+              )
             }
-            `}
-            onClick={() => viewAssignMOHPopUp()}
-            >
-              Assign MOH
-            </button>
           </div>
 
           {/* PHI Card */}
           <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
-            <h1 className="text-base text-[#080809]">PHI</h1>
-            <button
-              className={` text-white px-4 py-2 rounded text-base
-            ${
-              role === "idu" || role === "moh" 
-                ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
-                : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
+            <div className="w-full flex flex-row items-center justify-between">
+              <h1 className="text-base font-medium text-[#080809]">PHI</h1>
+              <h2 className="text-base font-medium text-[#080809]">
+                {singleCase?.phiAssignedDate}
+              </h2>
+            </div>
+            {
+              singleCase?.assignedPhi == "" ? (<button
+                className={` text-white px-4 py-2 rounded text-base
+              ${
+                role === "idu" || role === "moh" 
+                  ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
+                  : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
+              }
+              `}
+              onClick={() => viewAssignPHIPopUp()}
+              >
+                Assign PHI
+              </button>) : (
+                <>
+                
+                <p className="text-xl font-medium">
+                  {singleCase?.assignedPhiDetails?.name}
+                </p>
+                <p className="text-base text-[#65686C]">
+                  {singleCase?.assignedPhiDetails?.area
+                    ? singleCase.assignedPhiDetails.area
+                        .charAt(0)
+                        .toUpperCase() +
+                      singleCase.assignedPhiDetails.area.slice(1)
+                    : ""}
+                </p>
+              
+              </>
+              )
             }
-            `}
-            onClick={() => viewAssignPHIPopUp()}
-            >
-              Assign PHI
-            </button>
           </div>
 
           {/* Confirmed By Card */}
@@ -146,8 +197,14 @@ const SingleCaseView = ({
             <div>
               {singleCase?.caseStatus == "Suspected" ? (
                 <button
-                  className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
+                  className={`px-[16px] py-[8px] rounded-[6px]
+                  ${
+                    role === "idu"
+                      ? "text-gray-400 cursor-not-allowed bg-[#E2E5E9]" : "text-white bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
+                  }
+                  `}
                   onClick={() => viewConfirmPopUp(patientId)}
+                  disabled={role === "idu"}
                 >
                   Confirm Case
                 </button>
