@@ -14,7 +14,7 @@ const Report = ({ viewReport, closeViewReport }) => {
 
   const formik = useFormik({
     initialValues: {
-      id: viewReport?.[1],
+      caseId: viewReport?.[1],
       ethnicGroup: "",
       dischargeDate: "",
       isolationStatus: "",
@@ -48,9 +48,11 @@ const Report = ({ viewReport, closeViewReport }) => {
           formData.append("file", file);
         }
 
-        const response = await addReport(formData);
+        console.log(formData)
 
+        const response = await addReport(formData);
         messageApi.success(response.message);
+        setTimeout(()=>closeViewReport(), 1000)
       } catch (error) {
         console.error("Failed to update report:", error);
         messageApi.error("Failed to update report. Please try again.");
