@@ -5,21 +5,21 @@ const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
 
 const diseasesResponse = [
     {
-      diseaseId: "D001",
+      id: "DS001",
       diseaseName: "Dengue Fever",
       category: "Viral Infection",
       modeOfTransmission: "Mosquito-borne (Aedes mosquitoes)",
       description: "Dengue fever is a viral illness transmitted by mosquitoes, causing high fever, severe headaches, joint pain, and skin rash. In severe cases, it can lead to hemorrhagic fever or shock syndrome.",
     },
     {
-      diseaseId: "D002",
+      id: "DS002",
       diseaseName: "Tuberculosis (TB)",
       category: "Bacterial Infection",
       modeOfTransmission: "Airborne (coughing, sneezing, or talking)",
       description: "Tuberculosis is a contagious bacterial infection that primarily affects the lungs. Symptoms include chronic cough, weight loss, fever, and night sweats. It is spread through airborne droplets when an infected person coughs or sneezes.",
     },
     {
-      diseaseId: "D003",
+      id: "DS003",
       diseaseName: "Hepatitis B",
       category: "Viral Infection",
       modeOfTransmission: "Blood, bodily fluids, unprotected sex, mother-to-child",
@@ -31,22 +31,22 @@ export const addDiseases = async (disease) => {
   try {
     if (IS_BACKEND) {
       
-      const existingDisease = diseasesResponse.find((institutes) => institutes.diseaseName === disease.diseaseName || institutes.diseaseId === disease.diseaseId);
+      const existingDisease = diseasesResponse.find((dis) => dis.diseaseName === disease.diseaseName || dis.id === disease.id);
+
+      console.log(existingDisease)
       
       if (existingDisease) {
-       
-        console.log("Disease already exists:", existingDisease);
-        return existingDisease;
+
+        return { status: 400, message: "Disease already exists" };
       } else {
         
         const newDisease = {
           ...disease,
           id: (diseasesResponse.length + 1).toString().padStart(3, "0"), 
-          message: "Disease registered successfully",
         };
         diseasesResponse.push(newDisease);
-        console.log("New Disease registered:", newDisease);
-        return newDisease;
+
+        return { status: 200, message: "Disease registered successfully" };
       }
     } else {
       
@@ -62,7 +62,7 @@ export const addDiseases = async (disease) => {
 export const getAllDiseasesData = async () => {
   try {
     if(IS_BACKEND){
-      return diseasesResponse;
+      return { status: 200, message: "fetch data successfully", data: diseasesResponse }
     }else{
       const response = await axios.get(`${BASE_URL}/getAllDiseasesData`); // Replace with your API endpoint
       return response.data; // Return the data received from the API
