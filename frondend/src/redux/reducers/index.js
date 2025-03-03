@@ -8,6 +8,7 @@ import ViewsSingleCaseReducer from './viewsSingleCase-reducer';
 import AssignphipopupReducer from './assignphipopup-reducer';
 import UnassigncasepopupReducer from './unassigncasepopup-reducer';
 import Assignmohpopup from './assignmohpopup-reducer';
+import ViewEditEvent from './viewEditEvent-reducer';
 
 const rootReducer = combineReducers(
     {
@@ -20,6 +21,7 @@ const rootReducer = combineReducers(
         assignphipopupReducer: AssignphipopupReducer,
         unassigncasepopupReducer: UnassigncasepopupReducer,
         assignmohpopup: Assignmohpopup,
+        viewEditEvent: ViewEditEvent,
     }
 )
 
