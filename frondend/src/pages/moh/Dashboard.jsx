@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { getAllCases } from "../../api/allCasesApi";
 import Navbar from "../../components/Navbar";
 import AssignPHIPopup from "../../components/AssignPHIPopup";
+import ConfirmCasePopup from "../../components/ConfirmCasePopup";
 
 const Dashboard = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,6 +93,7 @@ const Dashboard = (props) => {
       )}
       </div>
       <AssignPHIPopup/>
+      <ConfirmCasePopup/>
     </>
   );
 };
