@@ -14,10 +14,10 @@ export const assignedPhiResponse = [
   },
   {
     id: "002",
-    assignedStatus: "unassigned",
+    assignedStatus: "assigned",
     remarks: "Lorem Lorem",
     assignedPhi: "P001",
-    caseId: "C001",
+    caseId: "C003",
   },
 ];
 
