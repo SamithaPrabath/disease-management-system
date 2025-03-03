@@ -79,9 +79,9 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {data.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-50">
-                      {user.diseaseCode ? (
+                      {user.id ? (
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
-                          {user.diseaseCode}
+                          {user.id}
                         </td>
                       ) : null}
 
@@ -100,12 +100,6 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
                       {user.modeOfTransmission ? (
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
                           {user.modeOfTransmission}
-                        </td>
-                      ) : null}
-
-                      {user.description ? (
-                        <td className="whitespace-wrap w-[200px] py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
-                          {user.description}
                         </td>
                       ) : null}
 
