@@ -6,8 +6,8 @@ const Events = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const events = await getAllEvents();
-      setAllEvents(events);
+      const response = await getAllEvents();
+      setAllEvents(response.data);
     };
     fetchEvents();
   }, []);
