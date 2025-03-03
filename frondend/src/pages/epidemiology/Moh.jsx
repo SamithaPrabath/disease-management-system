@@ -17,8 +17,8 @@ const Moh = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllMohData();
-        setMohData(data);
+        const response = await getAllMohData();
+        setMohData(response.data);
       } catch (error) {
         console.error("Failed to fetch PHI data:", error);
       }
