@@ -9,7 +9,7 @@ import * as Yup from "yup";
 
 // Validation schema
 const assignMOHSchema = Yup.object().shape({
-  assignMoh: Yup.string().required("Please select a MOH"),
+  assignedMoh: Yup.string().required("Please select a MOH"),
 });
 
 const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) => {
@@ -18,13 +18,13 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
   const [mohList, setMohList] = useState([]);
 
   useEffect(() => {
-    setIsOpen(Assignmohpopup);
+    setIsOpen(Assignmohpopup || false); // Ensure boolean fallback
   }, [Assignmohpopup]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getMohListByLocation("Colombo");
+        const response = await getMohListByLocation("Colombo"); // Adjust location dynamically if needed
         setMohList(response.data || []);
       } catch (error) {
         console.error("Error fetching MOH list:", error);
@@ -37,25 +37,28 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
 
   const formik = useFormik({
     initialValues: {
-      caseId: ViewsSingleCase?.[1],
-      assignMoh: "",
-      mohAssignedDate: new Date().toISOString().split("T")[0],
+      caseId: ViewsSingleCase?.[1] || "", // Ensure fallback if undefined
+      assignedMoh: "",
+      mohAssignedDate: new Date().toISOString().split("T")[0], // Today's date
     },
+    enableReinitialize: true, // Updates initialValues if ViewsSingleCase changes
     validationSchema: assignMOHSchema,
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      setSubmitting(true);
       try {
         const response = await mohAssignToCase(values);
-
-        if (response?.message) {
+        if (response.status === 200 && response.message) {
           messageApi.success(response.message);
           resetForm();
           setTimeout(() => closeAssignMOHPopUp(), 1000);
         } else {
-          throw new Error("No response message");
+          messageApi.error(response.message || "Failed to assign MOH");
         }
       } catch (error) {
         console.error("Error during MOH assignment:", error);
-        messageApi.error("An error occurred during MOH assignment");
+        messageApi.error(error.message || "An error occurred during MOH assignment");
+      } finally {
+        setSubmitting(false);
       }
     },
   });
@@ -74,6 +77,7 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
               <button
                 className="p-2 text-gray-600 hover:text-black transition"
                 onClick={() => closeAssignMOHPopUp()}
+                aria-label="Close"
               >
                 <IoIosCloseCircle className="text-[40px] text-[#E2E5E9] hover:text-[#d11a2a] cursor-pointer transition" />
               </button>
@@ -86,11 +90,12 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
                     Select a MOH According to Location
                   </label>
                   <select
-                    name="assignMoh"
-                    className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
-                    value={formik.values.assignMoh}
+                    name="assignedMoh"
+                    className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300"
+                    value={formik.values.assignedMoh}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
+                    disabled={formik.isSubmitting}
                   >
                     <option value="">Select MOH</option>
                     {mohList.map((moh) => (
@@ -99,24 +104,23 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
                       </option>
                     ))}
                   </select>
-                  {formik.touched.assignMoh && formik.errors.assignMoh && (
-                    <p className="text-red-500 text-sm">{formik.errors.assignMoh}</p>
+                  {formik.touched.assignedMoh && formik.errors.assignedMoh && (
+                    <p className="text-red-500 text-sm">{formik.errors.assignedMoh}</p>
                   )}
                 </div>
 
                 {/* Placeholder for Location Component */}
-                <div className="mt-4 text-gray-700">Location Here</div>
-
-                {/* Hidden Case ID */}
-                <input
-                  type="hidden"
-                  name="caseId"
-                  value={formik.values.caseId}
-                />
+                <div className="mt-4 text-gray-700">
+                  Location: Colombo {/* Make dynamic if needed */}
+                </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 mt-3 disabled:bg-blue-400"
+                  className={`w-full mt-4 px-6 py-2 rounded-md text-white font-medium transition ${
+                    formik.isSubmitting || !formik.isValid
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  }`}
                   disabled={formik.isSubmitting || !formik.isValid}
                 >
                   {formik.isSubmitting ? "Assigning..." : "Assign"}
