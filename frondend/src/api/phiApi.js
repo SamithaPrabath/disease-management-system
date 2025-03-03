@@ -151,7 +151,7 @@ export const getPhiListByLocation = async (location) => {
 
 export const phiAssignToCase = async (value) => {
   try {
-    if (!value || !value.caseId || !value.assignPhi) {
+    if (!value || !value.caseId || !value.assignedPhi) {
       throw new Error("Invalid input: caseId and assignPhi are required");
     }
 
@@ -166,7 +166,7 @@ export const phiAssignToCase = async (value) => {
 
       allCasesResponse[caseIndex] = {
         ...allCasesResponse[caseIndex],
-        assignPhi: value.assignPhi,
+        assignedPhi: value.assignedPhi,
         phiAssignedDate: value.phiAssignedDate || new Date().toISOString(), // Default to current date if not provided
       };
 
@@ -174,7 +174,7 @@ export const phiAssignToCase = async (value) => {
     } else {
       const response = await axios.put(
         `${BASE_URL}/phiAssignToCase/${value.caseId}`,
-        { assignPhi: value.assignPhi, phiAssignedDate: value.phiAssignedDate }
+        { assignedPhi: value.assignedPhi, phiAssignedDate: value.phiAssignedDate }
       );
       return response.data;
     }
