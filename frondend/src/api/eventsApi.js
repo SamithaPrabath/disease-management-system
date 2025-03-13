@@ -11,7 +11,7 @@ let eventsResponse = [
     startDate: "Sat, Oct 15",
     location: "Maharagama Hospital",
     description: "Join our free health check-up camp...",
-    image: "",
+    image: "./src/assets/hero.png",
     startTime: "01.00 PM",
   },
   {
@@ -20,7 +20,7 @@ let eventsResponse = [
     startDate: "Sat, Oct 15",
     location: "Maharagama Hospital",
     description: "Join our free health check-up camp...",
-    image: "",
+    image: "./src/assets/logo.png",
     startTime: "05.00 PM",
   },
 ];
