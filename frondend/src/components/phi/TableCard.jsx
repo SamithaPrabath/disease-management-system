@@ -69,7 +69,7 @@ const Table = ({
     const fetchData = async () => {
       try {
         const diseases = await geDiseasesList();
-        setDiseasesList(diseases);
+        setDiseasesList(diseases.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -138,7 +138,7 @@ const Table = ({
           className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
-          <option value="Date">Date</option>
+          <option value="">Date</option>
           {Array.from(new Set(patients.map((p) => p.dateOfOnset))).map(
             (date) => (
               <option key={date} value={date}>
