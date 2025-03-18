@@ -27,13 +27,13 @@ const Home = () => {
         <div className="w-[445px] flex flex-row gap-[10px]">
           <button
             className="text-[16px] text-center font-medium text-[#fff] px-[16px] py-[8px] rounded-[6px] bg-[#0866FF] cursor-pointer"
-            onClick={() => handleClickScroll("map")}
+            onClick={() => handleClickScroll("Map")}
           >
             Explore the Map
           </button>
           <button
             className="text-[16px] text-center font-medium text-[#080809] px-[16px] py-[8px] rounded-[6px] border-[1px] border-[#65686C] bg-[#fff] cursor-pointer"
-            onClick={() => handleClickScroll("events")}
+            onClick={() => handleClickScroll("Events")}
           >
             Upcoming Events
           </button>
