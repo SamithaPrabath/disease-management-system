@@ -214,7 +214,6 @@ export const mohAssignToCase = async (value) => {
     return {
       status: error.response?.status || 500,
       message: error.message || "Failed to assign MOH",
-      data: null,
     };
   }
 };
