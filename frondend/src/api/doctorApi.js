@@ -48,7 +48,7 @@ export const registerDoctor = async (user) => {
         const newUser = {
           ...user,
           id: "D" + (doctorResponse.length + 1).toString().padStart(3, "0"), // Generate a new doctorId
-          message: "User registered successfully",
+          message: "Doctor registered successfully",
         };
         doctorResponse.push(newUser);
 
