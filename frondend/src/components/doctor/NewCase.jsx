@@ -22,8 +22,8 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         const diseases = await geDiseasesList();
         const institutes = await getInstitutesList();
 
-        setDiseasesList(diseases || []);
-        setInstitutesList(institutes || []);
+        setDiseasesList(diseases.data);
+        setInstitutesList(institutes.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         messageApi.error("Failed to load required data");
@@ -230,7 +230,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
               >
                 <option value="">Select Disease</option>
                 {diseasesList.map((disease) => (
-                  <option key={disease.diseaseId} value={disease.diseaseName}>
+                  <option key={disease.id} value={disease.diseaseName}>
                     {disease.diseaseName}
                   </option>
                 ))}
@@ -372,10 +372,10 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
                 <option value="">Select Institute</option>
                 {institutesList.map((institute) => (
                   <option
-                    key={institute.instituteId}
-                    value={institute.instituteId}
+                    key={institute.id}
+                    value={institute.id}
                   >
-                    {institute.instituteName}
+                    {institute.name}
                   </option>
                 ))}
               </select>
