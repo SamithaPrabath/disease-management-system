@@ -13,8 +13,6 @@ const CasesCard = ({ chartData }) => {
   // Calculate total cases
   const totalCases = chartData.reduce((sum, item) => sum + item.count, 0);
 
-  console.log(processedData);
-
   return (
     <div className="w-full flex flex-wrap flex-row items-center justify-left gap-[32px]">
       <div className="w-[300px] h-[200px] bg-white flex flex-col items-center drop-shadow-md shadow-[#E2E5E9] rounded-[8px] p-[16px]">
@@ -69,7 +67,7 @@ const CasesCard = ({ chartData }) => {
                   dataKey="count"
                 >
                   {processedData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index == key? entry.color : `${entry.color}80`} />
+                    <Cell key={`cell-${index}`} fill={index == key? entry.color : `${entry.color}20`} />
                   ))}
                 </Pie>
                 <text
