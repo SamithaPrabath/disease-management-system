@@ -96,7 +96,6 @@ export const createEvent = async (eventData) => {
     return {
       status: error.response?.status || 500,
       message: error.message || "Failed to create event",
-      data: null,
     };
   }
 };
@@ -121,7 +120,6 @@ export const updateEvent = async (id, updatedEvent) => {
       return {
         status: 404,
         message: "Event not found",
-        data: null,
       };
     } else {
       const response = await axios.put(`${BASE_URL}/events/${id}`, updatedEvent);
@@ -132,7 +130,6 @@ export const updateEvent = async (id, updatedEvent) => {
     return {
       status: error.response?.status || 500,
       message: error.message || "Failed to update event",
-      data: null,
     };
   }
 };
@@ -151,13 +148,11 @@ export const deleteEvent = async (id) => {
         return {
           status: 200,
           message: "Event deleted successfully",
-          data: null,
         };
       }
       return {
         status: 404,
         message: "Event not found",
-        data: null,
       };
     } else {
       const response = await axios.delete(`${BASE_URL}/events/${id}`);
@@ -168,7 +163,6 @@ export const deleteEvent = async (id) => {
     return {
       status: error.response?.status || 500,
       message: error.message || "Failed to delete event",
-      data: null,
     };
   }
 };
