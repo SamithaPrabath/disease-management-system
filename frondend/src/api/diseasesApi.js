@@ -124,7 +124,7 @@ export const geDiseasesList = async () => {
         diseaseId,
         diseaseName,
       }));
-      return filteredDiseases;
+      return { status: 200, message: "Diseases list retrieved successfully", data: filteredDiseases };
     }else{
       const response = await axios.get(`${BASE_URL}/getDiseasesList`); // Replace with your API endpoint
       return response.data; // Return the data received from the API
