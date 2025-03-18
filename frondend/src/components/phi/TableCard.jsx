@@ -315,9 +315,7 @@ const Table = ({
                               >
                                 Confirm Case
                               </button>
-                            ) : 
-
-                            
+                            ) :  
                               Object.keys(patient.report).length > 0 && 
                               <button
                                 className={`px-[16px] py-[8px] rounded-[6px] ${
