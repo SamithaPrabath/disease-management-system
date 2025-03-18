@@ -36,12 +36,12 @@ const Events = () => {
           <img
             src={event.image}
             alt="eventImage"
-            className="w-full h-[188px] object-cover"
+            className="w-full h-[188px] object-contain"
           />
           <div className="p-[16px]">
             <p className="Date text-[16px] text-[#65686C] font-normal flex gap-2">
             <span>{event.startDate}</span>
-  <span>{event.startTime}</span>
+            <span>{event.startTime}</span>
             </p>
             <h1 className="text-[20px] text-[#080809] font-medium">
               {event.eventName}
