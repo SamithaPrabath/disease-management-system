@@ -67,7 +67,7 @@ const CasesCard = ({ chartData }) => {
                   dataKey="count"
                 >
                   {processedData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index == key? entry.color : `${entry.color}20`} />
+                    <Cell key={`cell-${index}`} fill={index == key? entry.color : `${entry.color}40`} />
                   ))}
                 </Pie>
                 <text
