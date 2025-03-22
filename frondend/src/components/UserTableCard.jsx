@@ -79,7 +79,7 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {data.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-50">
-                      {user.registrationNumber ? (
+                      {user ? (
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
                           {user.id}
                         </td>
