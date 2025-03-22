@@ -6,16 +6,36 @@ import { closeAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 import { message } from "antd";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 // Validation schema
 const assignMOHSchema = Yup.object().shape({
   assignedMoh: Yup.string().required("Please select a MOH"),
 });
 
+// Map container style
+const containerStyle = {
+  width: "100%",
+  height: "200px", // Adjust height as needed
+};
+
+// Colombo, Sri Lanka coordinates
+const center = {
+  lat: 6.9271, // Latitude of Colombo
+  lng: 79.8612, // Longitude of Colombo
+};
+
 const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [mohList, setMohList] = useState([]);
+
+  // Load the Google Maps API
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
 
   useEffect(() => {
     setIsOpen(Assignmohpopup || false); // Ensure boolean fallback
@@ -109,9 +129,23 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
                   )}
                 </div>
 
-                {/* Placeholder for Location Component */}
+                {/* Location Section with Map */}
                 <div className="mt-4 text-gray-700">
-                  Location: Colombo {/* Make dynamic if needed */}
+                  <p className="mb-2">Location: Colombo</p>
+                  {isLoaded ? (
+                    <GoogleMap
+                      mapContainerStyle={containerStyle}
+                      center={center}
+                      zoom={13} // Adjust zoom level as needed
+                    >
+                      {/* Add a marker for Colombo */}
+                      <Marker position={center} />
+                    </GoogleMap>
+                  ) : (
+                    <div className="flex items-center justify-center h-[200px] bg-gray-100">
+                      Loading Map...
+                    </div>
+                  )}
                 </div>
 
                 <button
