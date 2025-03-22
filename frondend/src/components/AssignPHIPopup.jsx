@@ -6,11 +6,24 @@ import { closeAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
 import { message } from "antd";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 // Validation schema
 const assignPHISchema = Yup.object().shape({
   assignedPhi: Yup.string().required("Please select a PHI"),
 });
+
+// Map container style
+const containerStyle = {
+  width: "100%",
+  height: "200px", // Adjust height as needed
+};
+
+// Colombo, Sri Lanka coordinates
+const center = {
+  lat: 6.9271, // Latitude of Colombo
+  lng: 79.8612, // Longitude of Colombo
+};
 
 const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -18,12 +31,17 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
   const [phiList, setPhiList] = useState([]);
   const [caseId, setCaseId] = useState("");
 
+  // Load the Google Maps API
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
+
   useEffect(() => {
     setIsOpen(Assignphipopup);
     setCaseId(ViewsSingleCase?.[1]);
   }, [Assignphipopup]);
-
-  console.log(ViewsSingleCase?.[1]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,7 +65,7 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
     },
     validationSchema: assignPHISchema,
     onSubmit: async (values, { resetForm }) => {
-      console.log(values)
+      console.log(values);
       try {
         const response = await phiAssignToCase(values);
 
@@ -109,8 +127,24 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
                   )}
                 </div>
 
-                {/* Placeholder for Location Component */}
-                <div className="mt-4 text-gray-700">Location Here</div>
+                {/* Location Section with Map */}
+                <div className="mt-4 text-gray-700">
+                  <p className="mb-2">Location: Colombo</p>
+                  {isLoaded ? (
+                    <GoogleMap
+                      mapContainerStyle={containerStyle}
+                      center={center}
+                      zoom={13} // Adjust zoom level as needed
+                    >
+                      {/* Add a marker for Colombo */}
+                      <Marker position={center} />
+                    </GoogleMap>
+                  ) : (
+                    <div className="flex items-center justify-center h-[200px] bg-gray-100">
+                      Loading Map...
+                    </div>
+                  )}
+                </div>
 
                 {/* Hidden Case ID */}
                 <input
