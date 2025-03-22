@@ -7,9 +7,10 @@ const testUser = { username: "test", password: "123" };
 export const testResponse = [
   {
     userId: "001",
+    username: "test user",
     token: "abc1234",
-    role: "moh",
-    userTypeId: "M001",
+    role: "idu",
+    userTypeId: "I001",
   },
 ];
 
