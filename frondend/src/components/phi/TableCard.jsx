@@ -121,7 +121,7 @@ const Table = ({
         <select
           name="diseaseName"
           id="diseaseName"
-          className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Select Disease</option>
@@ -135,7 +135,7 @@ const Table = ({
         <select
           name="date"
           id="disease"
-          className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Date</option>
@@ -151,7 +151,7 @@ const Table = ({
         <select
           name="sex"
           id="sex"
-          className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Sex</option>
@@ -161,7 +161,7 @@ const Table = ({
         <select
           name="caseStatus"
           id="confirmed"
-          className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Status</option>
