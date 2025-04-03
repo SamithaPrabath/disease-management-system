@@ -103,7 +103,7 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
             <form onSubmit={formik.handleSubmit} className="w-full p-4 flex flex-col gap-4">
               {/* Event Name */}
               <div>
-                <label className="block text-gray-700 font-medium mb-1">Event Name*</label>
+                <label className="block text-gray-700 font-medium mb-1">Event Name<span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="eventName"
@@ -121,7 +121,7 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
               {/* Start Date and Time */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-gray-700 font-medium mb-1">Start Date*</label>
+                  <label className="block text-gray-700 font-medium mb-1">Start Date<span className="text-red-500">*</span></label>
                   <input
                     type="date"
                     name="startDate"
@@ -136,7 +136,7 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
                   )}
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-medium mb-1">Start Time*</label>
+                  <label className="block text-gray-700 font-medium mb-1">Start Time<span className="text-red-500">*</span></label>
                   <input
                     type="time"
                     name="startTime"
@@ -154,7 +154,7 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
 
               {/* Location */}
               <div>
-                <label className="block text-gray-700 font-medium mb-1">Location*</label>
+                <label className="block text-gray-700 font-medium mb-1">Location<span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="location"
