@@ -145,7 +145,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
           <div className="flex flex-row gap-3">
             <div className="w-1/2 flex flex-col gap-3">
-              <label className="block text-gray-700">Name of Patient*</label>
+              <label className="block text-gray-700">Name of Patient<span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="patientName"
@@ -162,7 +162,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Age*</label>
+              <label className="block text-gray-700">Age<span className="text-red-500">*</span></label>
               <input
                 type="number"
                 name="age"
@@ -178,7 +178,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Sex*</label>
+              <label className="block text-gray-700">Sex<span className="text-red-500">*</span></label>
               <select
                 name="sex"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -220,7 +220,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Disease*</label>
+              <label className="block text-gray-700">Disease<span className="text-red-500">*</span></label>
               <select
                 name="diseaseName"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -243,7 +243,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Case Status*</label>
+              <label className="block text-gray-700">Case Status<span className="text-red-500">*</span></label>
               <select
                 name="caseStatus"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -342,7 +342,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/2 flex flex-col gap-3">
-              <label className="block text-gray-700">Phone Number*</label>
+              <label className="block text-gray-700">Phone Number<span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="phoneNumber"
@@ -361,7 +361,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
 
           <div className="flex flex-row gap-3">
             <div className="w-1/2 flex flex-col gap-3">
-              <label className="block text-gray-700">Institute*</label>
+              <label className="block text-gray-700">Institute<span className="text-red-500">*</span></label>
               <select
                 name="instituteId"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -405,7 +405,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Date of Admission*</label>
+              <label className="block text-gray-700">Date of Admission<span className="text-red-500">*</span></label>
               <input
                 type="date"
                 name="dateOfAdmission"
@@ -460,7 +460,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
 
           <div className="flex flex-col gap-3">
             <label className="block text-gray-700">
-              Address of the Patient*
+              Address of the Patient<span className="text-red-500">*</span>
             </label>
             <textarea
               name="address"
