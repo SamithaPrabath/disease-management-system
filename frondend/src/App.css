@@ -1,2 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+.custom-select {
+    /* Remove default arrow */
+    -webkit-appearance: none; /* For Chrome, Safari */
+    -moz-appearance: none;    /* For Firefox */
+    appearance: none;         /* Standard */
+    
+    /* Add custom arrow */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="%23000" d="M0 0l5 5 5-5H0z"/></svg>'); /* Simple downward arrow */
+    background-repeat: no-repeat;
+    background-position: right 10px center; /* Move arrow 10px from the right */
+    background-size: 10px; /* Adjust arrow size if needed */
+  }
