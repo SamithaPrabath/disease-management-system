@@ -199,7 +199,8 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
           <div className="flex flex-row gap-3">
             <div className="w-1/2 flex flex-col gap-3">
               <label className="block text-gray-700">
-                {Number(formik.values.age) < 18 ? "Guardian*" : "Guardian"}
+                {Number(formik.values.age) < 18 ? "Guardian" : "Guardian"}
+                <span className="text-red-500">{Number(formik.values.age) < 18 ? "*" : ""}</span>
               </label>
               <input
                 type="text"
@@ -321,7 +322,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
           <div className="flex flex-row gap-3">
             <div className="w-1/2 flex flex-col gap-3">
               <label className="block text-gray-700">
-                NIC No{Number(formik.values.age) >= 18 ? "*" : ""}
+                NIC No<span className="text-red-500">{Number(formik.values.age) >= 18 ? "*" : ""}</span>
               </label>
               <input
                 type="text"
