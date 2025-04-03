@@ -28,6 +28,8 @@ const CasesCard = ({ chartData }) => {
               innerRadius={40}
               outerRadius={60}
               dataKey="count"
+              stroke="#aaa"
+              strokeWidth={1}
             >
               {processedData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -65,9 +67,11 @@ const CasesCard = ({ chartData }) => {
                   innerRadius={40}
                   outerRadius={60}
                   dataKey="count"
+                  stroke="#aaa" 
+                  strokeWidth={1}
                 >
                   {processedData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index == key? entry.color : `${entry.color}40`} />
+                    <Cell key={`cell-${index}`} fill={index == key? entry.color : `${entry.color}10`} />
                   ))}
                 </Pie>
                 <text
