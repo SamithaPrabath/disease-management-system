@@ -1,5 +1,6 @@
 import React from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import "../../App.css"
 
 // Map container style
 const containerStyle = {
@@ -47,7 +48,7 @@ const Map = () => {
         <select
           name="disease"
           id="disease"
-          className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
         >
           <option value="disease">Disease</option>
         </select>
@@ -55,7 +56,7 @@ const Map = () => {
         <select
           name="date"
           id="date"
-          className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
         >
           <option value="date">Date</option>
         </select>
@@ -63,7 +64,7 @@ const Map = () => {
         <select
           name="affectedArea"
           id="affectedArea"
-          className="w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
         >
           <option value="affectedArea">Affected area</option>
         </select>
