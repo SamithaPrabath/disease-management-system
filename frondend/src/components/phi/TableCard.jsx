@@ -180,7 +180,7 @@ const Table = ({
                     {tableHeaders.map((heading) => (
                       <th
                         key={heading}
-                        className="py-3.5 pl-4 pr-3 text-left text-sm font-normal text-[#65686C] sm:pl-6"
+                        className="py-3.5 pl-4 pr-3 text-center text-sm font-normal text-[#65686C] sm:pl-6"
                       >
                         {heading}
                       </th>
@@ -189,7 +189,7 @@ const Table = ({
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredPatients.map((patient) => (
-                    <tr key={patient.caseId} className="hover:bg-gray-50">
+                    <tr key={patient.caseId} className="hover:bg-gray-50 text-center">
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
                         {patient.caseId}
                       </td>
@@ -224,7 +224,7 @@ const Table = ({
                           {patient.caseStatus}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm flex gap-3">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm flex justify-center items-center gap-3">
                         <button
                           className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] cursor-pointer"
                           onClick={() => viewSingleCase(patient.caseId)}
