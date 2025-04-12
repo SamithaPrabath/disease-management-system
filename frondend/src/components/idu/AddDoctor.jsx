@@ -15,7 +15,7 @@ const AddDoctor = ({ handleBack }) => {
     const fetchData = async () => {
       try {
         const moh = await getAllMOHList();
-        setMohList(moh);
+        setMohList(moh.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         messageApi.error("Failed to load required data");

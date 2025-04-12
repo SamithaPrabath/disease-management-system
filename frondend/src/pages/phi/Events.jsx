@@ -92,7 +92,7 @@ const Events = ({viewEditEvent}) => {
                   <img
                     src={event.image}
                     alt="eventImage"
-                    className="w-full h-[188px] object-cover"
+                    className="w-full h-[188px] object-contain"
                   />
                   <div className="p-[16px]">
                     <p className="Date text-[16px] text-[#65686C] font-normal flex gap-2">

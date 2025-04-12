@@ -218,6 +218,20 @@ const HeaderBar = ({
                 >
                   Confirm Case
                 </button>
+
+                {Object.keys(singleCase?.report || {}).length > 0 && (
+                  <button
+                    className={`px-[16px] py-[8px] rounded-[6px] ${
+                      singleCase?.sendReport
+                        ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                        : "bg-blue-600 text-white cursor-pointer"
+                    }
+                                `}
+                    onClick={() => handleSendFinalReport(singleCase?.caseId)}
+                  >
+                    Send Final Report
+                  </button>
+                )}
               </div>
             ) : (
               <button
@@ -229,9 +243,7 @@ const HeaderBar = ({
                 }
                 `}
                 onClick={() => handleMarkAsReceived(singleCase?.caseId)}
-                disabled={
-                  singleCase?.markAsReceived == "true" ? true : false
-                }
+                disabled={singleCase?.markAsReceived == "true" ? true : false}
               >
                 Mark as Received
               </button>

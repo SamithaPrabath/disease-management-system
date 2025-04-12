@@ -49,7 +49,7 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
         {/* Disease Filter */}
         <select
           name="disease"
-          className="w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Disease</option>
@@ -59,7 +59,7 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
         {/* Date Filter */}
         <select
           name="date"
-          className="w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Date</option>
@@ -75,7 +75,7 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
         {/* Sex Filter */}
         <select
           name="sex"
-          className="w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Sex</option>
@@ -86,7 +86,7 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
         {/* Status Filter */}
         <select
           name="status"
-          className="w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
+          className="custom-select w-[186px] h-[40px] px-4 py-2 bg-[#E2E5E9] rounded-[8px]"
           onChange={handleFilterChange}
         >
           <option value="">Status</option>

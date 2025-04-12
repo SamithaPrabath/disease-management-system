@@ -80,7 +80,7 @@ const AddEvent = ({ handleAddEvent }) => {
           >
             {/* Event Name */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">Event Name*</label>
+              <label className="block text-gray-700 font-medium mb-1">Event Name<span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="eventName"
@@ -98,7 +98,7 @@ const AddEvent = ({ handleAddEvent }) => {
             {/* Start Date and Time */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 font-medium mb-1">Start Date*</label>
+                <label className="block text-gray-700 font-medium mb-1">Start Date<span className="text-red-500">*</span></label>
                 <input
                   type="date"
                   name="startDate"
@@ -113,7 +113,7 @@ const AddEvent = ({ handleAddEvent }) => {
                 )}
               </div>
               <div>
-                <label className="block text-gray-700 font-medium mb-1">Start Time*</label>
+                <label className="block text-gray-700 font-medium mb-1">Start Time<span className="text-red-500">*</span></label>
                 <input
                   type="time"
                   name="startTime"
@@ -131,7 +131,7 @@ const AddEvent = ({ handleAddEvent }) => {
 
             {/* Location */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">Location*</label>
+              <label className="block text-gray-700 font-medium mb-1">Location<span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="location"

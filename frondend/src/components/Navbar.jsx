@@ -3,12 +3,36 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { IoNotifications } from "react-icons/io5";
 import { HiUser } from "react-icons/hi2";
+import { connect } from "react-redux";
 
-const Navbar = ({ Sections, onNavClick, activeId }) => {
+const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
   const [activeSection, setActiveSection] = useState("Home");
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false); // State for dropdown visibility
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false); // State for user dropdown visibility
+  const [isNotificationDropdownVisible, setIsNotificationDropdownVisible] =
+    useState(false); // State for notification dropdown visibility
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [userName, setUserName] = useState("Null");
+  const [userRole, setUserRole] = useState("Null");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (AllLogins?.data) {
+        setUserName(AllLogins.data.username);
+        setUserRole(AllLogins.data.role);
+      }
+    };
+
+    fetchData();
+  }, [AllLogins]);
+
+  // Mock notifications
+  const mockNotifications = [
+    { id: 1, text: "New message from John Doe" },
+    { id: 2, text: "Your report is ready" },
+    { id: 3, text: "Reminder: Meeting at 3 PM" },
+  ];
 
   // Handle smooth scrolling
   const handleClickScroll = (elementId) => {
@@ -34,7 +58,10 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
       });
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
 
     Sections.forEach(({ id }) => {
       const section = document.getElementById(id);
@@ -44,9 +71,14 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
     return () => observer.disconnect(); // Cleanup observer
   }, []);
 
-  // Toggle dropdown visibility
+  // Toggle user dropdown visibility
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
+  };
+
+  // Toggle notification dropdown visibility
+  const toggleNotificationDropdown = () => {
+    setIsNotificationDropdownVisible(!isNotificationDropdownVisible);
   };
 
   // Handle logout
@@ -110,15 +142,42 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
               </button>
             ))}
           </ul>
-          <div className="w-[100px] h-[40px] flex flex-row items-center gap-[16px] relative">
+          <div className="min-w-[100px] h-[40px] flex flex-row items-center gap-[16px] relative">
             {/* Notification Button */}
-            <button
-              className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
+            <div className="relative">
+              <div className="relative">
+                <button
+                  className="w-[40px] h-[40px] text-[18px] bg-[#E2E5E9] rounded-[50%] cursor-pointer
         flex items-center justify-center
         "
-            >
-              <IoNotifications />
-            </button>
+                  onClick={toggleNotificationDropdown}
+                >
+                  <IoNotifications />
+                </button>
+                {/* Notification Count */}
+                <div
+                  className="absolute -top-1 -right-1 w-[20px] h-[20px] bg-[#0866FF] text-[#fff] text-[12px] rounded-[50%]
+                flex items-center justify-center
+                "
+                >
+                  {mockNotifications.length}
+                </div>
+              </div>
+
+              {/* Notification Dropdown Menu */}
+              {isNotificationDropdownVisible && (
+                <div className="absolute right-0 mt-2 w-[250px] bg-white border border-[#E2E5E9] rounded-[6px] shadow-lg">
+                  {mockNotifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className="px-4 py-2 text-[14px] text-[#65686C] hover:bg-[#F5F5F5]"
+                    >
+                      {notification.text}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* User Button with Dropdown */}
             <div className="relative">
@@ -131,7 +190,7 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
                 <HiUser />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* User Dropdown Menu */}
               {isDropdownVisible && (
                 <div className="absolute right-0 mt-2 w-[120px] bg-white border border-[#E2E5E9] rounded-[6px] shadow-lg">
                   <button
@@ -143,6 +202,18 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
                 </div>
               )}
             </div>
+            <div className="flex flex-col items-start justify-center">
+              <div>
+                <p className="text-[14px] text-gray-500 font-bold">
+                  Hi<span className="text-[#0866FF]">, </span>
+                  {userName}
+                </p>
+              </div>
+              <p className="text-gray-400 flex flex-row items-center justify-between text-[10px] uppercase gap-1">
+                <div className="active w-[10px] h-[10px] bg-green-500 rounded-[50%]" />
+                {userRole}
+              </p>
+            </div>
           </div>
         </>
       )}
@@ -150,4 +221,10 @@ const Navbar = ({ Sections, onNavClick, activeId }) => {
   );
 };
 
-export default Navbar;
+const mapStateToProps = (state) => {
+  return {
+    AllLogins: state.allLogins,
+  };
+};
+
+export default connect(mapStateToProps, null)(Navbar);

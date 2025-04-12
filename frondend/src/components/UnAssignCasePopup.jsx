@@ -4,6 +4,19 @@ import { connect } from "react-redux";
 import { closeUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction";
 import { message } from "antd";
 import { unAssignedPhi } from "../api/assignedPhiApi";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+
+// Map container style
+const containerStyle = {
+  width: "100%",
+  height: "200px", // Adjust height as needed
+};
+
+// Colombo, Sri Lanka coordinates
+const center = {
+  lat: 6.9271, // Latitude of Colombo
+  lng: 79.8612, // Longitude of Colombo
+};
 
 const UnAssignCasePopup = ({
   AllLogins,
@@ -20,6 +33,13 @@ const UnAssignCasePopup = ({
     remarks: "",
   });
   const [userTypeId, setUserTypeId] = useState("");
+
+  // Load the Google Maps API
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
 
   useEffect(() => {
     setUserTypeId(AllLogins.data.userTypeId);
@@ -52,7 +72,7 @@ const UnAssignCasePopup = ({
     }
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error);
+    return !Object.values(newErrors).some((error) => error);
   };
 
   const handleSubmit = async (e) => {
@@ -63,7 +83,7 @@ const UnAssignCasePopup = ({
       assignedPhi: userTypeId,
       caseId: ViewsSingleCase?.[1],
     };
-    
+
     const response = await unAssignedPhi(values);
 
     try {
@@ -82,10 +102,10 @@ const UnAssignCasePopup = ({
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
-          <div className="bg-white w-[400px] h-[500px] rounded-[8px] shadow-sm flex flex-col">
+          <div className="bg-white w-[400px] min-h-[500px] rounded-[8px] shadow-sm flex flex-col">
             {/* Header Section */}
             <div className="h-[56px] px-[16px] py-[8px] flex items-center justify-between border-b border-[#E2E5E9]">
               <h1 className="w-full text-center text-[24px] font-medium">
@@ -143,7 +163,24 @@ const UnAssignCasePopup = ({
                   )}
                 </div>
 
-                Location Here
+                {/* Location Section with Map */}
+                <div className="mt-4 text-gray-700">
+                  <p className="mb-2">Location: Colombo</p>
+                  {isLoaded ? (
+                    <GoogleMap
+                      mapContainerStyle={containerStyle}
+                      center={center}
+                      zoom={13} // Adjust zoom level as needed
+                    >
+                      {/* Add a marker for Colombo */}
+                      <Marker position={center} />
+                    </GoogleMap>
+                  ) : (
+                    <div className="flex items-center justify-center h-[200px] bg-gray-100">
+                      Loading Map...
+                    </div>
+                  )}
+                </div>
 
                 {/* Submit Button */}
                 <button

@@ -23,7 +23,7 @@ export const allCasesResponse = [
     nicNo: "123456789V",
     phoneNumber: "0771234567",
     instituteName: "XYZ Medical College",
-    dateOfOnset: "2023-09-15",
+    dateOfOnset: "2023-09-17",
     dateOfAdmission: "2023-09-20",
     ward: "Ward 10",
     bhtNumber: "BHT12345",
