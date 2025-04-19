@@ -25,7 +25,7 @@ const AddMOH = ({ handleBack }) => {
       try {
         const response = await registerMoh(values);
 
-        if (response.status === 201 && response.message) {
+        if (response.status === 200 && response.message) {
           messageApi.success(response.message);
           setTimeout(() => handleBack(), 1000);
           window.location.reload();

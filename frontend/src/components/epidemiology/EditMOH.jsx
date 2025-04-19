@@ -9,7 +9,6 @@ import { message } from "antd";
 
 const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [showPassword, setShowPassword] = useState(false);
   const [isEnableEdit, setIsEnableEdit] = useState(true); // View mode by default
   const [userData, setUserData] = useState(null); // Start as null for loading state
 
@@ -36,8 +35,6 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
       area: userData?.area || "",
       email: userData?.email || "",
       phone: userData?.phone || "",
-      username: userData?.username || "",
-      password: userData?.password_hash || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes
     validationSchema: mohSchema,
@@ -177,60 +174,6 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
                 />
                 {formik.touched.phoneNumber && formik.errors.phoneNumber && (
                   <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Username & Password - Two-column layout */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700">Username</label>
-                <input
-                  type="text"
-                  name="username"
-                  className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                    isEnableEdit
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-black"
-                  }`}
-                  value={formik.values.username}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  disabled={isEnableEdit}
-                />
-                {formik.touched.username && formik.errors.username && (
-                  <p className="text-red-500 text-sm">{formik.errors.username}</p>
-                )}
-              </div>
-
-              <div className="relative">
-                <label className="block text-gray-700">Password</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  className={`w-full px-4 py-2 rounded-md focus:outline-none pr-10 ${
-                    isEnableEdit
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-black"
-                  }`}
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  disabled={isEnableEdit}
-                />
-                <button
-                  type="button"
-                  className="absolute top-9 right-3 text-gray-600"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <AiOutlineEyeInvisible size={22} />
-                  ) : (
-                    <AiOutlineEye size={22} />
-                  )}
-                </button>
-                {formik.touched.password && formik.errors.password && (
-                  <p className="text-red-500 text-sm">{formik.errors.password}</p>
                 )}
               </div>
             </div>

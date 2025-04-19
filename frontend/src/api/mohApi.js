@@ -97,7 +97,7 @@ export const getAllMohData = async () => {
 
 export const deleteMoh = async (id) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const index = mohResponse.findIndex((moh) => moh.id === id);
       if (index !== -1) {
         mohResponse.splice(index, 1);
@@ -106,8 +106,12 @@ export const deleteMoh = async (id) => {
         return { status: 404, message: "MOH record not found" };
       }
     } else {
-      const response = await axios.delete(`${BASE_URL}/deleteMOH/${id}`);
-      return response.data;
+      const response = await axios.delete(`${BASE_URL}/api/mohs/delete/${id}`);
+      if (response.status === 200) {
+        return { status: 200, message: "MOH record deleted successfully" };
+      } else {
+        return { status: 400, message: "Failed to delete MOH record", data: response.data };
+      }
     }
   } catch (error) {
     console.error("Error deleting MOH record:", error);

@@ -24,3 +24,21 @@ class MOHController(BaseController):
             return MOHController.success_response(moh_users)
         except Exception as e:
             return MOHController.error_response(str(e))
+
+    @staticmethod
+    def delete_moh_user(id):
+        try:
+            result = asyncio.run(MOH.delete_moh_user(id))
+            return MOHController.success_response(result)
+        except Exception as e:
+            return MOHController.error_response(str(e))
+
+    @staticmethod
+    @jwt_required()
+    def update_moh_user(id):
+        try:
+            data = request.get_json()
+            result = asyncio.run(MOH.update_moh_user(id, data))
+            return MOHController.success_response(result)
+        except Exception as e:
+            return MOHController.error_response(str(e))

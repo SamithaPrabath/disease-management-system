@@ -62,3 +62,50 @@ class MOH():
 
             return users
         return []
+
+    @staticmethod
+    async def delete_moh_user(id):
+        query_executor = AsyncQueryExecutor()
+        # First delete from moh table
+        query = "DELETE FROM moh WHERE id = %s"
+        await query_executor.execute(query, (id,))
+        
+        query_executor1 = AsyncQueryExecutor()
+        # Then delete from users table
+        query = "DELETE FROM users WHERE id = %s"
+        await query_executor1.execute(query, (id,))
+        
+        return {"message": "MOH user deleted successfully", "status": 200}
+
+    @staticmethod
+    async def update_moh_user(id, data):
+        query_executor = AsyncQueryExecutor()
+        
+        # Update users table
+        user_update_query = """
+            UPDATE users 
+            SET name = %s, 
+                phone = %s, 
+                username = %s,
+                updated_at = %s
+            WHERE id = %s
+        """
+        updated_at = datetime.now()
+        await query_executor.execute(
+            user_update_query, 
+            (data.get('name'), data.get('phoneNumber'), data.get('username'), updated_at, id)
+        )
+        
+        # Update moh table
+        moh_update_query = """
+            UPDATE moh 
+            SET area = %s, 
+                email = %s
+            WHERE id = %s
+        """
+        await query_executor.execute(
+            moh_update_query, 
+            (data.get('area'), data.get('email'), id)
+        )
+        
+        return {"message": "MOH user updated successfully", "status": 200}
