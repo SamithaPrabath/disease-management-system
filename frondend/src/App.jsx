@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import Home from "./pages/PublicPage"
 import Login from "./pages/LoginPage";
+import ResetPassword from "./pages/ResetPassword";
 
 import DashboardEpi from "./pages/epidemiology/Dashboard";
 import DashboardPhi from "./pages/phi/Dashboard";
@@ -24,7 +25,12 @@ const  App = (props) => {
   useEffect(() => {
     if (response?.status == "200") {
       encryptAndStoreToken(response?.data?.token);
-      navigate("/dashboard");
+
+      if(response?.data?.isInitial == 1){
+        navigate("/reset-password")
+      }else{
+        navigate("/dashboard");
+      }
     } else {
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("tokenExpiry");
@@ -36,6 +42,7 @@ const  App = (props) => {
       <Routes>
       <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword/>}/>
         <Route path="/home" element={<Home />} />
         <Route
           path="/dashboard"

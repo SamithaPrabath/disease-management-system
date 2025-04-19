@@ -9,8 +9,9 @@ export const testResponse = [
     userId: "001",
     username: "test user",
     token: "abc1234",
-    role: "idu",
-    userTypeId: "I001",
+    role: "admin",
+    userTypeId: "A001",
+    isInitial: 0,
   },
 ];
 
