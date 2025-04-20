@@ -55,3 +55,11 @@ class CaseController(BaseController):
             return CaseController.success_response(case)
         except Exception as e:
             return CaseController.error_response(str(e), 500)
+    
+    @staticmethod
+    def get_all_cases_by_admin():
+        try:
+            cases = asyncio.run(Case.get_all_cases_by_admin())
+            return CaseController.success_response(cases)
+        except Exception as e:
+            return CaseController.error_response(str(e), 500)

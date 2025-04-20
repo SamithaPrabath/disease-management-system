@@ -33,11 +33,8 @@ export const phiResponse = [
 
 export const registerPhi = async (user) => {
   try {
-    if (!user || !user.name || !user.registrationNumber) {
-      throw new Error("Invalid input: Name and registrationNumber are required");
-    }
-
-    if (IS_BACKEND) {
+    
+    if (IS_BACKEND == "false") {
       const existingUser = phiResponse.find(
         (phi) => phi.name === user.name || phi.registrationNumber === user.registrationNumber
       );
@@ -55,8 +52,13 @@ export const registerPhi = async (user) => {
         return { status: 201, message: "User registered successfully", data: newUser };
       }
     } else {
-      const response = await axios.post(`${BASE_URL}/register`, user);
-      return response.data;
+      const response = await axios.post(`${BASE_URL}/api/phis/add`, user);
+      console.log(response.data);
+      if (response.status == 200) {
+        return { status: 200, message: "User registered successfully", data: response.data };
+      } else {
+        return { status: 400, message: response.data.message };
+      }
     }
   } catch (error) {
     console.error("Error registering user:", error);
@@ -69,11 +71,15 @@ export const registerPhi = async (user) => {
 
 export const getAllPhiData = async () => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       return { status: 200, message: "Fetch data successfully", data: phiResponse };
     } else {
-      const response = await axios.get(`${BASE_URL}/getAllPhiData`);
-      return response.data;
+      const response = await axios.get(`${BASE_URL}/api/phis/getAll`);
+      if (response.status == 200) {
+        return { status: 200, message: "Fetch data successfully", data: response.data.data };
+      } else {
+        return { status: 400, message: response.data.message };
+      }
     }
   } catch (error) {
     console.error("Error fetching PHI data:", error);
@@ -86,7 +92,7 @@ export const getAllPhiData = async () => {
 
 export const deletePhi = async (id) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const index = phiResponse.findIndex((phi) => phi.id === id);
       if (index !== -1) {
         phiResponse.splice(index, 1);
@@ -95,8 +101,12 @@ export const deletePhi = async (id) => {
         return { status: 404, message: "PHI record not found" };
       }
     } else {
-      const response = await axios.delete(`${BASE_URL}/deletePhi/${id}`);
-      return response.data;
+      const response = await axios.delete(`${BASE_URL}/api/phis/delete/${id}`);
+      if (response.status == 200) {
+        return { status: 200, message: "PHI record deleted successfully", data: response.data };
+      } else {
+        return { status: 400, message: response.data.message };
+      }
     }
   } catch (error) {
     console.error("Error deleting PHI record:", error);
@@ -109,7 +119,7 @@ export const deletePhi = async (id) => {
 
 export const updatePhi = async (id, updatedData) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const index = phiResponse.findIndex((phi) => phi.id === id);
       if (index !== -1) {
         phiResponse[index] = { ...phiResponse[index], ...updatedData };
@@ -118,8 +128,12 @@ export const updatePhi = async (id, updatedData) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      const response = await axios.put(`${BASE_URL}/updatePhi/${id}`, updatedData);
-      return response.data;
+      const response = await axios.put(`${BASE_URL}/api/phis/update/${id}`, updatedData);
+      if (response.status == 200) {
+        return { status: 200, message: "Record updated successfully", data: response.data };
+      } else {
+        return { status: 400, message: response.data.message };
+      }
     }
   } catch (error) {
     console.error("Error updating PHI record:", error);

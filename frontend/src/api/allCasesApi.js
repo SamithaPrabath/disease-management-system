@@ -386,7 +386,7 @@ export const getCasesCount = async () => {
   try {
     let activeCasesCount;
 
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const activeCases = allCasesResponse.filter((caseItem) => caseItem.caseStatus === "Confirmed");
 
       const casesByDisease = activeCases.reduce((acc, caseItem) => {
@@ -408,22 +408,61 @@ export const getCasesCount = async () => {
       };
     } else {
       // API call to fetch cases count
-      const response = await axios.get(`${BASE_URL}/getCasesCount`);
-      activeCasesCount = response.data.data; // Assumes API returns { status, message, data }
-
-      // Optionally add colors if not provided by API
-      if (activeCasesCount && !activeCasesCount[0]?.color) {
-        activeCasesCount = activeCasesCount.map((item, index) => ({
-          ...item,
-          color: getColorForDisease(item.diseaseName, index),
+      const response = await axios.get(`${BASE_URL}/api/cases/admin/all`);
+      if (response.status === 200) {
+        const filteredCases = response.data.data.map(({ id, patientName, age, sex, guardian, diseaseName, caseStatus, confirmedDate, natureOfConfirmation, remarks, confirmedBy, nicNo, phoneNumber, instituteName, dateOfOnset, dateOfAdmission, ward, bhtNumber, address, labResult, file, notifier, notifiedDate, assignedPhi, phiAssignedDate, assignedMoh, mohAssignedDate, sendReport, markAsReceived }) => ({
+          id,
+          caseId: id,
+          patientName,
+          age,
+          sex,
+          guardian,
+          diseaseName,
+          caseStatus,
+          confirmedDate,
+          natureOfConfirmation,
+          remarks,
+          confirmedBy,
+          nicNo,
+          phoneNumber,
+          instituteName,
+          dateOfOnset,
+          dateOfAdmission,
+          ward,
+          bhtNumber,
+          address,
+          labResult,
+          file,
+          notifier,
+          notifiedDate,
+          assignedPhi,
+          phiAssignedDate,
+          assignedMoh,
+          mohAssignedDate,
+          sendReport,
+          markAsReceived,
         }));
-      }
 
-      return {
-        status: 200,
-        message: "Data fetched successfully",
-        data: activeCasesCount,
-      };
+        const activeCases = filteredCases.filter((caseItem) => caseItem.caseStatus === "Confirmed");
+        const casesByDisease = activeCases.reduce((acc, caseItem) => {
+          const diseaseName = caseItem.diseaseName || "Unknown";
+          acc[diseaseName] = (acc[diseaseName] || 0) + 1;
+          return acc;
+        }, {});
+  
+        activeCasesCount = Object.entries(casesByDisease).map(([diseaseName, count], index) => ({
+          diseaseName,
+          count,
+          color: getColorForDisease(diseaseName, index), // Assign a color
+        }));
+  
+        return {
+          status: 200,
+          message: "Data fetched successfully",
+          data: activeCasesCount,
+        };
+      }
+      return { status: 400, message: "Failed to fetch data", data: [] };
     }
   } catch (error) {
     console.error("Error calculating cases count:", error);

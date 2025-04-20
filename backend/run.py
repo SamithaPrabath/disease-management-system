@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import Config
-from routes import auth_bp, case_bp, phi_bp, moh_bp, disease_bp, institute_bp
+from routes import auth_bp, case_bp, phi_bp, moh_bp, disease_bp, institute_bp, doctor_bp
 import os
 
 def create_app():
@@ -27,6 +27,7 @@ def create_app():
     app.register_blueprint(moh_bp, url_prefix='/api/mohs')
     app.register_blueprint(disease_bp, url_prefix='/api/diseases')
     app.register_blueprint(institute_bp, url_prefix='/api/institutes')
+    app.register_blueprint(doctor_bp, url_prefix='/api/doctors')
     
     return app
 

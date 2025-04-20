@@ -34,7 +34,7 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
 
   useEffect(() => {
     setData(filteredUsers);
-  }, [rows, searchQuery, tableHeaders]);
+  }, [rows, searchQuery, tableHeaders, tableData]);
 
   const handleDelete = async (id) => {
     console.log(id)

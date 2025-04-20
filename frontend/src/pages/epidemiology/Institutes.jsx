@@ -25,19 +25,20 @@ const Institutes = (props) => {
     };
 
     fetchData();
-  }, []);
+  }, [isOpen, viewEdit]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
 
     const tableData = [
-      {tableHeaders: ["Registation Number",
-      "Name",
-      "Email",
-      "Phone Number",
-      "City",
-      "Province",
-      "Actions",],
+      {tableHeaders: [
+        "Registation Number",
+        "Name",
+        "Email",
+        "Phone Number",
+        "City",
+        "Province",
+        "Actions",],
       tableData: institutesData,
       searchQuery: searchQuery,
       mode: "institutes",

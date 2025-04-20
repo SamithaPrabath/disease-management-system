@@ -124,7 +124,7 @@ export const deleteMoh = async (id) => {
 
 export const updateMoh = async (id, updatedData) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const index = mohResponse.findIndex((moh) => moh.id === id);
       if (index !== -1) {
         mohResponse[index] = { ...mohResponse[index], ...updatedData };
@@ -133,8 +133,12 @@ export const updateMoh = async (id, updatedData) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      const response = await axios.put(`${BASE_URL}/updateMOH/${id}`, updatedData);
-      return response.data;
+      const response = await axios.put(`${BASE_URL}/api/mohs/update/${id}`, updatedData);
+      if (response.status === 200) {
+        return { status: 200, message: "Record updated successfully" };
+      } else {
+        return { status: 400, message: "Failed to update MOH record", data: response.data };
+      }
     }
   } catch (error) {
     console.error("Error updating MOH record:", error);
@@ -147,7 +151,7 @@ export const updateMoh = async (id, updatedData) => {
 
 export const getAllMOHList = async () => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const filteredMOH = mohResponse.map(({ id, name }) => ({
         id,
         name,

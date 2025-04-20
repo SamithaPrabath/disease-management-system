@@ -29,7 +29,7 @@ const diseasesResponse = [
 
 export const addDiseases = async (disease) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       
       const existingDisease = diseasesResponse.find((dis) => dis.diseaseName === disease.diseaseName || dis.id === disease.id);
 
@@ -50,8 +50,12 @@ export const addDiseases = async (disease) => {
       }
     } else {
       
-      const response = await axios.post(`${BASE_URL}/register`, disease);
-      return response.data;
+      const response = await axios.post(`${BASE_URL}/api/diseases/create`, disease);
+      if (response.status === 200) {
+        return { status: 200, message: "Disease registered successfully" };
+      } else {
+        return { status: 400, message: "Failed to register disease" };
+      }
     }
   } catch (error) {
     console.error("Error registering disease:", error);
@@ -61,12 +65,19 @@ export const addDiseases = async (disease) => {
 
 export const getAllDiseasesData = async () => {
   try {
-    if(IS_BACKEND == false){
+    if(IS_BACKEND == "false"){
       return { status: 200, message: "fetch data successfully", data: diseasesResponse }
     }else{
       const response = await axios.get(`${BASE_URL}/api/diseases/all`);
       if (response.status === 200) {
-        return { status: 200, message: "fetch data successfully", data: response.data }
+        const filteredDiseases = response.data.data.map(({ id, name, category, mod_of_transmission, description }) => ({
+          id: id,
+          diseaseName: name,
+          category: category,
+          modeOfTransmission: mod_of_transmission,
+          description: description,
+        }));
+        return { status: 200, message: "fetch data successfully", data: filteredDiseases }
       }else{
         return { status: 400, message: "fetch data failed", data: [] }
       }
@@ -79,7 +90,7 @@ export const getAllDiseasesData = async () => {
 
 export const deleteDiseases = async (id) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       // Simulating deletion from mock data
       const index = diseasesResponse.findIndex((diseases) => diseases.id === id);
       if (index !== -1) {
@@ -90,8 +101,12 @@ export const deleteDiseases = async (id) => {
       }
     } else {
       // API call to delete Disease record
-      const response = await axios.delete(`${BASE_URL}/deleteDisease/${id}`);
-      return response.data; // Return response from backend
+      const response = await axios.delete(`${BASE_URL}/api/diseases/delete/${id}`);
+      if (response.status === 200) {
+        return { status: 200, message: "Disease record deleted successfully" };
+      } else {
+        return { status: 400, message: "Failed to delete disease record" };
+      }
     }
   } catch (error) {
     console.error("Error deleting Disease record:", error);
@@ -101,7 +116,7 @@ export const deleteDiseases = async (id) => {
 
 export const updateDiseases = async (id, updatedData) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       // Simulating update in mock data
       const index = diseasesResponse.findIndex((disease) => disease.id === id);
       if (index !== -1) {
@@ -112,8 +127,12 @@ export const updateDiseases = async (id, updatedData) => {
       }
     } else {
       // API call to update PHI record
-      const response = await axios.put(`${BASE_URL}/updateDisease/${id}`, updatedData);
-      return response.data; // Return response from backend
+      const response = await axios.put(`${BASE_URL}/api/diseases/update/${id}`, updatedData);
+      if (response.status === 200) {
+        return { status: 200, message: "Record updated successfully" };
+      } else {
+        return { status: 400, message: "Failed to update disease record" };
+      }
     }
   } catch (error) {
     console.error("Error updating Disease record:", error);

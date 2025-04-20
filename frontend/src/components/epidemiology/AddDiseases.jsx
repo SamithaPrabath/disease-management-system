@@ -9,7 +9,6 @@ const AddDiseases = ({ handleBack }) => {
 
   const formik = useFormik({
     initialValues: {
-      diseaseCode: "",
       diseaseName: "",
       category: "",
       modeOfTransmission: "",
@@ -22,6 +21,9 @@ const AddDiseases = ({ handleBack }) => {
 
         if (response && (response.status === 200 || response.status === 201) && response.message) {
           messageApi.success(response.message);
+          setTimeout(() => {
+            handleBack();
+          }, 1000);
         } else {
           messageApi.error(response?.message || "Registration failed");
         }
@@ -41,21 +43,6 @@ const AddDiseases = ({ handleBack }) => {
         </h2>
 
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
-          <div>
-            <label className="block text-gray-700">Disease Code</label>
-            <input
-              type="text"
-              name="diseaseCode"
-              className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              value={formik.values.diseaseCode}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.diseaseCode && formik.errors.diseaseCode && (
-              <p className="text-red-500">{formik.errors.diseaseCode}</p>
-            )}
-          </div>
-
           <div>
             <label className="block text-gray-700">Disease Name</label>
             <input

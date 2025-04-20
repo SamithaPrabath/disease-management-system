@@ -28,7 +28,6 @@ const AddMOH = ({ handleBack }) => {
         if (response.status === 200 && response.message) {
           messageApi.success(response.message);
           setTimeout(() => handleBack(), 1000);
-          window.location.reload();
         } else {
           messageApi.error(response.message || "Registration failed");
         }

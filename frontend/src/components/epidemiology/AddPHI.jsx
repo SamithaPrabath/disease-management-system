@@ -1,18 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { phiSchema } from "../../yupSchema/epidemiologySchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { registerPhi } from "../../api/phiApi";
 import { message } from "antd";
-
+import { getAllMohData } from "../../api/mohApi";
 const AddPHI = ({ handleBack }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [showPassword, setShowPassword] = useState(false);
 
+  const [mohData, setMohData] = useState([]);
+
+  // Fetch data when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllMohData();
+        setMohData(response.data);
+      } catch (error) {
+        console.error("Failed to fetch PHI data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       name: "",
-      registrationNumber: "",
       moh: "",
       area: "",
       email: "",
@@ -27,7 +42,7 @@ const AddPHI = ({ handleBack }) => {
       try {
         const response = await registerPhi(values);
 
-        if (response?.status === 201 && response.message) {
+        if (response?.status === 200 && response.message) {
           messageApi.success(response.message);
           resetForm(); // Clear form on success
           setTimeout(() => handleBack(), 1000); // Navigate back after success
@@ -68,33 +83,23 @@ const AddPHI = ({ handleBack }) => {
             )}
           </div>
 
-          {/* Registration Number */}
-          <div>
-            <label className="block text-gray-700">Registration Number</label>
-            <input
-              type="text"
-              name="registrationNumber"
-              className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              value={formik.values.registrationNumber}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.registrationNumber && formik.errors.registrationNumber && (
-              <p className="text-red-500 text-sm">{formik.errors.registrationNumber}</p>
-            )}
-          </div>
-
           {/* MOH */}
           <div>
             <label className="block text-gray-700">MOH</label>
-            <input
-              type="text"
-              name="moh"
-              className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-              value={formik.values.moh}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
+            <select
+                name="moh"
+                className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
+                value={formik.values.moh}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              >
+                <option value="">Select MOH</option>
+                {mohData.map((moh) => (
+                  <option key={moh.id} value={moh.id}>
+                    {moh.name}
+                  </option>
+                ))}
+              </select>
             {formik.touched.moh && formik.errors.moh && (
               <p className="text-red-500 text-sm">{formik.errors.moh}</p>
             )}

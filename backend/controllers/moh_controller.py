@@ -34,7 +34,6 @@ class MOHController(BaseController):
             return MOHController.error_response(str(e))
 
     @staticmethod
-    @jwt_required()
     def update_moh_user(id):
         try:
             data = request.get_json()
@@ -42,3 +41,4 @@ class MOHController(BaseController):
             return MOHController.success_response(result)
         except Exception as e:
             return MOHController.error_response(str(e))
+        

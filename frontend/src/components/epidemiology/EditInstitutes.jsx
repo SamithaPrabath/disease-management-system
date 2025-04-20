@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { instituteSchema } from "../../yupSchema/epidemiologySchema";
+import { instituteEditSchema } from "../../yupSchema/epidemiologySchema";
 import { viewEdit } from "../../redux/actions/viewEditAction";
 import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
@@ -32,16 +32,15 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
 
   const formik = useFormik({
     initialValues: {
-      instituteName: userData?.name || "",
-      registrationNumber: userData?.registrationNumber || "",
+      name: userData?.name || "",
       email: userData?.email || "",
-      phoneNumber: userData?.phoneNumber || "",
+      phone: userData?.phone || "",
       address: userData?.address || "",
       province: userData?.province || "",
       city: userData?.city || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes
-    validationSchema: instituteSchema,
+    validationSchema: instituteEditSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const id = userData?.id;
@@ -72,7 +71,6 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
 
     const selected = sriLankaProvinces.find((p) => p.province === province);
     setCities(selected ? selected.cities : []);
-    formik.setFieldValue("city", ""); // Reset city selection
   };
 
   return (
@@ -107,36 +105,17 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
               <label className="block text-gray-700">Institute Name</label>
               <input
                 type="text"
-                name="instituteName"
+                name="name"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                   isEnableEdit
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-gray-200 text-black"
                 }`}
-                {...formik.getFieldProps("instituteName")}
+                {...formik.getFieldProps("name")}
                 disabled={isEnableEdit}
               />
-              {formik.touched.instituteName && formik.errors.instituteName && (
-                <p className="text-red-500 text-sm">{formik.errors.instituteName}</p>
-              )}
-            </div>
-
-            {/* Registration Number */}
-            <div>
-              <label className="block text-gray-700">Registration Number</label>
-              <input
-                type="text"
-                name="registrationNumber"
-                className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                  isEnableEdit
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-black"
-                }`}
-                {...formik.getFieldProps("registrationNumber")}
-                disabled={isEnableEdit}
-              />
-              {formik.touched.registrationNumber && formik.errors.registrationNumber && (
-                <p className="text-red-500 text-sm">{formik.errors.registrationNumber}</p>
+              {formik.touched.name && formik.errors.name && (
+                <p className="text-red-500 text-sm">{formik.errors.name}</p>
               )}
             </div>
 
@@ -166,17 +145,17 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                 <label className="block text-gray-700">Phone Number</label>
                 <input
                   type="text"
-                  name="phoneNumber"
+                  name="phone"
                   className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                     isEnableEdit
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-gray-200 text-black"
                   }`}
-                  {...formik.getFieldProps("phoneNumber")}
+                  {...formik.getFieldProps("phone")}
                   disabled={isEnableEdit}
                 />
-                {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                  <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
+                {formik.touched.phone && formik.errors.phone && (
+                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
                 )}
               </div>
             </div>
@@ -217,12 +196,15 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                   onBlur={formik.handleBlur}
                   disabled={isEnableEdit}
                 >
-                  <option value="">Select Province</option>
-                  {sriLankaProvinces.map((province) => (
-                    <option key={province.province} value={province.province}>
-                      {province.province}
-                    </option>
-                  ))}
+                  {isEnableEdit ? (
+                    <option value={formik.values.province}>{formik.values.province}</option>
+                  ) : (
+                    sriLankaProvinces.map((province) => (
+                      <option key={province.province} value={province.province}>
+                        {province.province}
+                      </option>
+                    ))
+                  )}
                 </select>
                 {formik.touched.province && formik.errors.province && (
                   <p className="text-red-500 text-sm">{formik.errors.province}</p>
@@ -244,12 +226,15 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                   onBlur={formik.handleBlur}
                   disabled={isEnableEdit || !formik.values.province}
                 >
-                  <option value="">Select City</option>
-                  {cities.map((city) => (
-                    <option key={city} value={city}>
-                      {city}
-                    </option>
-                  ))}
+                    {isEnableEdit ? (
+                      <option value={formik.values.city}>{formik.values.city}</option>
+                    ) : (
+                    cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))
+                  )}
                 </select>
                 {formik.touched.city && formik.errors.city && (
                   <p className="text-red-500 text-sm">{formik.errors.city}</p>

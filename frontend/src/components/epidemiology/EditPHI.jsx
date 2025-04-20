@@ -2,16 +2,17 @@ import { viewEdit } from "../../redux/actions/viewEditAction";
 import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { phiSchema } from "../../yupSchema/epidemiologySchema";
+import { phiEditSchema } from "../../yupSchema/epidemiologySchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { getAllPhiData, updatePhi } from "../../api/phiApi";
 import { message } from "antd";
+import { getAllMohData } from "../../api/mohApi";
 
 const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [showPassword, setShowPassword] = useState(false);
   const [isEnableEdit, setIsEnableEdit] = useState(true); // View mode by default
-  const [userData, setUserData] = useState(null); // Start as null for loading state
+  const [userData, setUserData] = useState(null);
+  const [mohData, setMohData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +22,9 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
           (item) => item.id === AllViewEditReducer?.[1]
         );
         setUserData(filteredData || {});
+
+        const mohResponse = await getAllMohData();
+        setMohData(mohResponse.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         messageApi.error("Failed to load PHI data");
@@ -33,16 +37,14 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
   const formik = useFormik({
     initialValues: {
       name: userData?.name || "",
-      registrationNumber: userData?.registrationNumber || "",
       moh: userData?.moh || "",
       area: userData?.area || "",
       email: userData?.email || "",
-      phoneNumber: userData?.phoneNumber || "",
-      username: userData?.userName || "",
-      password: userData?.password || "",
+      phone: userData?.phone || "",
+      moh_id: userData?.moh_id || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes
-    validationSchema: phiSchema,
+    validationSchema: phiEditSchema,
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
@@ -119,43 +121,27 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
               )}
             </div>
 
-            {/* Registration Number */}
-            <div>
-              <label className="block text-gray-700">Registration Number</label>
-              <input
-                type="text"
-                name="registrationNumber"
-                className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                  isEnableEdit
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-black"
-                }`}
-                value={formik.values.registrationNumber}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                disabled={isEnableEdit}
-              />
-              {formik.touched.registrationNumber && formik.errors.registrationNumber && (
-                <p className="text-red-500 text-sm">{formik.errors.registrationNumber}</p>
-              )}
-            </div>
-
             {/* MOH */}
             <div>
               <label className="block text-gray-700">MOH</label>
-              <input
-                type="text"
+              <select
                 name="moh"
-                className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                  isEnableEdit
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-200 text-black"
-                }`}
+                className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
                 value={formik.values.moh}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 disabled={isEnableEdit}
-              />
+              >
+                {isEnableEdit ? (
+                  <option value={formik.values.moh_id}>{formik.values.moh}</option>
+                ) : (
+                  mohData.map((moh) => (
+                    <option key={moh.id} value={moh.id}>
+                      {moh.name}
+                    </option>
+                  ))
+                )}
+              </select>
               {formik.touched.moh && formik.errors.moh && (
                 <p className="text-red-500 text-sm">{formik.errors.moh}</p>
               )}
@@ -208,73 +194,19 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
                 <label className="block text-gray-700">Phone Number</label>
                 <input
                   type="text"
-                  name="phoneNumber"
+                  name="phone"
                   className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                     isEnableEdit
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-gray-200 text-black"
                   }`}
-                  value={formik.values.phoneNumber}
+                  value={formik.values.phone}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   disabled={isEnableEdit}
                 />
-                {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                  <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Username & Password - Two-column layout */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700">Username</label>
-                <input
-                  type="text"
-                  name="username"
-                  className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                    isEnableEdit
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-black"
-                  }`}
-                  value={formik.values.username}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  disabled={isEnableEdit}
-                />
-                {formik.touched.username && formik.errors.username && (
-                  <p className="text-red-500 text-sm">{formik.errors.username}</p>
-                )}
-              </div>
-
-              <div className="relative">
-                <label className="block text-gray-700">Password</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  className={`w-full px-4 py-2 rounded-md focus:outline-none pr-10 ${
-                    isEnableEdit
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-black"
-                  }`}
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  disabled={isEnableEdit}
-                />
-                <button
-                  type="button"
-                  className="absolute top-9 right-3 text-gray-600"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <AiOutlineEyeInvisible size={22} />
-                  ) : (
-                    <AiOutlineEye size={22} />
-                  )}
-                </button>
-                {formik.touched.password && formik.errors.password && (
-                  <p className="text-red-500 text-sm">{formik.errors.password}</p>
+                {formik.touched.phone && formik.errors.phone && (
+                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
                 )}
               </div>
             </div>

@@ -32,7 +32,7 @@ export const doctorResponse = [
 
 export const registerDoctor = async (user) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       // Check if the user already exists
       const existingUser = doctorResponse.find(
         (doctor) =>

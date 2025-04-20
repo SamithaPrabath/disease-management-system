@@ -64,6 +64,22 @@ class MOH():
         return []
 
     @staticmethod
+    async def get_moh_user_by_id(id):
+        query_executor = AsyncQueryExecutor()
+        query = "SELECT * FROM moh WHERE id = %s"
+        result = await query_executor.fetch_one(query, (id,))
+        
+        if result:
+            moh = MOH(*result)
+            user = await User.get_user_by_id(moh.id)
+            if user:
+                user.email = moh.email
+                user.area = moh.area
+                user.password_hash = ""
+                return user
+        return None
+
+    @staticmethod
     async def delete_moh_user(id):
         query_executor = AsyncQueryExecutor()
         # First delete from moh table
@@ -86,16 +102,16 @@ class MOH():
             UPDATE users 
             SET name = %s, 
                 phone = %s, 
-                username = %s,
                 updated_at = %s
             WHERE id = %s
         """
         updated_at = datetime.now()
         await query_executor.execute(
             user_update_query, 
-            (data.get('name'), data.get('phoneNumber'), data.get('username'), updated_at, id)
+            (data.get('name'), data.get('phone'), updated_at, id)
         )
         
+        query_executor1 = AsyncQueryExecutor()
         # Update moh table
         moh_update_query = """
             UPDATE moh 
@@ -103,7 +119,7 @@ class MOH():
                 email = %s
             WHERE id = %s
         """
-        await query_executor.execute(
+        await query_executor1.execute(
             moh_update_query, 
             (data.get('area'), data.get('email'), id)
         )

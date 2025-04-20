@@ -1,40 +1,43 @@
+import asyncio
 from flask import request
 from flask_jwt_extended import jwt_required
 from .base_controller import BaseController
 from models.phi import PHI
-from models.case import Case
-from datetime import datetime
+
 
 class PHIController(BaseController):
-    @jwt_required()
-    def get_phis():
-        try:
-            phis = PHI.query.all()
-            return PHIController.success_response(
-                [phi.to_dict() for phi in phis]
-            )
-        except Exception as e:
-            return PHIController.error_response(str(e), 500)
-
-    @jwt_required()
-    def assign_case():
+    @staticmethod
+    def add_phi_user():
         try:
             data = request.get_json()
-            case_id = data.get('caseId')
-            phi_id = data.get('phiId')
-            
-            case = Case.query.get(case_id)
-            if not case:
-                return PHIController.error_response("Case not found", 404)
-            
-            case.assigned_phi = phi_id
-            case.phi_assigned_date = datetime.utcnow()
-            
-            db.session.commit()
-            return PHIController.success_response(
-                case.to_dict(),
-                "PHI assigned successfully"
-            )
+            phi_user = PHI(**data)
+            phi_user = asyncio.run(PHI.add_phi_user(phi_user))
+            return PHIController.success_response(phi_user)
         except Exception as e:
-            db.session.rollback()
-            return PHIController.error_response(str(e), 500) 
+            return PHIController.error_response(str(e))
+        
+    @staticmethod
+    def get_phi_users():
+        try:
+            phi_users = asyncio.run(PHI.get_phi_users())
+            return PHIController.success_response(phi_users)
+        except Exception as e:
+            return PHIController.error_response(str(e))
+
+    @staticmethod
+    def delete_phi_user(id):
+        try:
+            result = asyncio.run(PHI.delete_phi_user(id))
+            return PHIController.success_response(result)
+        except Exception as e:
+            return PHIController.error_response(str(e))
+
+    @staticmethod
+    def update_phi_user(id):
+        try:
+            data = request.get_json()
+            result = asyncio.run(PHI.update_phi_user(id, data))
+            return PHIController.success_response(result)
+        except Exception as e:
+            return PHIController.error_response(str(e))
+    

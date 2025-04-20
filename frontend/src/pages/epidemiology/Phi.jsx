@@ -18,14 +18,18 @@ const Phi = (props) => {
     const fetchData = async () => {
       try {
         const response = await getAllPhiData();
-        setPhiData(response.data);
+        if (response.status == 200) {
+          setPhiData(response.data);
+        } else {
+          console.error("Failed to fetch PHI data:", response.message);
+        }
       } catch (error) {
         console.error("Failed to fetch PHI data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [isOpen, viewEdit]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
@@ -33,7 +37,7 @@ const Phi = (props) => {
   const tableData = [
     {
       tableHeaders: [
-        "Registation Number",
+        "ID",
         "Name",
         "Email",
         "Phone Number",

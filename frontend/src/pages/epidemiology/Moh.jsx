@@ -25,7 +25,7 @@ const Moh = (props) => {
     };
 
     fetchData();
-  }, []);
+  }, [isOpen, viewEdit]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());

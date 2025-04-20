@@ -62,3 +62,10 @@ class Case:
         results = await query_executor.fetch_all(query, (user_id, user_id))
         
         return [Case(*result) for result in results] if results else []
+    
+    @staticmethod
+    async def get_all_cases_by_admin():
+        query_executor = AsyncQueryExecutor()
+        query = "SELECT * FROM cases where caseStatus = 'Confirmed'"
+        results = await query_executor.fetch_all(query)
+        return [Case(*result) for result in results] if results else []

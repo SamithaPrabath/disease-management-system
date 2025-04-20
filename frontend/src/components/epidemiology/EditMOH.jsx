@@ -2,8 +2,7 @@ import { viewEdit } from "../../redux/actions/viewEditAction";
 import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { mohSchema } from "../../yupSchema/epidemiologySchema";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { mohEditSchema } from "../../yupSchema/epidemiologySchema";
 import { getAllMohData, updateMoh } from "../../api/mohApi";
 import { message } from "antd";
 
@@ -37,7 +36,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
       phone: userData?.phone || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes
-    validationSchema: mohSchema,
+    validationSchema: mohEditSchema,
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
@@ -161,7 +160,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
                 <label className="block text-gray-700">Phone Number</label>
                 <input
                   type="text"
-                  name="phoneNumber"
+                  name="phone"
                   className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                     isEnableEdit
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -172,8 +171,8 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
                   onBlur={formik.handleBlur}
                   disabled={isEnableEdit}
                 />
-                {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                  <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
+                {formik.touched.phone && formik.errors.phone && (
+                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
                 )}
               </div>
             </div>

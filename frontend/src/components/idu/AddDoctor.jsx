@@ -4,7 +4,7 @@ import { doctorSchema } from "../../yupSchema/doctorSchema";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { registerDoctor } from "../../api/doctorApi";
 import { message } from "antd";
-import { getAllMOHList } from "../../api/mohApi";
+import { getAllMohData } from "../../api/mohApi";
 
 const AddDoctor = ({ handleBack }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -14,7 +14,7 @@ const AddDoctor = ({ handleBack }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const moh = await getAllMOHList();
+        const moh = await getAllMohData();
         setMohList(moh.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -89,7 +89,7 @@ const AddDoctor = ({ handleBack }) => {
             >
               <option value="">Select MOH</option>
               {mohList.map((moh) => (
-                <option key={moh.mohId} value={moh.name}>
+                <option key={moh.id} value={moh.id}>
                   {moh.name}
                 </option>
               ))}

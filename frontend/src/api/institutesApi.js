@@ -48,11 +48,7 @@ const institutesResponse = [
 
 export const registerInstitutes = async (user) => {
   try {
-    if (!user || !user.name || !user.registrationNumber) {
-      throw new Error("Invalid input: name and registrationNumber are required");
-    }
-
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const existingUser = institutesResponse.find(
         (institute) =>
           institute.name.toLowerCase() === user.name.toLowerCase() ||
@@ -71,8 +67,12 @@ export const registerInstitutes = async (user) => {
         return { status: 201, message: "Institute registered successfully" };
       }
     } else {
-      const response = await axios.post(`${BASE_URL}/registerInstitute`, user);
-      return response.data;
+      const response = await axios.post(`${BASE_URL}/api/institutes/create`, user);
+      if (response.status === 200) {
+        return { status: 200, message: "Institute registered successfully" };
+      } else {
+        return { status: 400, message: "Failed to register institute" };
+      }
     }
   } catch (error) {
     console.error("Error registering institute:", error);
@@ -95,7 +95,7 @@ export const getAllInstitutesData = async () => {
           name,
           registrationNumber: registration_number,
           email,
-          phoneNumber: phone_number,
+          phone: phone_number,
           address,
           province,
           city,
@@ -115,7 +115,7 @@ export const getAllInstitutesData = async () => {
 
 export const deleteInstitutes = async (id) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const index = institutesResponse.findIndex((institute) => institute.id === id);
       if (index !== -1) {
         institutesResponse.splice(index, 1);
@@ -124,8 +124,12 @@ export const deleteInstitutes = async (id) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      const response = await axios.delete(`${BASE_URL}/deleteInstitute/${id}`);
-      return response.data;
+      const response = await axios.delete(`${BASE_URL}/api/institutes/delete/${id}`);
+      if (response.status === 200) {
+        return { status: 200, message: "Record deleted successfully" };
+      } else {
+        return { status: 400, message: "Failed to delete institute record" };
+      }
     }
   } catch (error) {
     console.error("Error deleting Institute record:", error);
@@ -138,7 +142,7 @@ export const deleteInstitutes = async (id) => {
 
 export const updateInstitutes = async (id, updatedData) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const index = institutesResponse.findIndex((institute) => institute.id === id);
       if (index !== -1) {
         institutesResponse[index] = { ...institutesResponse[index], ...updatedData };
@@ -147,8 +151,12 @@ export const updateInstitutes = async (id, updatedData) => {
         return { status: 404, message: "Record not found" };
       }
     } else {
-      const response = await axios.put(`${BASE_URL}/updateInstitutes/${id}`, updatedData);
-      return response.data;
+      const response = await axios.put(`${BASE_URL}/api/institutes/update/${id}`, updatedData);
+      if (response.status === 200) {
+        return { status: 200, message: "Record updated successfully" };
+      } else {
+        return { status: 400, message: "Failed to update institute record" };
+      }
     }
   } catch (error) {
     console.error("Error updating Institute record:", error);
