@@ -154,7 +154,7 @@ export const getAllCases = async (userID) => {
     } else {
       const response = await axios.get(`${BASE_URL}/api/cases/all?userID=${userID}`);
       if (response.status === 200) {
-        const filteredCases = response.data.data.map(({ id, patientName, age, sex, guardian, diseaseName, caseStatus, confirmedDate, natureOfConfirmation, remarks, confirmedBy, nicNo, phoneNumber, instituteName, dateOfOnset, dateOfAdmission, ward, bhtNumber, address, labResult, file, notifier, notifiedDate, assignedPhi, phiAssignedDate, assignedMoh, mohAssignedDate, sendReport, markAsReceived }) => ({
+        const filteredCases = response.data.data.map(({ id, patientName, age, sex, guardian, diseaseName, caseStatus, confirmedDate, natureOfConfirmation, remarks, confirmedBy, nicNo, phoneNumber, instituteName, dateOfOnset, dateOfAdmission, ward, bhtNumber, address, labResult, file, notifier, notifiedDate, assignedPhi, phiAssignedDate, assignedMoh, mohAssignedDate, sendReport, markAsReceived, report }) => ({
           id,
           caseId: id,
           patientName,
@@ -185,6 +185,7 @@ export const getAllCases = async (userID) => {
           mohAssignedDate,
           sendReport,
           markAsReceived,
+          report,
         }));
         
         return { status: 200, message: "data fetch successfully", data: filteredCases };

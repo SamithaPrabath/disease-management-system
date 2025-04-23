@@ -27,7 +27,7 @@ const HeaderBar = ({
     const fetchData = async () => {
       if (AllLogins?.data) {
         setRole(AllLogins.data.role);
-        setUserTypeId(AllLogins.data.userTypeId);
+        setUserTypeId(AllLogins.data.userId);
       }
 
       try {
@@ -142,7 +142,7 @@ const HeaderBar = ({
               </div>
             ) : role === "phi" ? (
               <div className="flex gap-3">
-                {singleCase.assignedPhi != userTypeId ? (
+                {singleCase?.assignedPhi != userTypeId ? (
                   <button
                     className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
                     disabled={true}

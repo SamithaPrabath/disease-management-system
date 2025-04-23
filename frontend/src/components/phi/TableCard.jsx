@@ -317,7 +317,7 @@ const Table = ({
                                 Confirm Case
                               </button>
                             ) :  
-                              Object.keys(patient.report).length > 0 && 
+                              Object.keys(patient?.report).length > 0 && 
                               <button
                                 className={`px-[16px] py-[8px] rounded-[6px] ${
                                   patient.sendReport ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" :  "bg-blue-600 text-white cursor-pointer"

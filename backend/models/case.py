@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from models.moh import MOH
+from models.phi import PHI
 from models.user import User
 from utils.db.query_executor import AsyncQueryExecutor
 
@@ -38,6 +39,7 @@ class Case:
     assignedMohDetails: dict = None # name, area, registrationNumber
     assignedPhiDetails: dict = None # name, area, registrationNumber
     confirmedByDetails: dict = None # name, role
+    instituteName: str = None
     report: dict = None # reportCreatedDate, ethnicGroup, dischargeDate, isolationStatus, isolationDateFrom, isolationDateTo, outcome, movementHistory, labResults, phiRemarks, householdContacts {name, age, description, date, age, disposition}, otherContacts {name, age, description, date, age, disposition} 
 
     async def save(self):
@@ -97,6 +99,34 @@ class Case:
                     "area": moh_user.area,
                     "registrationNumber": moh_user.id
                 }
+            
+            if case.assignedPhi:
+                phi_user = await PHI.get_phi_user_by_id(case.assignedPhi)
+                case.assignedPhiDetails = {
+                    "name": phi_user.name,
+                    "area": phi_user.area,
+                    "registrationNumber": phi_user.id
+                }
+            
+            if case.confirmedBy:
+                confirmed_by_user = await User.get_user_by_id(case.confirmedBy)
+                case.confirmedByDetails = {
+                    "name": confirmed_by_user.name,
+                    "role": confirmed_by_user.role
+                }
+
+            if case.instituteId:
+                institute_user = await User.get_user_by_id(case.instituteId)
+                case.instituteName = institute_user.name
+            
+            if case.notifier:
+                notifier_user = await User.get_user_by_id(case.notifier)
+                case.notifierDetails = {
+                    "name": notifier_user.name,
+                    "role": notifier_user.role
+                }
+            
+            case.report = {}
                 
             return case
         return {}
@@ -107,13 +137,13 @@ class Case:
         user = await User.get_user_by_id(user_id)
 
         if user.role == "admin" or user.role == "epi":
-            query = "SELECT * FROM cases"
+            query = "SELECT id FROM cases"
             results = await query_executor.fetch_all(query)
         else:
-            query = "SELECT * FROM cases where notifier = %s or confirmedBy = %s or instituteId = %s or assignedMoh = %s"
-            results = await query_executor.fetch_all(query, (user_id, user_id, user_id, user_id))
+            query = "SELECT id FROM cases where notifier = %s or confirmedBy = %s or instituteId = %s or assignedMoh = %s or assignedPhi = %s"
+            results = await query_executor.fetch_all(query, (user_id, user_id, user_id, user_id, user_id))
         
-        return [Case(*result) for result in results] if results else []
+        return [await Case.get_case_by_id(result[0]) for result in results] if results else []
     
     @staticmethod
     async def get_all_cases_by_admin():
