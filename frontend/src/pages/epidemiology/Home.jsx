@@ -41,7 +41,7 @@ const Home = (props) => {
     };
 
     fetchData();
-  }, [props.ViewReport]);
+  }, [props.ViewReport, props.AllLogins]);
 
   useEffect(() => {
     setIsViewSingleCase(props.ViewsSingleCase?.[0]);

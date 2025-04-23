@@ -46,7 +46,7 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getPhiListByLocation("Colombo");
+        const response = await getPhiListByLocation();
         setPhiList(response.data || []);
       } catch (error) {
         console.error("Error fetching PHI list:", error);

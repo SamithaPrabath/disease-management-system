@@ -44,7 +44,7 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getMohListByLocation("Colombo"); // Adjust location dynamically if needed
+        const response = await getMohListByLocation();
         setMohList(response.data || []);
       } catch (error) {
         console.error("Error fetching MOH list:", error);

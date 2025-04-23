@@ -19,7 +19,7 @@ const Dashboard = (props) => {
     // Fetch all cases data
     const fetchData = async () => {
       try {
-        const response = await getAllCases();
+        const response = await getAllCases(props.AllLogins.data.userId);
         setAllCasesData(response.data);
       } catch (error) {
         console.error("Failed to fetch cases data:", error);
@@ -103,6 +103,7 @@ const mapStateToProps = (state) => {
     ViewReport: state.viewReportReducer,
     ViewsSingleCase: state.viewsSingleCase,
     AssignphipopupReducer: state.assignphipopupReducer,
+    AllLogins: state.allLogins,
   };
 };
 

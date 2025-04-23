@@ -52,6 +52,8 @@ export const instituteSchema = Yup.object().shape({
   address: Yup.string().required("Address is required"),
   province: Yup.string().required("Please select a province"),
   city: Yup.string().required("Please select a city"),
+  username: Yup.string().min(4, "Username must be at least 4 characters").required("Username is required"),
+  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
 });
 
 export const instituteEditSchema = Yup.object().shape({

@@ -1,5 +1,8 @@
 from dataclasses import dataclass, fields
+from datetime import datetime
+from models.user import User
 from utils.db.query_executor import AsyncQueryExecutor
+from werkzeug.security import generate_password_hash
 
 
 @dataclass
@@ -29,13 +32,23 @@ class Institute:
         return [Institute(*result) for result in results] if results else []
     
     @staticmethod
-    async def create_institute(name, registration_number, email, phone_number, address, city, province):
+    async def create_institute(name, registration_number, email, phone_number, address, city, province, username, password):
+        password_hash = generate_password_hash(password)
+        user = User(username=username, password_hash=password_hash, name=name, role="idu", phone=phone_number, created_at=datetime.now(), updated_at=datetime.now())
+
+        is_exists = await User.get_user_by_username(user.username)
+        if is_exists:
+            return {"message": "User already exists", "status": 400}
+        
+        user = await User.add_institute_user(user)
         query_executor = AsyncQueryExecutor()
         query = """
-            INSERT INTO institute (name, registration_number, email, phone_number, address, city, province)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO institute (id, name, registration_number, email, phone_number, address, city, province)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        await query_executor.execute(query, (name, registration_number, email, phone_number, address, city, province))
+        await query_executor.execute(query, (user.id, name, registration_number, email, phone_number, address, city, province))
+
+        
         
         return {"message": "Institute created successfully", "status": "success"}
     

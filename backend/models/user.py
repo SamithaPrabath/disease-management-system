@@ -19,6 +19,7 @@ class User:
     area: str = None
     moh: str = None
     moh_id: str = None
+    institute_id: str = None
 
     @staticmethod
     async def get_user_by_id(id):
@@ -56,3 +57,21 @@ class User:
         user = await User.get_user_by_username(self.username)
         return user
     
+    @staticmethod
+    async def add_institute_user(self):
+        query_executor = AsyncQueryExecutor()
+        query = "INSERT INTO users (username, password_hash, name, role, phone, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        await query_executor.execute(query, (self.username, self.password_hash, self.name, self.role,self.phone, self.created_at, self.updated_at))
+        
+        user = await User.get_user_by_username(self.username)
+        return user
+    
+    @staticmethod
+    async def add_doctor_user(self):
+        query_executor = AsyncQueryExecutor()
+        query = "INSERT INTO users (username, password_hash, name, role, phone, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        await query_executor.execute(query, (self.username, self.password_hash, self.name, self.role,self.phone, self.created_at, self.updated_at))
+        
+        user = await User.get_user_by_username(self.username)
+        return user
+

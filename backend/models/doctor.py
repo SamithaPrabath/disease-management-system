@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 
+from models.moh import MOH
 from models.user import User
 from models.phi import PHI
 from utils.db.query_executor import AsyncQueryExecutor
@@ -9,15 +10,16 @@ from utils.db.query_executor import AsyncQueryExecutor
 @dataclass
 class Doctor():
     id: int = None
-    specialization: str = None
+    institute_id: int = None
     email: str = None
-    hospital: str = None
-    password: str = None
+    area: str = None
+    moh: str = None
     name: str = None
     phoneNumber: str = None
     username: str = None
-    role: str = "doctor"
-    license_number: str = None
+    password: str = None
+    role: str = None
+    
 
     @staticmethod
     async def add_doctor_user(self):
@@ -40,8 +42,8 @@ class Doctor():
         user = await User.add_doctor_user(user)
 
         query_executor = AsyncQueryExecutor()
-        query = "INSERT INTO doctors (id, specialization, email, hospital, license_number) VALUES (%s, %s, %s, %s, %s)"
-        await query_executor.execute(query, (user.id, self.specialization, self.email, self.hospital, self.license_number))
+        query = "INSERT INTO doctors (id, institute_id, email, area, moh) VALUES (%s, %s, %s, %s, %s)"
+        await query_executor.execute(query, (user.id, self.institute_id, self.email, self.area, self.moh))
         
         return {"message": "Doctor added successfully", "status": 200}
 
@@ -58,46 +60,17 @@ class Doctor():
             for doctor in doctor_users:
                 user = await User.get_user_by_id(doctor.id)
                 user.email = doctor.email
-                user.specialization = doctor.specialization
-                user.hospital = doctor.hospital
-                user.license_number = doctor.license_number
+                user.area = doctor.area
+                user.institute_id = doctor.institute_id
+                user.moh_id = doctor.moh
                 user.password_hash = ""
+
+                moh_user = await MOH.get_moh_user_by_id(doctor.moh)
+                user.moh = moh_user.name
                 users.append(user)
 
             return users
         return []
-
-    @staticmethod
-    async def get_doctor_user_by_id(id):
-        query_executor = AsyncQueryExecutor()
-        query = "SELECT * FROM doctors WHERE id = %s"
-        result = await query_executor.fetch_one(query, (id,))
-        
-        if result:
-            doctor = Doctor(*result)
-            user = await User.get_user_by_id(doctor.id)
-            if user:
-                user.email = doctor.email
-                user.specialization = doctor.specialization
-                user.hospital = doctor.hospital
-                user.license_number = doctor.license_number
-                user.password_hash = ""
-                return user
-        return None
-
-    @staticmethod
-    async def delete_doctor_user(id):
-        query_executor = AsyncQueryExecutor()
-        # First delete from doctor table
-        query = "DELETE FROM doctors WHERE id = %s"
-        await query_executor.execute(query, (id,))
-        
-        query_executor1 = AsyncQueryExecutor()
-        # Then delete from users table
-        query = "DELETE FROM users WHERE id = %s"
-        await query_executor1.execute(query, (id,))
-        
-        return {"message": "Doctor user deleted successfully", "status": 200}
 
     @staticmethod
     async def update_doctor_user(id, data):
@@ -114,47 +87,36 @@ class Doctor():
         updated_at = datetime.now()
         await query_executor.execute(
             user_update_query, 
-            (data.get('name'), data.get('phone'), updated_at, id)
+            (data.get('name'), data.get('phoneNumber'), updated_at, id)
         )
         
         # Update doctor table
         doctor_update_query = """
             UPDATE doctors 
-            SET specialization = %s, 
-                email = %s,
-                hospital = %s,
-                license_number = %s
+            SET email = %s,
+                area = %s,
+                moh = %s
             WHERE id = %s
         """
-        await query_executor.execute(
+
+        query_executor1 = AsyncQueryExecutor()
+        await query_executor1.execute(
             doctor_update_query, 
-            (data.get('specialization'), data.get('email'), data.get('hospital'), data.get('license_number'), id)
+            (data.get('email'), data.get('area'), data.get('moh'), id)
         )
         
         return {"message": "Doctor user updated successfully", "status": 200}
 
     @staticmethod
-    async def get_referrals_by_phi(phi_id):
+    async def delete_doctor_user(id):
         query_executor = AsyncQueryExecutor()
-        query = """
-            SELECT r.*, p.name as patient_name, p.age, p.gender, p.address, p.phone
-            FROM referrals r
-            JOIN patients p ON r.patient_id = p.id
-            WHERE r.phi_id = %s AND r.doctor_id IS NULL
-        """
-        result = await query_executor.fetch_all(query, (phi_id,))
-        return result if result else []
-
-    @staticmethod
-    async def accept_referral(referral_id, doctor_id):
-        query_executor = AsyncQueryExecutor()
-        query = """
-            UPDATE referrals 
-            SET doctor_id = %s,
-                status = 'accepted',
-                updated_at = %s
-            WHERE id = %s
-        """
-        updated_at = datetime.now()
-        await query_executor.execute(query, (doctor_id, updated_at, referral_id))
-        return {"message": "Referral accepted successfully", "status": 200}
+        # First delete from doctor table
+        query = "DELETE FROM doctors WHERE id = %s"
+        await query_executor.execute(query, (id,))
+        
+        query_executor1 = AsyncQueryExecutor()
+        # Then delete from users table
+        query = "DELETE FROM users WHERE id = %s"
+        await query_executor1.execute(query, (id,))
+        
+        return {"message": "Doctor user deleted successfully", "status": 200}

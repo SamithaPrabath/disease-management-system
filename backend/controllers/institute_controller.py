@@ -40,7 +40,7 @@ class InstituteController:
     def create_institute():
         try:
             data = request.get_json()
-            required_fields = ['name', 'registrationNumber', 'email', 'phone', 'address', 'city', 'province']
+            required_fields = ['name', 'registrationNumber', 'email', 'phone', 'address', 'city', 'province', 'username', 'password']
             
             # Validate required fields
             for field in required_fields:
@@ -58,7 +58,9 @@ class InstituteController:
                 phone_number=data['phone'],
                 address=data['address'],
                 city=data['city'],
-                province=data['province']
+                province=data['province'],
+                username=data['username'],
+                password=data['password']
             ))
 
             return jsonify({

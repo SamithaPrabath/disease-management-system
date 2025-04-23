@@ -5,8 +5,9 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { registerDoctor } from "../../api/doctorApi";
 import { message } from "antd";
 import { getAllMohData } from "../../api/mohApi";
+import { connect } from "react-redux";
 
-const AddDoctor = ({ handleBack }) => {
+const AddDoctor = ({ handleBack, AllLogins }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [showPassword, setShowPassword] = useState(false);
   const [mohList, setMohList] = useState([]);
@@ -34,7 +35,8 @@ const AddDoctor = ({ handleBack }) => {
       phoneNumber: "",
       username: "",
       password: "",
-      role: "phi",
+      role: "doctor",
+      instituteId: AllLogins.data.userId,
     },
     validationSchema: doctorSchema,
     onSubmit: async (values) => {
@@ -43,6 +45,9 @@ const AddDoctor = ({ handleBack }) => {
 
         if (response && response.message) {
           messageApi.success(response.message);
+          setTimeout(() => {
+            handleBack();
+          }, 1000);
         } else {
           messageApi.error("Registration failed");
         }
@@ -221,4 +226,10 @@ const AddDoctor = ({ handleBack }) => {
   );
 };
 
-export default AddDoctor;
+const mapStateToProps = (state) => {
+  return {
+    AllLogins: state.allLogins,
+  };
+};
+
+export default connect(mapStateToProps, null)(AddDoctor);

@@ -103,6 +103,7 @@ const Table = ({
   
       if (response.status === 200 && response.message) {
         messageApi.success(response.message);
+        window.location.reload();
       } else {
         throw new Error(response.message || "Failed to send final report");
       }

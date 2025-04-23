@@ -154,7 +154,6 @@ export const getAllCases = async (userID) => {
     } else {
       const response = await axios.get(`${BASE_URL}/api/cases/all?userID=${userID}`);
       if (response.status === 200) {
-        console.log(response.data);
         const filteredCases = response.data.data.map(({ id, patientName, age, sex, guardian, diseaseName, caseStatus, confirmedDate, natureOfConfirmation, remarks, confirmedBy, nicNo, phoneNumber, instituteName, dateOfOnset, dateOfAdmission, ward, bhtNumber, address, labResult, file, notifier, notifiedDate, assignedPhi, phiAssignedDate, assignedMoh, mohAssignedDate, sendReport, markAsReceived }) => ({
           id,
           caseId: id,
@@ -506,7 +505,7 @@ export const sendFinalReport = async (value) => {
 
 export const mark_AsReceived = async (value) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const caseIndex = allCasesResponse.findIndex(
         (data) => data.caseId === value.caseId
       );
@@ -525,8 +524,11 @@ export const mark_AsReceived = async (value) => {
         throw new Error("Case not found");
       }
     } else {
-      const response = await axios.put(`${BASE_URL}/markAsReceived`, value);
-      return response.data;
+      const response = await axios.put(`${BASE_URL}/api/cases/${value.caseId}/mark-received`, value);
+      if (response.status === 200) {
+        return { status: 200, message: "Mark As Received successfully", data: response.data };
+      }
+      return { status: 400, message: "Failed to mark as received", data: [] };
     }
   } catch (error) {
     console.error("Error confirming case:", error);

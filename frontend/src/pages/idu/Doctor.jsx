@@ -25,7 +25,7 @@ const Doctor = (props) => {
     };
 
     fetchData();
-  }, []);
+  }, [setIsOpen, setViewEdit]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());

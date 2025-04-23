@@ -63,3 +63,47 @@ class CaseController(BaseController):
             return CaseController.success_response(cases)
         except Exception as e:
             return CaseController.error_response(str(e), 500)
+
+    @staticmethod
+    def update_mark_as_received(case_id):
+        try:
+            data = request.get_json()
+            mark_as_received = data.get('markAsReceived')
+            
+            if mark_as_received is None:
+                return CaseController.error_response("markAsReceived field is required", 400)
+                
+            result = asyncio.run(Case.update_mark_as_received(case_id, mark_as_received))
+            return CaseController.success_response(result)
+        except Exception as e:
+            return CaseController.error_response(str(e), 500)
+
+    @staticmethod
+    def update_assigned_moh(case_id):
+        try:
+            data = request.get_json()
+            assigned_moh = data.get('assignedMoh')
+            moh_assigned_date = data.get('mohAssignedDate')
+            
+            if not assigned_moh or not moh_assigned_date:
+                return CaseController.error_response("assignedMoh and mohAssignedDate fields are required", 400)
+                
+            result = asyncio.run(Case.update_assigned_moh(case_id, assigned_moh, moh_assigned_date))
+            return CaseController.success_response(result)
+        except Exception as e:
+            return CaseController.error_response(str(e), 500)
+
+    @staticmethod
+    def update_assigned_phi(case_id):
+        try:
+            data = request.get_json()
+            assigned_phi = data.get('assignedPhi')
+            phi_assigned_date = data.get('phiAssignedDate')
+            
+            if not assigned_phi or not phi_assigned_date:
+                return CaseController.error_response("assignedPhi and phiAssignedDate fields are required", 400)
+                
+            result = asyncio.run(Case.update_assigned_phi(case_id, assigned_phi, phi_assigned_date))
+            return CaseController.success_response(result)
+        except Exception as e:
+            return CaseController.error_response(str(e), 500)

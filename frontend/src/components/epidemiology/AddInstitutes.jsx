@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useFormik } from "formik";
 import { sriLankaProvinces } from "../../assets/citysAndProvinces";
 import { instituteSchema } from "../../yupSchema/epidemiologySchema";
@@ -8,6 +9,7 @@ import { registerInstitutes } from "../../api/institutesApi";
 const AddInstitutes = ({ handleBack }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [cities, setCities] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -18,6 +20,8 @@ const AddInstitutes = ({ handleBack }) => {
       address: "",
       province: "",
       city: "",
+      username: "",
+      password: "",
     },
     validationSchema: instituteSchema,
     onSubmit: async (values, { resetForm, setSubmitting }) => {
@@ -186,6 +190,51 @@ const AddInstitutes = ({ handleBack }) => {
               </select>
               {formik.touched.city && formik.errors.city && (
                 <p className="text-red-500 text-sm">{formik.errors.city}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Username & Password - Two-column layout */}
+          {/* Username & Password - Two-column layout */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700">Username</label>
+              <input
+                type="text"
+                name="username"
+                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
+                value={formik.values.username}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.username && formik.errors.username && (
+                <p className="text-red-500 text-sm">{formik.errors.username}</p>
+              )}
+            </div>
+
+            <div className="relative">
+              <label className="block text-gray-700">Password</label>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none pr-10"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <button
+                type="button"
+                className="absolute top-9 right-3 text-gray-600"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={22} />
+                ) : (
+                  <AiOutlineEye size={22} />
+                )}
+              </button>
+              {formik.touched.password && formik.errors.password && (
+                <p className="text-red-500 text-sm">{formik.errors.password}</p>
               )}
             </div>
           </div>

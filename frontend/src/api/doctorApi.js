@@ -58,8 +58,12 @@ export const registerDoctor = async (user) => {
       }
     } else {
       // API call to register a new doctor
-      const response = await axios.post(`${BASE_URL}/register`, user);
-      return response.data;
+      const response = await axios.post(`${BASE_URL}/api/doctors/add`, user);
+      if (response.status === 200) {
+        return { status: 200, message: "Doctor registered successfully", data: response.data };
+      } else {
+        return { status: 400, message: "Failed to register doctor", data: [] };
+      }
     }
   } catch (error) {
     console.error("Error registering user:", error);
@@ -72,8 +76,12 @@ export const getAllDoctorData = async () => {
     if (IS_BACKEND == "false") {
       return { status: 200, message: "data fetch successfully", data: doctorResponse };
     } else {
-      const response = await axios.get(`${BASE_URL}/getAllDoctorData`); // Replace with your API endpoint
-      return response.data; // Return the data received from the API
+      const response = await axios.get(`${BASE_URL}/api/doctors/all`);
+      if (response.status === 200) {
+        return { status: 200, message: "data fetch successfully", data: response.data.data };
+      } else {
+        return { status: 400, message: "Failed to fetch doctor data", data: [] };
+      }
     }
   } catch (error) {
     console.error("Error fetching Doctor data:", error);
@@ -83,7 +91,7 @@ export const getAllDoctorData = async () => {
 
 export const deleteDoctor = async (doctorId) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       // Simulating deletion from mock data
       const index = doctorResponse.findIndex((doctor) => doctor.id === doctorId);
       if (index !== -1) {
@@ -94,8 +102,12 @@ export const deleteDoctor = async (doctorId) => {
       }
     } else {
       // API call to delete Doctor record
-      const response = await axios.delete(`${BASE_URL}/deleteDoctor/${doctorId}`);
-      return response.data; // Return response from backend
+      const response = await axios.delete(`${BASE_URL}/api/doctors/delete/${doctorId}`);
+      if (response.status === 200) {
+        return { status: 200, message: "Doctor record deleted successfully", data: response.data };
+      } else {
+        return { status: 400, message: "Failed to delete doctor record", data: [] };
+      }
     }
   } catch (error) {
     console.error("Error deleting Doctor record:", error);
@@ -105,7 +117,7 @@ export const deleteDoctor = async (doctorId) => {
 
 export const updateDoctor = async (doctorId, updatedData) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       // Simulating update in mock data
       const index = doctorResponse.findIndex((doctor) => doctor.id === doctorId);
       if (index !== -1) {
@@ -116,8 +128,12 @@ export const updateDoctor = async (doctorId, updatedData) => {
       }
     } else {
       // API call to update Doctor record
-      const response = await axios.put(`${BASE_URL}/updateDoctor/${doctorId}`, updatedData);
-      return response.data; // Return response from backend
+      const response = await axios.put(`${BASE_URL}/api/doctors/update/${doctorId}`, updatedData);
+      if (response.status === 200) {
+        return { status: 200, message: "Record updated successfully", data: response.data };
+      } else {
+        return { status: 400, message: "Failed to update record", data: [] };
+      }
     }
   } catch (error) {
     console.error("Error updating Doctor record:", error);

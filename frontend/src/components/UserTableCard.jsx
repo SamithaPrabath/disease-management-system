@@ -46,9 +46,24 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
       else if (mode === "diseases") response = await deleteDiseases(id);
       else if (mode === "doctor") response = await deleteDoctor(id);
 
-      messageApi.success(response.message);
-
-      setData((prevData) => prevData.filter((user) => user.id !== id));
+      if (response.status === 200) {
+        messageApi.success(response.message);
+        setData((prevData) => prevData.filter((user) => user.id !== id));
+      } else {
+        if (mode === "moh") {
+          messageApi.error("Can't delete MOH because it is assigned to a case and PHIs");
+        } else if (mode === "phi") {
+          messageApi.error("Can't delete PHI because it is assigned to a case");
+        } else if (mode === "institutes") {
+          messageApi.error("Can't delete Institute because it is assigned to a case");
+        } else if (mode === "diseases") {
+          messageApi.error("Can't delete Disease because it is assigned to a case");
+        } else if (mode === "doctor") {
+          messageApi.error("Can't delete Doctor because it is assigned to a case");
+        } else {
+          messageApi.error(response.message);
+        }
+      }
     } catch (error) {
       messageApi.error("Error deleting record. Please try again.");
       console.error("Delete Error:", error);

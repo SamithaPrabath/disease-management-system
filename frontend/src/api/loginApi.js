@@ -56,7 +56,6 @@ export const handleLogin = async (user) => {
           message: "Ok",
         };
       }
-      return errorResponse;
     }
   } catch (error) {
     console.error("Error logging in:", error);

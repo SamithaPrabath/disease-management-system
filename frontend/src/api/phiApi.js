@@ -146,13 +146,16 @@ export const updatePhi = async (id, updatedData) => {
 
 export const getPhiListByLocation = async (location) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const response = phiResponse.filter((phi) => phi.area === location);
       return { status: 200, message: "Fetch data successfully", data: response };
     } else {
-      // Corrected from PUT to GET since this is a retrieval operation
-      const response = await axios.get(`${BASE_URL}/getPhiListByLocation/${location}`);
-      return response.data;
+      const response = await axios.get(`${BASE_URL}/api/phis/getAll`);
+      if (response.status == 200) {
+        return { status: 200, message: "Fetch data successfully", data: response.data.data };
+      } else {
+        return { status: 400, message: response.data.message };
+      }
     }
   } catch (error) {
     console.error("Error fetching PHI list by location:", error);
@@ -165,11 +168,8 @@ export const getPhiListByLocation = async (location) => {
 
 export const phiAssignToCase = async (value) => {
   try {
-    if (!value || !value.caseId || !value.assignedPhi) {
-      throw new Error("Invalid input: caseId and assignPhi are required");
-    }
 
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const caseIndex = allCasesResponse.findIndex(
         (caseItem) => caseItem.caseId === value.caseId
       );
@@ -187,10 +187,14 @@ export const phiAssignToCase = async (value) => {
       return { status: 200, message: "PHI assigned successfully" };
     } else {
       const response = await axios.put(
-        `${BASE_URL}/phiAssignToCase/${value.caseId}`,
+        `${BASE_URL}/api/cases/${value.caseId}/assign-phi`,
         { assignedPhi: value.assignedPhi, phiAssignedDate: value.phiAssignedDate }
-      );
-      return response.data;
+        );
+        if (response.status == 200) {
+          return { status: 200, message: "PHI assigned successfully", data: response.data.data };
+        } else {
+          return { status: 400, message: response.data.message };
+        }
     }
   } catch (error) {
     console.error("Error assigning PHI to case:", error);

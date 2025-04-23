@@ -26,7 +26,9 @@ const LoginPage = (props) => {
     if (props?.AllLogins?.status == "200") {
       messageApi.success(props?.AllLogins?.message);
     } else {
-      messageApi.error(props?.AllLogins?.message);
+      if (props?.AllLogins?.message) {
+        messageApi.error("Username or password is incorrect");
+      }
     }
   };
 

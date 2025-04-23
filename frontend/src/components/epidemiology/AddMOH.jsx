@@ -14,7 +14,7 @@ const AddMOH = ({ handleBack }) => {
       name: "",
       area: "",
       email: "",
-      phoneNumber: "",
+      phone: "",
       username: "",
       password: "",
       role: "moh", // Fixed role for MOH
@@ -102,14 +102,14 @@ const AddMOH = ({ handleBack }) => {
               <label className="block text-gray-700">Phone Number</label>
               <input
                 type="text"
-                name="phoneNumber"
+                name="phone"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                value={formik.values.phoneNumber}
+                value={formik.values.phone}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
+              {formik.touched.phone && formik.errors.phone && (
+                <p className="text-red-500 text-sm">{formik.errors.phone}</p>
               )}
             </div>
           </div>

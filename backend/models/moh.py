@@ -12,7 +12,7 @@ class MOH():
     email: str = None
     password: str = None
     name: str = None
-    phoneNumber: str = None
+    phone: str = None
     username: str = None
     role: str = "moh"
 
@@ -24,7 +24,7 @@ class MOH():
         user = User(
             password_hash=generate_password_hash(self.password),
             name=self.name,
-            phone=self.phoneNumber,
+            phone=self.phone,
             username=self.username,
             role=self.role,
             created_at=created_at,

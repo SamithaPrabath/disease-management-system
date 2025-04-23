@@ -158,8 +158,12 @@ export const getAllMOHList = async () => {
       }));
       return { status: 200, message: "MOH list retrieved successfully", data: filteredMOH };
     } else {
-      const response = await axios.get(`${BASE_URL}/getMohList`);
-      return response.data;
+      const response = await axios.get(`${BASE_URL}/api/mohs/getAll`);
+      if (response.status === 200) {
+        return { status: 200, message: "Fetch data successfully", data: response.data.data };
+      } else {
+        return { status: 400, message: "Failed to fetch MOH data", data: response.data };
+      }
     }
   } catch (error) {
     console.error("Error fetching MOH list:", error);
@@ -170,15 +174,18 @@ export const getAllMOHList = async () => {
   }
 };
 
-export const getMohListByLocation = async (location) => {
+export const getMohListByLocation = async () => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const response = mohResponse.filter((moh) => moh.area === location);
       return { status: 200, message: "Fetch data successfully", data: response };
     } else {
-      // Corrected from PUT to GET since this is a retrieval operation
-      const response = await axios.get(`${BASE_URL}/getMohListByLocation/${location}`);
-      return response.data;
+      const response = await axios.get(`${BASE_URL}/api/mohs/getAll`);
+      if (response.status === 200) {
+        return { status: 200, message: "Fetch data successfully", data: response.data.data };
+      } else {
+        return { status: 400, message: "Failed to fetch MOH data", data: response.data };
+      }
     }
   } catch (error) {
     console.error("Error fetching MOH list by location:", error);
@@ -196,7 +203,7 @@ export const mohAssignToCase = async (value) => {
       throw new Error("Invalid input: caseId and assignMoh are required");
     }
 
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const caseIndex = allCasesResponse.findIndex(
         (caseItem) => caseItem.caseId === value.caseId
       );
@@ -218,7 +225,7 @@ export const mohAssignToCase = async (value) => {
       };
     } else {
       const response = await axios.put(
-        `${BASE_URL}/mohAssignToCase/${value.caseId}`,
+        `${BASE_URL}/api/cases/${value.caseId}/assign-moh`,
         {
           assignedMoh: value.assignedMoh,
           mohAssignedDate: value.mohAssignedDate,
@@ -229,7 +236,11 @@ export const mohAssignToCase = async (value) => {
           },
         }
       );
-      return response.data;
+      if (response.status === 200) {
+        return { status: 200, message: "MOH assigned successfully", data: response.data };
+      } else {
+        return { status: 400, message: "Failed to assign MOH", data: response.data };
+      }
     }
   } catch (error) {
     console.error("Error assigning MOH to case:", error);

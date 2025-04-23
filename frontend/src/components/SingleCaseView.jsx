@@ -9,6 +9,7 @@ import { getSingleCaseData } from "../api/allCasesApi";
 import { viewConfirmPopUp } from "../redux/actions/confirmCasePopUpAction";
 import { viewAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
 import { viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
+import { closeAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 
 const SingleCaseView = ({
   AllLogins,
@@ -18,6 +19,7 @@ const SingleCaseView = ({
   patientId,
   viewAssignPHIPopUp,
   viewAssignMOHPopUp,
+  closeAssignMOHPopUp,
 }) => {
   const [singleCase, setSingleCase] = useState([]);
   const [role, setRole] = useState("");
@@ -33,7 +35,7 @@ const SingleCaseView = ({
     };
 
     fetchData();
-  }, [AllLogins]);
+  }, [AllLogins, closeAssignMOHPopUp, viewAssignMOHPopUp, viewAssignPHIPopUp, viewConfirmPopUp]);
 
   useEffect(() => {
     setRole(AllLogins.data.role);
@@ -598,6 +600,8 @@ const mapDispatchToProps = (dispatch) => ({
   viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
   viewAssignPHIPopUp: () => dispatch(viewAssignPHIPopUp()),
   viewAssignMOHPopUp: () => dispatch(viewAssignMOHPopUp()),
+  closeAssignMOHPopUp: () => dispatch(closeAssignMOHPopUp()),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleCaseView);

@@ -2,18 +2,18 @@ import { viewEdit } from "../../redux/actions/viewEditAction";
 import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { doctorSchema } from "../../yupSchema/doctorSchema";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { doctorEditSchema } from "../../yupSchema/doctorSchema";
 import { getAllDoctorData, updateDoctor } from "../../api/doctorApi";
 import { message } from "antd";
+import { getAllMohData } from "../../api/mohApi";
 
 const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
   const [messageApi, contextHolder] = message.useMessage();
   
-  const [showPassword, setShowPassword] = useState(false);
   const [isEnableEdit, setIsEnableEdit] = useState(true);
 
   const [userData, setUserData] = useState([]);
+  const [mohData, setMohData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,6 +25,9 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
         );
 
         setUserData(filteredData);
+
+        const mohResponse = await getAllMohData();
+        setMohData(mohResponse.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -36,16 +39,13 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
   const formik = useFormik({
     initialValues: {
           name: userData[0]?.name || "",
-          registrationNumber: userData[0]?.registrationNumber || "",
           moh: userData[0]?.moh || "",
           area: userData[0]?.area || "",
           email: userData[0]?.email || "",
-          phoneNumber: userData[0]?.phoneNumber || "",
-          username: userData[0]?.userName || "",
-          password: userData[0]?.password || "",
+          phoneNumber: userData[0]?.phone || "",
       },
       enableReinitialize: true,
-    validationSchema: doctorSchema,
+    validationSchema: doctorEditSchema,
     onSubmit: async (values) => {
       try {
         const id = userData[0]?.id;
@@ -58,6 +58,7 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
         const response = await updateDoctor(id, values);
         if (response && response.message) {
           messageApi.success(response.message);
+          setTimeout(() => viewEdit(), 1000);
         } else {
           messageApi.error("Registration failed");
         }
@@ -116,42 +117,29 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
             )}
           </div>
 
-          {/* Registration Number */}
-          <div>
-            <label className="block text-gray-700">Registration Number</label>
-            <input
-              type="text"
-              name="registrationNumber"
-              className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
-              value={formik.values.registrationNumber}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.registrationNumber &&
-              formik.errors.registrationNumber && (
-                <p className="text-red-500">
-                  {formik.errors.registrationNumber}
-                </p>
-              )}
-          </div>
-
           {/* MOH */}
           <div>
             <label className="block text-gray-700">MOH</label>
-            <input
-              type="text"
+            <select
               name="moh"
-              className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-              }`}
+              className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
               value={formik.values.moh}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-            />
+              disabled={isEnableEdit}
+            >
+              {isEnableEdit ? (
+                <option value={formik.values.moh_id}>{formik.values.moh}</option>
+              ) : (
+                mohData.map((moh) => (
+                  <option key={moh.id} value={moh.id}>
+                    {moh.name}
+                  </option>
+                ))
+              )}
+            </select>
             {formik.touched.moh && formik.errors.moh && (
-              <p className="text-red-500">{formik.errors.moh}</p>
+              <p className="text-red-500 text-sm">{formik.errors.moh}</p>
             )}
           </div>
 
@@ -181,7 +169,7 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
                 type="email"
                 name="email"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
                 }`}
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -198,7 +186,7 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
                 type="text"
                 name="phoneNumber"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
                 }`}
                 value={formik.values.phoneNumber}
                 onChange={formik.handleChange}
@@ -206,55 +194,6 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
               />
               {formik.touched.phoneNumber && formik.errors.phoneNumber && (
                 <p className="text-red-500">{formik.errors.phoneNumber}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Username & Password - Two-column layout */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700">Username</label>
-              <input
-                type="text"
-                name="username"
-                className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-                }`}
-                value={formik.values.username}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.username && formik.errors.username && (
-                <p className="text-red-500">{formik.errors.username}</p>
-              )}
-            </div>
-
-            <div className="relative">
-              <label className="block text-gray-700">Password</label>
-              <input
-                type={showPassword ? "text" : "password"} // Toggle between text/password
-                name="password"
-                className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                  isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
-                }`}
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {/* Toggle Button (Eye Icon) */}
-              <button
-                type="button"
-                className="absolute top-9 right-3 text-gray-600"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <AiOutlineEyeInvisible size={22} />
-                ) : (
-                  <AiOutlineEye size={22} />
-                )}
-              </button>
-              {formik.touched.password && formik.errors.password && (
-                <p className="text-red-500">{formik.errors.password}</p>
               )}
             </div>
           </div>
