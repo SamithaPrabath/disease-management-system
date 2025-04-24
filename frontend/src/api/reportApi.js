@@ -100,7 +100,7 @@ export const addReport = async (reportData) => {
       throw new Error("Invalid input: caseId is required");
     }
 
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       // Check if a report already exists for this caseId
       const existingReport = reportResponse.find((r) => r.caseId === report.caseId);
       if (existingReport) {
@@ -137,12 +137,25 @@ export const addReport = async (reportData) => {
       };
     } else {
       // Make an API call to update the case with the report
-      const response = await axios.put(`${BASE_URL}/updateCase/${report.caseId}`, reportData, {
+      const response = await axios.put(`${BASE_URL}/api/cases/add-report/${report.caseId}`, reportData, {
         headers: {
           "Content-Type": "multipart/form-data", // Required for FormData with file
         },
       });
-      return response.data; // Assumes API returns { status, message, data }
+      if(response.status == 200){
+        return {
+          status: 200,
+          message: "Report added successfully",
+          data: response.data,
+        };
+      }
+      else{
+        return {
+          status: 400,
+          message: "Failed to add report",
+          data: null,
+        };
+      }
     }
   } catch (error) {
     console.error("Error adding report:", error);

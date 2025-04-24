@@ -107,3 +107,25 @@ class CaseController(BaseController):
             return CaseController.success_response(result)
         except Exception as e:
             return CaseController.error_response(str(e), 500)
+
+    @staticmethod
+    def add_report(case_id):
+        try:
+            # Get form data
+            report_data = dict(request.form)
+            
+            # Handle file upload if present
+            if 'file' in request.files:
+                file = request.files['file']
+                if file.filename:
+                    # Save the file and get its path
+                    # You'll need to implement your file saving logic here
+                    file_path = f"uploads/reports/{file.filename}"
+                    file.save(file_path)
+                    report_data['file'] = file_path
+            
+            # Add report to case
+            result = asyncio.run(Case.add_report(case_id, report_data))
+            return CaseController.success_response(result)
+        except Exception as e:
+            return CaseController.error_response(str(e), 500)

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from models.moh import MOH
 from models.phi import PHI
 from models.user import User
+from models.report import Report
 from utils.db.query_executor import AsyncQueryExecutor
 
 
@@ -35,6 +36,7 @@ class Case:
     sendReport: str = "false"
     assignedMoh: str = None
     mohAssignedDate: str = None
+    reportId: str = None
     notifierDetails: dict = None # name, role
     assignedMohDetails: dict = None # name, area, registrationNumber
     assignedPhiDetails: dict = None # name, area, registrationNumber
@@ -89,7 +91,8 @@ class Case:
                 assignedPhi=result[24],
                 sendReport=result[25],
                 assignedMoh=result[26],
-                mohAssignedDate=result[27]
+                mohAssignedDate=result[27],
+                reportId=result[28]
             )
 
             if case.assignedMoh:
@@ -126,7 +129,20 @@ class Case:
                     "role": notifier_user.role
                 }
             
-            case.report = {}
+            if case.reportId:
+                report = await Report.get_report_by_id(case.reportId)
+                case.report = {
+                    "reportCreatedDate": report.reportCreatedDate,
+                    "ethnicGroup": report.ethnicGroup,
+                    "dischargeDate": report.dischargeDate,
+                    "isolationStatus": report.isolationStatus,
+                    "isolationDateFrom": report.isolationDateFrom,
+                    "isolationDateTo": report.isolationDateTo,
+                    "outcome": report.outcome,
+                    "movementHistory": report.movementHistory,
+                    "labResults": report.labResults,
+                    "phiRemarks": report.phiRemarks
+                }
                 
             return case
         return {}
@@ -172,3 +188,36 @@ class Case:
         query = "UPDATE cases SET assignedPhi = %s, phiAssignedDate = %s WHERE id = %s"
         await query_executor.execute(query, (assigned_phi, phi_assigned_date, case_id))
         return {"message": "Case assignedPhi and phiAssignedDate updated successfully", "status": "success"}
+
+    @staticmethod
+    async def add_report(case_id: int, report_data: dict):
+        # Create new report
+        report = Report(
+            ethnicGroup=report_data.get('ethnicGroup'),
+            dischargeDate=report_data.get('dischargeDate'),
+            isolationDateFrom=report_data.get('isolationDateFrom'),
+            isolationDateTo=report_data.get('isolationDateTo'),
+            movementHistory=report_data.get('movementHistory'),
+            isolationStatus=report_data.get('isolationStatus'),
+            outcome=report_data.get('outcome'),
+            labResults=report_data.get('labResults'),
+            householdContacts=report_data.get('householdContacts'),
+            otherContacts=report_data.get('otherContacts'),
+            phiRemarks=report_data.get('phiRemarks'),
+            file=report_data.get('file'),
+            reportCreatedDate=report_data.get('reportCreatedDate')
+        )
+        
+        # Save the report
+        saved_report = await report.save()
+        
+        # Update case with report ID
+        query_executor1 = AsyncQueryExecutor()
+        query = "UPDATE cases SET report_id = %s WHERE id = %s"
+        await query_executor1.execute(query, (saved_report.id, case_id))
+        
+        return {
+            "message": "Report added and case updated successfully",
+            "status": "success",
+            "reportId": saved_report.id
+        }

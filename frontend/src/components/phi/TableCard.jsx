@@ -289,7 +289,7 @@ const Table = ({
                             {!patient?.assignedPhi ? (
                               <button
                                 className={`text-white px-[16px] py-[8px] rounded-[6px] bg-blue-600 hover:bg-blue-700 transition cursor-pointer`}
-                                onClick={() => viewAssignPHIPopUp()}
+                                onClick={() => viewSingleCase(patient.caseId)}
                               >
                                 Assign PHI
                               </button>

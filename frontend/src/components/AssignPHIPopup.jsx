@@ -25,7 +25,7 @@ const center = {
   lng: 79.8612, // Longitude of Colombo
 };
 
-const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) => {
+const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, AllLogins}) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [phiList, setPhiList] = useState([]);
@@ -46,7 +46,7 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getPhiListByLocation();
+        const response = await getPhiListByLocation(AllLogins.data.userId);
         setPhiList(response.data || []);
       } catch (error) {
         console.error("Error fetching PHI list:", error);
@@ -59,12 +59,15 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
 
   const formik = useFormik({
     initialValues: {
-      caseId: caseId || "",
+      caseId: ViewsSingleCase?.[1] || "",
       assignedPhi: "",
       phiAssignedDate: new Date().toISOString().split("T")[0],
     },
     validationSchema: assignPHISchema,
     onSubmit: async (values, { resetForm }) => {
+      if(values.caseId == ""){
+        values.caseId = ViewsSingleCase?.[1]
+      }
       console.log(values);
       try {
         const response = await phiAssignToCase(values);
@@ -118,7 +121,7 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
                     <option value="">Select PHI</option>
                     {phiList.map((phi) => (
                       <option key={phi.id} value={phi.id}>
-                        Name: {phi.name}, MOH: {phi.moh}
+                        Name: {phi.name}
                       </option>
                     ))}
                   </select>
@@ -172,6 +175,7 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp }) =
 const mapStateToProps = (state) => ({
   Assignphipopup: state.assignphipopupReducer,
   ViewsSingleCase: state.viewsSingleCase,
+  AllLogins: state.allLogins,
 });
 
 const mapDispatchToProps = (dispatch) => ({

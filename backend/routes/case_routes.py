@@ -11,3 +11,4 @@ case_bp.route('/admin/all', methods=['GET'])(CaseController.get_all_cases_by_adm
 case_bp.route('/<case_id>/mark-received', methods=['PUT'])(CaseController.update_mark_as_received)
 case_bp.route('/<case_id>/assign-moh', methods=['PUT'])(CaseController.update_assigned_moh)
 case_bp.route('/<case_id>/assign-phi', methods=['PUT'])(CaseController.update_assigned_phi)
+case_bp.route('/add-report/<case_id>', methods=['PUT'])(CaseController.add_report)

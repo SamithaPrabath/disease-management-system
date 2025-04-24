@@ -40,4 +40,14 @@ class PHIController(BaseController):
             return PHIController.success_response(result)
         except Exception as e:
             return PHIController.error_response(str(e))
+
+    @staticmethod
+    def get_phi_user(id):
+        try:
+            phi_user = asyncio.run(PHI.get_phi_user_by_moh_id(id))
+            if not phi_user:
+                return PHIController.error_response("PHI user not found", 404)
+            return PHIController.success_response(phi_user)
+        except Exception as e:
+            return PHIController.error_response(str(e))
     

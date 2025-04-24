@@ -150,7 +150,7 @@ export const getPhiListByLocation = async (location) => {
       const response = phiResponse.filter((phi) => phi.area === location);
       return { status: 200, message: "Fetch data successfully", data: response };
     } else {
-      const response = await axios.get(`${BASE_URL}/api/phis/getAll`);
+      const response = await axios.get(`${BASE_URL}/api/phis/getUser/${location}`);
       if (response.status == 200) {
         return { status: 200, message: "Fetch data successfully", data: response.data.data };
       } else {

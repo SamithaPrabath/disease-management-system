@@ -82,6 +82,10 @@ class PHI():
                 user.email = phi.email
                 user.area = phi.area
                 user.password_hash = ""
+
+                moh = await MOH.get_moh_user_by_id(phi.moh_id)
+                user.moh = moh.name
+                user.moh_id = moh.id
                 return user
         return None
 
@@ -150,3 +154,28 @@ class PHI():
             )
         
         return {"message": "PHI user updated successfully", "status": 200}
+    
+    @staticmethod
+    async def get_phi_user_by_moh_id(id):
+        query_executor = AsyncQueryExecutor()
+        query = "SELECT * FROM phis WHERE moh_id = %s"
+        result = await query_executor.fetch_all(query, (id,))
+
+        users = []
+        if result:
+            phi_users = [PHI(*phi) for phi in result]
+        
+            for phi in phi_users:
+                user = await User.get_user_by_id(phi.id)
+                user.email = phi.email
+                user.area = phi.area
+                user.password_hash = ""
+
+                moh = await MOH.get_moh_user_by_id(phi.moh_id)
+                user.moh = moh.name
+                user.moh_id = moh.id
+                users.append(user)
+
+            return users
+        return []
+
