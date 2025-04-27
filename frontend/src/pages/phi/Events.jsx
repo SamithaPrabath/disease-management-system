@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { viewEditEvent } from "../../redux/actions/viewEditEventAction";
 import EditEvent from "../../components/moh/EditEvent";
 
-const Events = ({viewEditEvent}) => {
+const Events = ({AllLogins, viewEditEvent}) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [allEvents, setAllEvents] = useState([]);
@@ -17,11 +17,11 @@ const Events = ({viewEditEvent}) => {
   // Fetch all events on component mount
   useEffect(() => {
     const fetchEvents = async () => {
-      const response = await getAllEvents();
+      const response = await getAllEvents(AllLogins.data.userId);
       setAllEvents(response.data);
     };
     fetchEvents();
-  }, []);
+  }, [isAddEventOpen, messageApi, AllLogins]);
 
   // Handle search input change
   const handleSearchChange = (e) => {
@@ -138,4 +138,10 @@ const mapDispatchToProps = (dispatch) => ({
   viewEditEvent: (value) => dispatch(viewEditEvent(value)),
 });
 
-export default connect(null, mapDispatchToProps)(Events);
+const mapStateToProps = (state) => {
+  return {
+    AllLogins: state.allLogins,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Events);

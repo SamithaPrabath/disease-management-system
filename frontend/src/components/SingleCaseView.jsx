@@ -229,7 +229,7 @@ const SingleCaseView = ({
           </div>
         </div>
 
-        {(singleCase?.markAsReceived == "true" || role == "admin") && Object.keys(singleCase?.report || {}).length > 0 ? (
+        {(singleCase?.markAsReceived == "true" || role == "admin" || role == "moh" || role == "phi" || role == "doctor" || role == "epidemiologist") && Object.keys(singleCase?.report || {}).length > 0 ? (
           <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
             <div className="flex flex-row items-center justify-between">
               <h1 className="text-2xl font-medium">

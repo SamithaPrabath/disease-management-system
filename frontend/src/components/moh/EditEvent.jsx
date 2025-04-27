@@ -7,7 +7,7 @@ import { message } from "antd";
 import { connect } from "react-redux";
 import { closeViewEditEvent } from "../../redux/actions/viewEditEventAction";
 
-const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
+const EditEvent = ({ ViewEditEvent, closeViewEditEvent, AllLogins }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [image, setImage] = useState(null);
   const [eventData, setEventData] = useState(null); // Changed to null for single object
@@ -20,7 +20,7 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAllEvents();
+        const response = await getAllEvents(AllLogins.data.userId);
         const filteredData = response.data.find(
           (item) => item.id === ViewEditEvent?.[1]
         );
@@ -208,9 +208,14 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
                 {image ? (
                   <p className="text-sm text-gray-600 mt-1">{image.name}</p>
                 ) : eventData?.image ? (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Current: {typeof eventData.image === "string" ? eventData.image : "Image exists"}
-                  </p>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600">Current: </p>
+                    <img 
+                      src={eventData.image} 
+                      alt="Current event image" 
+                      className="mt-2 max-h-[200px] w-auto rounded-md object-cover"
+                    />
+                  </div>
                 ) : null}
               </div>
 
@@ -238,6 +243,7 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent }) => {
 
 const mapStateToProps = (state) => ({
   ViewEditEvent: state.viewEditEvent,
+  AllLogins: state.allLogins,
 });
 
 const mapDispatchToProps = (dispatch) => ({

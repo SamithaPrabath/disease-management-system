@@ -26,17 +26,28 @@ let eventsResponse = [
 ];
 
 // Fetch all events
-export const getAllEvents = async () => {
+export const getAllEvents = async (userId) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       return {
         status: 200,
         message: "Events fetched successfully",
         data: eventsResponse,
       };
     } else {
-      const response = await axios.get(`${BASE_URL}/events`);
-      return response.data; // Assumes API returns { status, message, data }
+      const response = await axios.get(`${BASE_URL}/api/events/get-events/phi/${userId}`);
+      if (response.status === 200) {
+        return {
+          status: 200,
+          message: "Events fetched successfully",
+          data: response.data.data,
+        };
+      }
+      return {
+        status: response.status,
+        message: response.data.message,
+        data: response.data,
+      };
     }
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -49,7 +60,7 @@ export const getAllEvents = async () => {
 };
 
 // Create a new event
-export const createEvent = async (eventData) => {
+export const createEvent = async (eventData, userId) => {
   try {
     // Handle FormData or plain object
     let event;
@@ -71,7 +82,7 @@ export const createEvent = async (eventData) => {
       throw new Error("Invalid input: eventName, startDate, and location are required");
     }
 
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const newEvent = {
         ...event,
         id: (eventsResponse.length + 1).toString().padStart(3, "0"), // Generate a new ID
@@ -84,12 +95,23 @@ export const createEvent = async (eventData) => {
       };
     } else {
       // API call with FormData
-      const response = await axios.post(`${BASE_URL}/events`, eventData, {
+      const response = await axios.post(`${BASE_URL}/api/events/add-event/${userId}`, eventData, {
         headers: {
           "Content-Type": "multipart/form-data", // Required for file uploads
         },
       });
-      return response.data;
+      if (response.status === 200) {
+        return {
+          status: 200,
+          message: "Event created successfully",
+          data: response.data,
+        };
+      }
+      return {
+        status: response.status,
+        message: response.data.message,
+        data: response.data,
+      };
     }
   } catch (error) {
     console.error("Error creating event:", error);
@@ -107,7 +129,7 @@ export const updateEvent = async (id, updatedEvent) => {
       throw new Error("Invalid input: id and updatedEvent are required");
     }
 
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const index = eventsResponse.findIndex((event) => event.id === id);
       if (index !== -1) {
         eventsResponse[index] = { ...eventsResponse[index], ...updatedEvent };
@@ -122,8 +144,19 @@ export const updateEvent = async (id, updatedEvent) => {
         message: "Event not found",
       };
     } else {
-      const response = await axios.put(`${BASE_URL}/events/${id}`, updatedEvent);
-      return response.data;
+      const response = await axios.put(`${BASE_URL}/api/events/update-event/${id}`, updatedEvent);
+      if (response.status === 200) {
+        return {
+          status: 200,
+          message: "Event updated successfully",
+          data: response.data.data,
+        };
+      }
+      return {
+        status: response.status,
+        message: response.data.message,
+        data: response.data,
+      };
     }
   } catch (error) {
     console.error("Error updating event:", error);

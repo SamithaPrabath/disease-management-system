@@ -4,9 +4,10 @@ import { useFormik } from "formik";
 import { eventSchema } from "../../yupSchema/eventSchema";
 import { createEvent } from "../../api/eventsApi";
 import { message } from "antd";
+import { connect } from "react-redux";
 
 
-const AddEvent = ({ handleAddEvent }) => {
+const AddEvent = ({ handleAddEvent, AllLogins }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [image, setImage] = useState(null);
 
@@ -33,8 +34,8 @@ const AddEvent = ({ handleAddEvent }) => {
 
         console.log("Form: ", formData)
 
-        const response = await createEvent(formData);
-        if (response.status === 201 && response.message) {
+        const response = await createEvent(formData, AllLogins.data.userId);
+        if (response.status === 200 && response.message) {
           messageApi.success(response.message);
           resetForm();
           setTimeout(() => handleAddEvent(), 1000);
@@ -206,4 +207,10 @@ const AddEvent = ({ handleAddEvent }) => {
   );
 };
 
-export default AddEvent;
+const mapStateToProps = (state) => {
+  return {
+    AllLogins: state.allLogins,
+  };
+};
+
+export default connect(mapStateToProps, null)(AddEvent);
