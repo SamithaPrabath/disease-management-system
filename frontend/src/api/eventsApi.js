@@ -174,7 +174,7 @@ export const deleteEvent = async (id) => {
       throw new Error("Invalid input: id is required");
     }
 
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const initialLength = eventsResponse.length;
       eventsResponse = eventsResponse.filter((event) => event.id !== id);
       if (eventsResponse.length < initialLength) {
@@ -188,8 +188,18 @@ export const deleteEvent = async (id) => {
         message: "Event not found",
       };
     } else {
-      const response = await axios.delete(`${BASE_URL}/events/${id}`);
-      return response.data;
+      const response = await axios.delete(`${BASE_URL}/api/events/delete-event/${id}`);
+      if (response.status === 200) {
+        return {
+          status: 200,
+          message: "Event deleted successfully",
+        };
+      }
+      return {
+        status: response.status,
+        message: response.data.message,
+        data: response.data,
+      };
     }
   } catch (error) {
     console.error("Error deleting event:", error);

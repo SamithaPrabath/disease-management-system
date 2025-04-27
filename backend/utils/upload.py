@@ -37,4 +37,36 @@ async def upload_file(file):
     file.save(file_path)
     
     # Return the relative URL path
-    return f"/uploads/{unique_filename}" 
+    return f"/uploads/{unique_filename}"
+
+def delete_file(file_path):
+    """
+    Delete a file from the server
+    
+    Args:
+        file_path: The relative path of the file to delete (e.g., '/uploads/filename.jpg')
+        
+    Returns:
+        bool: True if file was deleted, False if file doesn't exist
+    """
+    if not file_path:
+        return False
+        
+    try:
+        # Get the filename from the path
+        filename = os.path.basename(file_path)
+        if not filename:
+            return False
+            
+        # Get the full path to the file
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        file_path = os.path.join(upload_folder, filename)
+        
+        # Check if file exists and delete it
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return True
+        return False
+    except Exception as e:
+        print(f"Error deleting file: {str(e)}")
+        return False 

@@ -1,7 +1,7 @@
 import asyncio
 from flask import jsonify, request, url_for
 from models.event import Event
-from utils.upload import upload_file
+from utils.upload import upload_file, delete_file
 from controllers.base_controller import BaseController
 
 class EventController(BaseController):
@@ -119,6 +119,16 @@ class EventController(BaseController):
     @staticmethod
     def delete_event(id):
         try:
+            # Get the event first to check if it has an image
+            event = asyncio.run(Event.get_event_by_id(id))
+            if not event:
+                return EventController.error_response("Event not found", 404)
+                
+            # Delete the image file if it exists
+            if event.image:
+                delete_file(event.image)
+                
+            # Delete the event from database
             result = asyncio.run(Event.delete_event(id))
             return EventController.success_response(
                 result
