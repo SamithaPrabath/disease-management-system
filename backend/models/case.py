@@ -143,6 +143,8 @@ class Case:
                     "labResults": report.labResults,
                     "phiRemarks": report.phiRemarks
                 }
+            else:
+                case.report = {}
                 
             return case
         return {}
