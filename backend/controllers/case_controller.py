@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request
 from .base_controller import BaseController
 from models.case import Case
@@ -98,11 +99,11 @@ class CaseController(BaseController):
         try:
             data = request.get_json()
             assigned_phi = data.get('assignedPhi')
-            phi_assigned_date = data.get('phiAssignedDate')
+            phi_assigned_date = datetime.now().strftime('%Y-%m-%d')
+
+            if not assigned_phi:
+                assigned_phi = None
             
-            if not assigned_phi or not phi_assigned_date:
-                return CaseController.error_response("assignedPhi and phiAssignedDate fields are required", 400)
-                
             result = asyncio.run(Case.update_assigned_phi(case_id, assigned_phi, phi_assigned_date))
             return CaseController.success_response(result)
         except Exception as e:

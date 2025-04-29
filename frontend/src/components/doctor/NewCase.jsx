@@ -147,7 +147,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
       {contextHolder}
       <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-          Notification of a Communicable Disease
+          Notifiable Disease Notifications
         </h2>
 
         <form className="space-y-4" onSubmit={formik.handleSubmit}>

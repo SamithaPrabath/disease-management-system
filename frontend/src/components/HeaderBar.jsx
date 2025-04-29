@@ -198,8 +198,11 @@ const HeaderBar = ({
             ) : role === "moh" ? (
               <div className="flex gap-3">
                 <button
-                  className="px-[16px] py-[8px] rounded-[6px] text-white bg-blue-600 cursor-pointer"
+                  className={`px-[16px] py-[8px] rounded-[6px] ${
+                    singleCase?.assignedPhi ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" : "bg-blue-600 text-white cursor-pointer"
+                  }`}
                   onClick={() => viewAssignPHIPopUp()}
+                  disabled={singleCase?.assignedPhi ? true : false}
                 >
                   Assign PHI
                 </button>

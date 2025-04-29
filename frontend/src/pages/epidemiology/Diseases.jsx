@@ -71,7 +71,7 @@ const Didseaces = (props) => {
               <div className="w-full flex flex-row items-center justify-between">
                 {/* Heading */}
                 <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-                  Didseaces
+                Diseases
                 </h2>
 
                 <div className="flex flex-row gap-3">
@@ -79,7 +79,7 @@ const Didseaces = (props) => {
                     className="w-[150px] text-white text-[16px] font-medium rounded-[8px] bg-[#0866FF] p-[8px] cursor-pointer"
                     onClick={handlePopUpOpen}
                   >
-                    Add Didseaces
+                    Add Diseases
                   </button>
                   <div className="relative">
                     <input

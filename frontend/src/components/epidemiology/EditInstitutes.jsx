@@ -20,6 +20,7 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
         const filteredData = response.data.find(
           (item) => item.id === AllViewEditReducer?.[1]
         );
+        setCities([filteredData?.city] || []);
         setUserData(filteredData || {});
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -229,10 +230,11 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                     {isEnableEdit ? (
                       <option value={formik.values.city}>{formik.values.city}</option>
                     ) : (
-                    cities.map((city) => (
-                      <option key={city} value={city}>
-                        {city}
-                      </option>
+                      
+                      cities.map((city) => (
+                        <option key={city} value={city}>
+                          {city}
+                        </option>
                     ))
                   )}
                 </select>

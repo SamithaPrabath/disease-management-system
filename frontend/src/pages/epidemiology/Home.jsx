@@ -78,7 +78,7 @@ const Home = (props) => {
             <div className="w-full flex flex-row items-center justify-between">
               {/* Heading */}
               <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-                Notifications of a communicable disease
+              Notifiable Disease Notifications
               </h2>
 
               {/* Search Input with Icon */}

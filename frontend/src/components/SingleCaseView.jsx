@@ -161,7 +161,7 @@ const SingleCaseView = ({
               <button
                 className={` text-white px-4 py-2 rounded text-base
               ${
-                role === "idu" || role === "moh"
+                (role === "idu" || role === "moh")
                   ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
                   : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
               }

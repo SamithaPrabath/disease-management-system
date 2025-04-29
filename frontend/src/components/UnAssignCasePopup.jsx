@@ -84,8 +84,6 @@ const UnAssignCasePopup = ({
       caseId: ViewsSingleCase?.[1],
     };
 
-    const response = await unAssignedPhi(values);
-
     try {
       const response = await unAssignedPhi(values);
 

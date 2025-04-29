@@ -25,7 +25,7 @@ export const assignedPhi = async () => {};
 
 export const unAssignedPhi = async (unAssignData) => {
     try {
-      if (IS_BACKEND) {
+      if (IS_BACKEND == "false") {
         // Update the main case data
         const caseIndex = allCasesResponse.findIndex(
           (data) => data.caseId === unAssignData.caseId
@@ -62,8 +62,19 @@ export const unAssignedPhi = async (unAssignData) => {
           throw new Error("Case or PHI assignment not found");
         }
       } else {
-        const response = await axios.put(`${BASE_URL}/unassignPhi`, unAssignData);
-        return response.data;
+        const response = await axios.put(`${BASE_URL}/api/cases/${unAssignData.caseId}/assign-phi`, 
+          {'assignedPhi': 0, 'phiAssignedDate': Date.now()} , {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+        if (response.status === 200) {
+          return {
+            status: 200,
+            message: "PHI unassigned successfully",
+            data: response.data,
+          };
+        }
       }
     } catch (error) {
       console.error("Error unassigning PHI:", error);

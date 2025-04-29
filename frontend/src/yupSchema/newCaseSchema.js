@@ -17,7 +17,5 @@ export const newCaseSchema = Yup.object({
   instituteId: Yup.string().required("Institute is required"),
   dateOfOnset: Yup.date().required("Date of Onset is required"),
   dateOfAdmission: Yup.date().required("Date of Admission is required"),
-  ward: Yup.string().required("Ward is required"),
-  bhtNumber: Yup.string().required("B.H.T. Number is required"),
   address: Yup.string().required("Address is required"),
 });

@@ -252,10 +252,15 @@ const Table = ({
                         ) : role == "idu" ? (
                           <button
                             type="button"
-                            className="bg-gray-300 text-black px-[16px] py-[8px] rounded-[6px] hover:bg-gray-400 cursor-pointer"
+                            className={`px-[16px] py-[8px] rounded-[6px] ${
+                              patient.assignedMoh ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" :  "bg-blue-600 text-white cursor-pointer"
+                            }`}
                             onClick={() => viewSingleCase(patient.caseId)}
+                            disabled={
+                              patient.assignedMoh ? true : false
+                            }
                           >
-                            Assign Officers
+                            Assign MOH
                           </button>
                         ) : role == "phi" ? (
                           <>

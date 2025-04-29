@@ -33,8 +33,8 @@ class User:
     @staticmethod
     async def get_user_by_username(username):
         query_executor = AsyncQueryExecutor()
-        query = f"SELECT * FROM users WHERE username = '{username}'"
-        result = await query_executor.fetch_one(query)
+        query = "SELECT * FROM users WHERE BINARY username = %s"
+        result = await query_executor.fetch_one(query, (username,))
         if result:
             return User(*result)
         return None

@@ -54,8 +54,12 @@ class Event():
     @staticmethod
     async def get_events_by_phi_id(phi_id):
         query_executor = AsyncQueryExecutor()
-        query = "SELECT * FROM events WHERE phi_id = %s ORDER BY startDate DESC, startTime DESC"
-        result = await query_executor.fetch_all(query, (phi_id,))
+        if phi_id:
+            query = "SELECT * FROM events WHERE phi_id = %s ORDER BY startDate DESC, startTime DESC"
+            result = await query_executor.fetch_all(query, (phi_id,))
+        else:
+            query = "SELECT * FROM events ORDER BY startDate DESC, startTime DESC"
+            result = await query_executor.fetch_all(query)
         
         if result:
             return [Event(*event) for event in result]

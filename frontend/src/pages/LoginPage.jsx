@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../assets/logo.png";
 import loginSchema from "../yupSchema/loginSchema";
 import { useFormik } from "formik";
@@ -6,8 +6,9 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import { fetchLogin } from "../redux/actions/loginAction";
 import { connect } from "react-redux";
 import { message } from "antd";
-
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 const LoginPage = (props) => {
+  const [showPassword, setShowPassword] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   const formik = useFormik({
@@ -89,9 +90,10 @@ const LoginPage = (props) => {
               </p>
             )}
 
-            <label htmlFor="username" className="text-[16px] text-[#7C838A]">
+            <label htmlFor="password" className="text-[16px] text-[#7C838A]">
               Password
             </label>
+            <div className="relative">
             <input
               className={`w-[414px] h-[50px] bg-[#E2E5E9] rounded-[8px] px-[16px] py-[14px]
             ${
@@ -100,7 +102,7 @@ const LoginPage = (props) => {
                 : ""
             }
             `}
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Enter password"
               id="password"
               name="password"
@@ -108,12 +110,24 @@ const LoginPage = (props) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
+            <button
+              type="button"
+              className="absolute top-1/3 right-3 text-gray-600"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible size={22} />
+              ) : (
+                <AiOutlineEye size={22} />
+              )}
+            </button>
             {formik.errors.password && formik.touched.password && (
               <p className="text-red-500 text-[14px] flex flex-row gap-[2px] items-center">
                 <RiErrorWarningLine />
                 {formik.errors.password}
-              </p>
-            )}
+                </p>
+              )}
+            </div>
 
             <input
               className="w-[414px] h-[60px] bg-[#0866FF] rounded-[6px] text-[20px] text-white font-medium px-[32px] py-[16px] mt-[24px] cursor-pointer"

@@ -95,6 +95,24 @@ class Case:
                 reportId=result[28]
             )
 
+            if case.dateOfOnset:
+                case.dateOfOnset = format_date_with_suffix(case.dateOfOnset)
+
+            if case.dateOfAdmission:
+                case.dateOfAdmission = format_date_with_suffix(case.dateOfAdmission)
+            
+            if case.notifiedDate:
+                case.notifiedDate = format_date_with_suffix(case.notifiedDate)
+                
+            if case.confirmedDate:
+                case.confirmedDate = format_date_with_suffix(case.confirmedDate)
+                
+            if case.phiAssignedDate:
+                case.phiAssignedDate = format_date_with_suffix(case.phiAssignedDate)
+
+            if case.mohAssignedDate:
+                case.mohAssignedDate = format_date_with_suffix(case.mohAssignedDate)
+                
             if case.assignedMoh:
                 moh_user = await MOH.get_moh_user_by_id(case.assignedMoh)
                 case.assignedMohDetails = {
@@ -166,9 +184,9 @@ class Case:
     @staticmethod
     async def get_all_cases_by_admin():
         query_executor = AsyncQueryExecutor()
-        query = "SELECT * FROM cases where caseStatus = 'Confirmed'"
+        query = "SELECT id FROM cases where caseStatus = 'Confirmed'"
         results = await query_executor.fetch_all(query)
-        return [Case(*result) for result in results] if results else []
+        return [await Case.get_case_by_id(result[0]) for result in results] if results else []
 
     @staticmethod
     async def update_mark_as_received(case_id: int, mark_as_received: str):
@@ -223,3 +241,15 @@ class Case:
             "status": "success",
             "reportId": saved_report.id
         }
+
+
+def format_date_with_suffix(date_obj):
+    day = date_obj.day
+    # Get suffix
+    if 10 <= day % 100 <= 20:
+        suffix = 'th'
+    else:
+        suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+    
+    # Format the final string
+    return f"{day}{suffix} {date_obj.strftime('%b')} {date_obj.year}"
