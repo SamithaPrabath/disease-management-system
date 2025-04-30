@@ -3,6 +3,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { connect } from "react-redux";
 import { closePopUp } from "../redux/actions/popUpAction";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { getSingleCaseData } from "../api/allCasesApi";
 
 // Map container style
 const containerStyle = {
@@ -10,14 +11,15 @@ const containerStyle = {
   height: "400px", // Adjust height as needed
 };
 
-// Colombo, Sri Lanka coordinates
-const center = {
-  lat: 6.9271, // Latitude of Colombo
-  lng: 79.8612, // Longitude of Colombo
-};
-
-const ViewLocationPopup = (props) => {
+const ViewLocationPopup = ({ AllPopup, closePopUp }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [location, setLocation] = useState({
+    address: "",
+    coordinates: {
+      lat: 6.9271, // Default to Colombo
+      lng: 79.8612,
+    },
+  });
 
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -27,12 +29,30 @@ const ViewLocationPopup = (props) => {
   });
 
   useEffect(() => {
-    setIsOpen(props.AllPopup);
-  }, [props.AllPopup]);
+    setIsOpen(AllPopup?.isOpen || false);
+  }, [AllPopup]);
 
   const handlePopUpCLose = () => {
-    props.closePopUp();
+    closePopUp();
   };
+
+  useEffect(() => {
+    const fetchLocationData = async () => {
+      try {
+        const response = await getSingleCaseData(AllPopup.cardId);
+        setLocation({
+          address: response?.data?.address,
+          coordinates: {
+            lat: response?.data?.lat,
+            lng: response?.data?.lng,
+          },
+        });
+      } catch (error) {
+        console.error("Error fetching location data:", error);
+      }
+    };
+    fetchLocationData();
+  }, [AllPopup?.cardId]);
 
   return (
     <>
@@ -54,16 +74,18 @@ const ViewLocationPopup = (props) => {
 
             {/* Content Section */}
             <div className="flex-1 p-6">
-              <p className="text-base text-[#080809] mb-4">Address: Colombo, Sri Lanka</p>
+              <p className="text-base text-[#080809] mb-4">
+                Address: {location.address || "Colombo, Sri Lanka"}
+              </p>
               {/* Google Map */}
               {isLoaded ? (
                 <GoogleMap
                   mapContainerStyle={containerStyle}
-                  center={center}
+                  center={location.coordinates}
                   zoom={13} // Adjust zoom level as needed
                 >
-                  {/* Add a marker for Colombo */}
-                  <Marker position={center} />
+                  {/* Add a marker for the location */}
+                  <Marker position={location.coordinates} />
                 </GoogleMap>
               ) : (
                 <div className="flex items-center justify-center h-[400px] bg-gray-100">
