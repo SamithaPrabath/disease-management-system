@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 import AllLoginReducer from './login-reducer';
+import AllResetPasswordReducer from "./resetPassword-reducer"
 import AllPopupReducer from './popup-reducer'
 import AllViewEditReducer from './viewedit-reducer'
 import ViewReportReducer from './viewreport-reducer'
@@ -13,6 +14,7 @@ import ViewEditEvent from './viewEditEvent-reducer';
 const rootReducer = combineReducers(
     {
         allLogins: AllLoginReducer,
+        allResetPasswordReducer: AllResetPasswordReducer,
         allPopup: AllPopupReducer,
         allViewEditReducer: AllViewEditReducer,
         viewReportReducer: ViewReportReducer,
