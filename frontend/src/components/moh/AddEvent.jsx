@@ -1,11 +1,10 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { IoIosCloseCircle } from "react-icons/io";
 import { useFormik } from "formik";
 import { eventSchema } from "../../yupSchema/eventSchema";
 import { createEvent } from "../../api/eventsApi";
 import { message } from "antd";
 import { connect } from "react-redux";
-
 
 const AddEvent = ({ handleAddEvent, AllLogins }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -32,7 +31,7 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
           formData.append("image", image);
         }
 
-        console.log("Form: ", formData)
+        console.log("Form: ", formData);
 
         const response = await createEvent(formData, AllLogins.data.userId);
         if (response.status === 200 && response.message) {
@@ -44,7 +43,9 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
         }
       } catch (error) {
         console.error("Error during event creation:", error);
-        messageApi.error(error.message || "An error occurred during event creation");
+        messageApi.error(
+          error.message || "An error occurred during event creation"
+        );
       } finally {
         setSubmitting(false);
       }
@@ -59,8 +60,8 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
   return (
     <>
       {contextHolder}
-      <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
-        <div className="bg-white w-[400px] min-h-[500px] rounded-[8px] shadow-sm flex flex-col">
+      <div className="fixed overflow-y-auto inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
+        <div className="bg-white w-[400px] min-h-[500px] max-h-[95vh] overflow-y-auto rounded-[8px] shadow-sm flex flex-col">
           {/* Header Section */}
           <div className="h-[56px] px-[16px] py-[8px] flex items-center justify-between border-b border-[#E2E5E9]">
             <h1 className="w-full text-center text-[24px] font-medium text-[#080809]">
@@ -81,7 +82,9 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
           >
             {/* Event Name */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">Event Name<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700 font-medium mb-1">
+                Event Name<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 name="eventName"
@@ -92,14 +95,18 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
                 disabled={formik.isSubmitting}
               />
               {formik.touched.eventName && formik.errors.eventName && (
-                <p className="text-red-500 text-sm mt-1">{formik.errors.eventName}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.eventName}
+                </p>
               )}
             </div>
 
             {/* Start Date and Time */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 font-medium mb-1">Start Date<span className="text-red-500">*</span></label>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Start Date<span className="text-red-500">*</span>
+                </label>
                 <input
                   type="date"
                   name="startDate"
@@ -110,11 +117,15 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
                   disabled={formik.isSubmitting}
                 />
                 {formik.touched.startDate && formik.errors.startDate && (
-                  <p className="text-red-500 text-sm mt-1">{formik.errors.startDate}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.startDate}
+                  </p>
                 )}
               </div>
               <div>
-                <label className="block text-gray-700 font-medium mb-1">Start Time<span className="text-red-500">*</span></label>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Start Time<span className="text-red-500">*</span>
+                </label>
                 <input
                   type="time"
                   name="startTime"
@@ -125,14 +136,18 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
                   disabled={formik.isSubmitting}
                 />
                 {formik.touched.startTime && formik.errors.startTime && (
-                  <p className="text-red-500 text-sm mt-1">{formik.errors.startTime}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.startTime}
+                  </p>
                 )}
               </div>
             </div>
 
             {/* Location */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">Location<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700 font-medium mb-1">
+                Location<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 name="location"
@@ -143,13 +158,17 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
                 disabled={formik.isSubmitting}
               />
               {formik.touched.location && formik.errors.location && (
-                <p className="text-red-500 text-sm mt-1">{formik.errors.location}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.location}
+                </p>
               )}
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1">Description</label>
+              <label className="block text-gray-700 font-medium mb-1">
+                Description
+              </label>
               <textarea
                 name="description"
                 value={formik.values.description}
@@ -159,7 +178,9 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
                 disabled={formik.isSubmitting}
               />
               {formik.touched.description && formik.errors.description && (
-                <p className="text-red-500 text-sm mt-1">{formik.errors.description}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.description}
+                </p>
               )}
             </div>
 
@@ -183,7 +204,7 @@ const AddEvent = ({ handleAddEvent, AllLogins }) => {
                 disabled={formik.isSubmitting}
                 accept="image/*"
               />
-               {image && <p className="text-sm text-gray-600">{image.name}</p>}
+              {image && <p className="text-sm text-gray-600">{image.name}</p>}
             </div>
 
             {/* Submit Button */}
