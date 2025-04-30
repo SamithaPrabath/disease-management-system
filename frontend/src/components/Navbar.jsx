@@ -17,7 +17,6 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
 
   const [userName, setUserName] = useState("Null");
   const [userRole, setUserRole] = useState("Null");
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,10 +88,10 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
     // Clear session storage
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("tokenExpiry");
-    
+
     // Clear persisted Redux state
     dispatch(resetStore());
-    
+
     // Force a hard reload to clear all state
     window.location.href = "/home";
   };
@@ -218,10 +217,10 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
                   {userName}
                 </p>
               </div>
-              <p className="text-gray-400 flex flex-row items-center justify-between text-[10px] uppercase gap-1">
+              <div className="text-gray-400 flex flex-row items-center justify-between text-[10px] uppercase gap-1">
                 <div className="active w-[10px] h-[10px] bg-green-500 rounded-[50%]" />
                 {userRole}
-              </p>
+              </div>
             </div>
           </div>
         </>
