@@ -35,7 +35,13 @@ const SingleCaseView = ({
     };
 
     fetchData();
-  }, [AllLogins, closeAssignMOHPopUp, viewAssignMOHPopUp, viewAssignPHIPopUp, viewConfirmPopUp]);
+  }, [
+    AllLogins,
+    closeAssignMOHPopUp,
+    viewAssignMOHPopUp,
+    viewAssignPHIPopUp,
+    viewConfirmPopUp,
+  ]);
 
   useEffect(() => {
     setRole(AllLogins.data.role);
@@ -43,7 +49,7 @@ const SingleCaseView = ({
   }, [singleCase]);
 
   const handlePopUpOpen = () => {
-    openPopUp();
+    openPopUp(patientId);
   };
 
   return (
@@ -57,7 +63,7 @@ const SingleCaseView = ({
               <h1 className="text-base text-[#080809]">Location</h1>
               <button
                 className="text-base text-[#080809] py-[8px] px-[16px] rounded-[6px] bg-[#E2E5E9] cursor-pointer hover:bg-gray-300 transition"
-                onClick={handlePopUpOpen}
+                onClick={() => handlePopUpOpen()}
               >
                 View Location
               </button>
@@ -161,7 +167,7 @@ const SingleCaseView = ({
               <button
                 className={` text-white px-4 py-2 rounded text-base
               ${
-                (role === "idu" || role === "moh")
+                role === "idu" || role === "moh"
                   ? "bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
                   : "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
               }
@@ -196,7 +202,9 @@ const SingleCaseView = ({
               </h2>
             </div>
             <div>
-              {singleCase?.caseStatus == "Suspected" ? (<div></div>) : (
+              {singleCase?.caseStatus == "Suspected" ? (
+                <div></div>
+              ) : (
                 <>
                   <p className="text-xl font-medium">
                     {singleCase?.confirmedByDetails?.name}
@@ -215,7 +223,13 @@ const SingleCaseView = ({
           </div>
         </div>
 
-        {(singleCase?.markAsReceived == "true" || role == "admin" || role == "moh" || role == "phi" || role == "doctor" || role == "epidemiologist") && Object.keys(singleCase?.report || {}).length > 0 ? (
+        {(singleCase?.markAsReceived == "true" ||
+          role == "admin" ||
+          role == "moh" ||
+          role == "phi" ||
+          role == "doctor" ||
+          role == "epidemiologist") &&
+        Object.keys(singleCase?.report || {}).length > 0 ? (
           <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
             <div className="flex flex-row items-center justify-between">
               <h1 className="text-2xl font-medium">
@@ -275,7 +289,7 @@ const SingleCaseView = ({
 
               <div className="flex flex-row">
                 <div className="text-[#65686C] w-1/2 flex items-center justify-between">
-                  <p>Patient’s movement during three weeks prior to onset</p>
+                  <p>Patient's movement during three weeks prior to onset</p>
                   <p>:</p>
                 </div>
                 <p className="pl-2 w-1/2">
@@ -405,7 +419,9 @@ const SingleCaseView = ({
                     <p>Ethnic Group of the patient</p>
                     <p>:</p>
                   </div>
-                  <p className="pl-2 w-1/2">{singleCase?.report?.ethnicGroup}</p>
+                  <p className="pl-2 w-1/2">
+                    {singleCase?.report?.ethnicGroup}
+                  </p>
                 </div>
 
                 <div className="flex flex-row">
@@ -449,7 +465,7 @@ const SingleCaseView = ({
 
                 <div className="flex flex-row">
                   <div className="text-[#65686C] w-1/2 flex items-center justify-between">
-                    <p>Patient’s movement during three weeks prior to onset</p>
+                    <p>Patient's movement during three weeks prior to onset</p>
                     <p>:</p>
                   </div>
                   <p className="pl-2 w-1/2">
@@ -569,7 +585,7 @@ const SingleCaseView = ({
           )
         )}
       </div>
-      <ViewLocationPopup />
+      <ViewLocationPopup cardId={singleCase?.cardId} />
       <ConfirmCasePopup />
     </>
   );
@@ -582,13 +598,12 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  openPopUp: () => dispatch(openPopUp()),
+  openPopUp: (value) => dispatch(openPopUp(value)),
   closeSingleCase: () => dispatch(closeSingleCase()),
   viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
   viewAssignPHIPopUp: () => dispatch(viewAssignPHIPopUp()),
   viewAssignMOHPopUp: () => dispatch(viewAssignMOHPopUp()),
   closeAssignMOHPopUp: () => dispatch(closeAssignMOHPopUp()),
-
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleCaseView);
