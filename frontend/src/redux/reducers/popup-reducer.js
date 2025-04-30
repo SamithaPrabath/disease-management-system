@@ -3,13 +3,18 @@ import {
   POPUP_CLOSE_BUTTON_CLICKED,
 } from "../actions/types";
 
-export default function (state = null, action) {
+const initialState = {
+  isOpen: false,
+  cardId: null
+};
+
+export default function (state = initialState, action) {
   switch (action.type) {
     case POPUP_VIEW_BUTTON_CLICKED:
       return action.payload;
-      break;
     case POPUP_CLOSE_BUTTON_CLICKED:
       return action.payload;
+    default:
+      return state;
   }
-  return state;
 }
