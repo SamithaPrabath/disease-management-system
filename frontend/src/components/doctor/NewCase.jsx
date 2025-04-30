@@ -8,23 +8,63 @@ import { geDiseasesList } from "../../api/diseasesApi";
 import { getInstitutesList } from "../../api/institutesApi";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
+// Map container style
+const containerStyle = {
+  width: "100%",
+  height: "400px",
+};
 
 const NewCase = ({ AllLogins, handleViewNewCase }) => {
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
+  
   const [messageApi, contextHolder] = message.useMessage();
   const [diseasesList, setDiseasesList] = useState([]);
   const [institutesList, setInstitutesList] = useState([]);
   const [remarks, setRemarks] = useState("");
   const [userTypeId, setUserTypeId] = useState("");
   const [notifier, setNotifier] = useState("");
+  const [mapCenter, setMapCenter] = useState({
+    lat: 6.9271,
+    lng: 79.8612,
+  });
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const navigate = useNavigate();
+
+  // Get user's current location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setMapCenter({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          setSelectedLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+          messageApi.warning("Unable to get current location, using default location");
+        }
+      );
+    } else {
+      messageApi.warning("Geolocation is not supported by this browser");
+    }
+  }, [messageApi]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const diseases = await geDiseasesList();
         const institutes = await getInstitutesList();
-
         setDiseasesList(diseases.data);
         setInstitutesList(institutes.data);
       } catch (error) {
@@ -32,7 +72,6 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         messageApi.error("Failed to load required data");
       }
     };
-
     fetchData();
   }, [messageApi]);
 
@@ -61,39 +100,37 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
       address: "",
       labResult: "",
       file: null,
+      latitude: "",
+      longitude: "",
     },
     validationSchema: newCaseSchema,
     validate: (values) => {
       const errors = {};
-
       if (!values.caseStatus) {
         errors.caseStatus = "Case Status is required";
       }
-
       if (values.caseStatus === "Confirmed" && !values.natureOfConfirmation) {
         errors.natureOfConfirmation =
           "Nature of Confirmation is required for confirmed cases";
       }
-
       if (values.age && Number(values.age) < 18 && !values.guardian) {
         errors.guardian = "Guardian is required for patients under 18";
       }
-
+      if (!values.latitude || !values.longitude) {
+        errors.location = "Please select a location on the map";
+      }
       return errors;
     },
     onSubmit: async (values, { resetForm }) => {
       const formData = new FormData();
-
       if (values.caseStatus === "Confirmed") {
         const currentDate = new Date().toISOString().split("T")[0];
         values.confirmedDate = currentDate;
       }
-
       if (AllLogins) {
         const currentDate = new Date().toISOString().split("T")[0];
         values.notifiedDate = currentDate;
       }
-
       Object.entries(values).forEach(([key, value]) => {
         if (key === "file" && value) {
           formData.append(key, value);
@@ -102,18 +139,18 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         }
       });
       if (remarks) formData.append("remarks", remarks);
-      if (values.caseStatus === "Confirmed") {
-        if (userTypeId) formData.append("confirmedBy", userTypeId);
+      if (values.caseStatus === "Confirmed" && userTypeId) {
+        formData.append("confirmedBy", userTypeId);
       }
       if (notifier) formData.append("notifier", notifier);
       
       try {
         const response = await addNewCase(formData);
-
         if (response?.message) {
           messageApi.success(response.message);
           resetForm();
           setRemarks("");
+          setSelectedLocation(null);
           setTimeout(() => {
             handleViewNewCase();
             window.location.href = "/dashboard";
@@ -133,6 +170,14 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
     formik.setFieldValue("file", file);
   };
 
+  const handleMapClick = (event) => {
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+    setSelectedLocation({ lat, lng });
+    formik.setFieldValue("latitude", lat.toString());
+    formik.setFieldValue("longitude", lng.toString());
+  };
+
   useEffect(() => {
     const age = Number(formik.values.age);
     if (age < 18) {
@@ -145,7 +190,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
   return (
     <>
       {contextHolder}
-      <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
+      <div className="w-full min-h-[200.px] bg-white flex flex-col p-[32px] gap-[24px]">
         <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
           Notifiable Disease Notification Form
         </h2>
@@ -484,8 +529,39 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             )}
           </div>
 
-          {/* Placeholder for location component */}
-          <div className="text-gray-700">Location Here</div>
+          <div className="flex flex-col gap-3">
+            <label className="block text-gray-700">
+              Location<span className="text-red-500">*</span>
+            </label>
+            <div className="w-full h-[400px]">
+              {isLoaded ? (
+                <GoogleMap
+                  mapContainerStyle={containerStyle}
+                  center={mapCenter}
+                  zoom={13}
+                  onClick={handleMapClick}
+                >
+                  {selectedLocation && (
+                    <Marker position={selectedLocation} />
+                  )}
+                </GoogleMap>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  Loading Map...
+                </div>
+              )}
+            </div>
+            {selectedLocation && (
+              <div className="mt-2">
+                <p className="text-gray-600">
+                  Selected Location: Lat: {selectedLocation.lat.toFixed(6)}, Lng: {selectedLocation.lng.toFixed(6)}
+                </p>
+              </div>
+            )}
+            {formik.touched.latitude && formik.errors.location && (
+              <p className="text-red-500 text-sm">{formik.errors.location}</p>
+            )}
+          </div>
 
           <div className="flex flex-col gap-3">
             <label className="block text-gray-700">
