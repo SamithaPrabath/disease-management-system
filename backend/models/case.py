@@ -173,10 +173,10 @@ class Case:
         user = await User.get_user_by_id(user_id)
 
         if user.role == "admin" or user.role == "epi":
-            query = "SELECT id FROM cases"
+            query = "SELECT id FROM cases order by id desc"
             results = await query_executor.fetch_all(query)
         else:
-            query = "SELECT id FROM cases where notifier = %s or confirmedBy = %s or instituteId = %s or assignedMoh = %s or assignedPhi = %s"
+            query = "SELECT id FROM cases where notifier = %s or confirmedBy = %s or instituteId = %s or assignedMoh = %s or assignedPhi = %s order by id desc"
             results = await query_executor.fetch_all(query, (user_id, user_id, user_id, user_id, user_id))
         
         return [await Case.get_case_by_id(result[0]) for result in results] if results else []
@@ -184,7 +184,7 @@ class Case:
     @staticmethod
     async def get_all_cases_by_admin():
         query_executor = AsyncQueryExecutor()
-        query = "SELECT id FROM cases where caseStatus = 'Confirmed'"
+        query = "SELECT id FROM cases where caseStatus = 'Confirmed' order by id desc"
         results = await query_executor.fetch_all(query)
         return [await Case.get_case_by_id(result[0]) for result in results] if results else []
 

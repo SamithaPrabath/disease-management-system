@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "../assets/logo.png";
 import loginSchema from "../yupSchema/loginSchema";
 import { useFormik } from "formik";
@@ -7,9 +7,10 @@ import { fetchLogin } from "../redux/actions/loginAction";
 import { connect } from "react-redux";
 import { message } from "antd";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
 const LoginPage = (props) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();  
 
   const formik = useFormik({
     initialValues: {
@@ -18,20 +19,23 @@ const LoginPage = (props) => {
     },
     validationSchema: loginSchema,
     onSubmit: async (values) => {
-      props.fetchLogin(values);
-      handleSubmit();
+      try {
+        await props.fetchLogin(values);
+        // We'll handle the response in componentDidUpdate or useEffect
+      } catch (error) {
+        messageApi.error("An error occurred during login");
+      }
     },
   });
 
-  const handleSubmit = () => {
-    if (props?.AllLogins?.status == "200") {
+  // Add useEffect to handle login response
+  useEffect(() => {
+    if (props?.AllLogins?.status === "200") {
       messageApi.success(props?.AllLogins?.message);
-    } else {
-      if (props?.AllLogins?.message) {
-        messageApi.error("Username or password is incorrect");
-      }
+    } else if (props?.AllLogins?.message) {
+      messageApi.error("Username or password is incorrect");
     }
-  };
+  }, [props.AllLogins]);
 
   return (
     <>

@@ -88,7 +88,7 @@ const Dashboard = (props) => {
                     <input
                       className="bg-[#E2E5E9] w-[250px] h-[50px] rounded-[8px] px-[16px] py-[14px] text-black placeholder-gray-600 focus:outline-none"
                       type="text"
-                      placeholder="Search"
+                      placeholder="Search By Name"
                       value={searchQuery}
                       onChange={handleSearchChange}
                     />

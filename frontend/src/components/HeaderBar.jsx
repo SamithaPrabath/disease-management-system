@@ -168,13 +168,13 @@ const HeaderBar = ({
                 <button
                   className={`px-6 py-2 rounded-md
               ${
-                singleCase?.assignedPhi == userTypeId
+                singleCase?.assignedPhi == userTypeId && !Object.keys(singleCase?.report ?? {}).length > 0
                   ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
                   : "text-gray-400 bg-gray-300 cursor-not-allowed"
               }
               `}
                   onClick={() => viewUnAssignCasePopUp()}
-                  disabled={singleCase?.assignedPhi != userTypeId}
+                  disabled={Object.keys(singleCase?.report ?? {}).length > 0}
                 >
                   Un-assign Case
                 </button>

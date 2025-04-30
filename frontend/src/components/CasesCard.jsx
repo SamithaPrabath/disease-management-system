@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const CasesCard = ({ chartData }) => {
   // Determine header based on data
-  const header = "Total Active Cases";
+  const header = "Total Cases";
   // Process data for visualization
   const processedData = chartData.map((item) => ({
     ...item,

@@ -189,7 +189,7 @@ const SingleCaseView = (props) => {
                       <th className="text-left py-2 px-4">
                         Date of observation
                       </th>
-                      <th className="text-left py-2 px-4">Disposition</th>
+                      <th className="text-left py-2 px-4">Observation</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -220,7 +220,7 @@ const SingleCaseView = (props) => {
                       <th className="text-left py-2 px-4">
                         Date of observation
                       </th>
-                      <th className="text-left py-2 px-4">Disposition</th>
+                      <th className="text-left py-2 px-4">Observation</th>
                     </tr>
                   </thead>
                   <tbody>

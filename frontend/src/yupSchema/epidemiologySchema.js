@@ -13,10 +13,10 @@ export const phiSchema = Yup.object({
     .required("Phone Number is required"),
   username: Yup.string().min(4, "Username must be at least 4 characters").required("Username is required"),
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[A-Z]/, "Password must contain at least one capital letter")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[^A-Za-z0-9]/, "Password must contain at least one symbol")
+    .min(8, "Password must be at least 8 characters, one capital letter, one lowercase letter, one symbol")
+    .matches(/[A-Z]/, "Password must be at least 8 characters, one capital letter, one lowercase letter, one symbol")
+    .matches(/[a-z]/, "Password must be at least 8 characters, one capital letter, one lowercase letter, one symbol")
+    .matches(/[^A-Za-z0-9]/, "Password must be at least 8 characters, one capital letter, one lowercase letter, one symbol")
     .required("Password is required"),
 });
 

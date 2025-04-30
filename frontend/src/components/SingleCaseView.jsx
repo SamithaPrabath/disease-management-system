@@ -196,21 +196,7 @@ const SingleCaseView = ({
               </h2>
             </div>
             <div>
-              {singleCase?.caseStatus == "Suspected" ? (
-                <button
-                  className={`px-[16px] py-[8px] rounded-[6px]
-                  ${
-                    role === "idu"
-                      ? "text-gray-400 cursor-not-allowed bg-[#E2E5E9]"
-                      : "text-white bg-blue-600 cursor-pointer hover:bg-blue-700 transition"
-                  }
-                  `}
-                  onClick={() => viewConfirmPopUp(patientId)}
-                  disabled={role === "idu"}
-                >
-                  Confirm Case
-                </button>
-              ) : (
+              {singleCase?.caseStatus == "Suspected" ? (<div></div>) : (
                 <>
                   <p className="text-xl font-medium">
                     {singleCase?.confirmedByDetails?.name}
@@ -273,7 +259,8 @@ const SingleCaseView = ({
                   <p>:</p>
                 </div>
                 <p className="pl-2 w-1/2">
-                  {singleCase?.report.isolationDateFrom} to{" "}
+                  {singleCase?.report.isolationDateFrom}
+                  <span className="text-[#000000] font-bold"> to </span>
                   {singleCase?.report.isolationDateTo}
                 </p>
               </div>
@@ -332,7 +319,7 @@ const SingleCaseView = ({
                         <th className="text-left py-2 px-4">
                           Date of observation
                         </th>
-                        <th className="text-left py-2 px-4">Disposition</th>
+                        <th className="text-left py-2 px-4">Observation</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -370,7 +357,7 @@ const SingleCaseView = ({
                         <th className="text-left py-2 px-4">
                           Date of observation
                         </th>
-                        <th className="text-left py-2 px-4">Disposition</th>
+                        <th className="text-left py-2 px-4">Observation</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -506,7 +493,7 @@ const SingleCaseView = ({
                           <th className="text-left py-2 px-4">
                             Date of observation
                           </th>
-                          <th className="text-left py-2 px-4">Disposition</th>
+                          <th className="text-left py-2 px-4">Observation</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -548,7 +535,7 @@ const SingleCaseView = ({
                           <th className="text-left py-2 px-4">
                             Date of observation
                           </th>
-                          <th className="text-left py-2 px-4">Disposition</th>
+                          <th className="text-left py-2 px-4">Observation</th>
                         </tr>
                       </thead>
                       <tbody>

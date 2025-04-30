@@ -38,8 +38,34 @@ const Table = ({
 
   const [userTypeId, setUserTypeId] = useState("");
 
-  const handleFilterChange = (e) =>
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  const handleFilterChange = (e) => {
+    if (e.target.name === "date") {
+      const date = new Date(e.target.value);
+      const day = date.getDate();
+      const month = date.toLocaleString('default', { month: 'short' });
+      const year = date.getFullYear();
+      
+      // Add ordinal suffix to day
+      const getOrdinalSuffix = (day) => {
+        if (day > 3 && day < 21) return 'th';
+        switch (day % 10) {
+          case 1: return 'st';
+          case 2: return 'nd';
+          case 3: return 'rd';
+          default: return 'th';
+        }
+      };
+      
+      const formattedDate = `${day}${getOrdinalSuffix(day)} ${month} ${year}`;
+      if (date == "Invalid Date") {
+        setFilters({ ...filters, [e.target.name]: "" });
+      } else {
+        setFilters({ ...filters, [e.target.name]: formattedDate });
+      }
+    } else {
+      setFilters({ ...filters, [e.target.name]: e.target.value });
+    }
+  };
 
   const filteredPatients = patients?.filter((patient) => {
     return (
@@ -60,7 +86,7 @@ const Table = ({
   useEffect(() => {
     setPatients(rows); // Ensure state updates when rows change
     setRole(AllLogins.data.role);
-    setUserTypeId(AllLogins.data.userTypeId);
+    setUserTypeId(AllLogins.data.userId);
   }, [rows]);
 
   const [diseasesList, setDiseasesList] = useState([]);
@@ -132,22 +158,13 @@ const Table = ({
             </option>
           ))}
         </select>
-
-        <select
+        <input 
+          type="date"
           name="date"
-          id="disease"
-          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
-          onChange={handleFilterChange}
-        >
-          <option value="">Date</option>
-          {Array.from(new Set(patients?.map((p) => p.dateOfOnset))).map(
-            (date) => (
-              <option key={date} value={date}>
-                {date}
-              </option>
-            )
-          )}
-        </select>
+          id="date" 
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]" 
+          onChange={handleFilterChange} 
+        />
 
         <select
           name="sex"
@@ -238,7 +255,7 @@ const Table = ({
                             className={`px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] 
                           ${
                             patient.caseStatus == "Suspected"
-                              ? "cursor-pointer"
+                              ? "cursor-pointer bg-blue-600 text-white"
                               : "text-gray-400 cursor-not-allowed"
                           }
                         `}
@@ -266,24 +283,22 @@ const Table = ({
                           <>
                             {patient.assignedPhi != userTypeId ? (
                               <button
-                                className="px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                                className="px-[16px] py-[8px] rounded-[6px] bg-blue-600 text-gray-400 cursor-not-allowed"
                                 disabled={true}
                               >
                                 Add Report
                               </button>
                             ) : (
                               <button
-                                className={`px-[16px] py-[8px] rounded-[6px] bg-[#E2E5E9] 
-                          ${
-                            Object.keys(patient.report).length > 0
-                              ? "text-gray-400 cursor-not-allowed"
-                              : "cursor-pointer"
-                          }
-                        `}
+                                className={`px-[16px] py-[8px] rounded-[6px] ${
+                                  Object.keys(patient.report).length > 0 
+                                    ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                                    : "bg-blue-600 text-white cursor-pointer"
+                                }`}
                                 onClick={() => viewReport(patient.caseId)}
                                 disabled={
                                   Object.keys(patient.report).length > 0
-                                } //
+                                }
                               >
                                 Add Report
                               </button>

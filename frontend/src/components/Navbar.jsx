@@ -17,6 +17,7 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
 
   const [userName, setUserName] = useState("Null");
   const [userRole, setUserRole] = useState("Null");
+  
 
   useEffect(() => {
     const fetchData = async () => {

@@ -48,7 +48,7 @@ class Report:
         result = await query_executor.fetch_one(query)
 
         if result:
-            return Report(
+            res = Report(
                 id=result[0],
                 ethnicGroup=result[1],
                 dischargeDate=result[2],
@@ -64,6 +64,21 @@ class Report:
                 file=result[12],
                 reportCreatedDate=result[13]
             )
+
+            if res.dischargeDate:
+                res.dischargeDate = format_date_with_suffix(res.dischargeDate)
+
+            if res.isolationDateFrom:
+                res.isolationDateFrom = format_date_with_suffix(res.isolationDateFrom)
+
+            if res.isolationDateTo:
+                res.isolationDateTo = format_date_with_suffix(res.isolationDateTo)
+
+            if res.reportCreatedDate:
+                res.reportCreatedDate = format_date_with_suffix(res.reportCreatedDate)
+
+            return res
+
         return None
 
     @staticmethod
@@ -100,3 +115,15 @@ class Report:
             self.id
         ))
         return self 
+    
+
+def format_date_with_suffix(date_obj):
+    day = date_obj.day
+    # Get suffix
+    if 10 <= day % 100 <= 20:
+        suffix = 'th'
+    else:
+        suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+    
+    # Format the final string
+    return f"{day}{suffix} {date_obj.strftime('%b')} {date_obj.year}"
