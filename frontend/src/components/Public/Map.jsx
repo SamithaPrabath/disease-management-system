@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import "../../App.css"
+import { getAllMarkers } from "../../api/mapApi";
+import { message } from "antd";
 
 // Map container style
 const containerStyle = {
@@ -14,14 +16,9 @@ const center = {
   lng: 79.8612, // Longitude of Colombo
 };
 
-// Marker positions (example locations in Colombo)
-const markers = [
-  { id: 1, position: { lat: 6.9271, lng: 79.8612 }, label: "Colombo Fort" },
-  { id: 2, position: { lat: 6.9106, lng: 79.8876 }, label: "Galle Face Green" },
-  { id: 3, position: { lat: 6.8949, lng: 79.853 }, label: "Pettah Market" },
-];
-
 const Map = () => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const [markers, setMarkers] = useState([]);
 
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   // Load the Google Maps API
@@ -30,7 +27,24 @@ const Map = () => {
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllMarkers();
+        setMarkers(response.data);
+
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        messageApi.error("Failed to load required data");
+      }
+    };
+
+    fetchData();
+  }, [messageApi]);
+
   return (
+    <>
+    {contextHolder}
     <div
       id="Map"
       className="w-full min-w-[870px] h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]"
@@ -94,6 +108,7 @@ const Map = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
