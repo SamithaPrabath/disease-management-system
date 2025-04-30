@@ -11,6 +11,7 @@ export const testResponse = [
     token: "abc1234",
     role: "idu",
     userTypeId: "I001",
+    isInitial: 0,
   },
 ];
 
