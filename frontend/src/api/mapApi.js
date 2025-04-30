@@ -101,3 +101,44 @@ export const getAllMarkers = async () => {
     };
   }
 };
+
+export const getMarkerById = async (id) => {
+    try {
+      if (IS_BACKEND == "false") {
+        const marker = markers.find((m) => m.id === id);
+        if (marker) {
+          return { 
+            status: 200, 
+            message: "Marker fetched successfully", 
+            data: marker 
+          };
+        } else {
+          return { 
+            status: 404, 
+            message: "Marker not found" 
+          };
+        }
+      } else {
+        const response = await axios.get(`${BASE_URL}/api/markers/${id}`);
+        if (response.status === 200) {
+          return { 
+            status: 200, 
+            message: "Marker fetched successfully", 
+            data: response.data.data 
+          };
+        } else {
+          return { 
+            status: 400, 
+            message: "Failed to fetch marker", 
+            data: response.data 
+          };
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching marker by ID:", error);
+      return {
+        status: error.response?.status || 500,
+        message: error.message || "Failed to fetch marker",
+      };
+    }
+  };
