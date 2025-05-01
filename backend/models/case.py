@@ -3,6 +3,8 @@ from models.moh import MOH
 from models.phi import PHI
 from models.user import User
 from models.report import Report
+from models.location import Location
+from models.lab_report import LabReport
 from utils.db.query_executor import AsyncQueryExecutor
 
 
@@ -37,17 +39,43 @@ class Case:
     assignedMoh: str = None
     mohAssignedDate: str = None
     reportId: str = None
+    longitude: float = None
+    latitude: float = None
+    location_address: str = None
+    lab_files: list = None
     notifierDetails: dict = None # name, role
     assignedMohDetails: dict = None # name, area, registrationNumber
     assignedPhiDetails: dict = None # name, area, registrationNumber
     confirmedByDetails: dict = None # name, role
     instituteName: str = None
     report: dict = None # reportCreatedDate, ethnicGroup, dischargeDate, isolationStatus, isolationDateFrom, isolationDateTo, outcome, movementHistory, labResults, phiRemarks, householdContacts {name, age, description, date, age, disposition}, otherContacts {name, age, description, date, age, disposition} 
+    location_details: dict = None # id, case_id, longitude, latitude, address
+    lab_reports: list = None # list of lab report dictionaries
 
     async def save(self):
         query_executor = AsyncQueryExecutor()
         query = "INSERT INTO cases (patientName, guardian, age, sex, diseaseName, caseStatus, nicNo, phoneNumber, instituteId, dateOfOnset, dateOfAdmission, ward, bhtNumber, address, notifiedDate, confirmedBy, notifier, confirmedDate, remarks, natureOfConfirmation, labResult, markAsReceived) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         await query_executor.execute(query, (self.patientName, self.guardian, self.age, self.sex, self.diseaseName, self.caseStatus, self.nicNo, self.phoneNumber, self.instituteId, self.dateOfOnset, self.dateOfAdmission, self.ward, self.bhtNumber, self.address, self.notifiedDate, self.confirmedBy, self.notifier, self.confirmedDate, self.remarks, self.natureOfConfirmation, self.labResult, self.markAsReceived))
+        
+        # Get the last inserted case ID
+        query_executor1 = AsyncQueryExecutor()
+        result = await query_executor1.fetch_one("SELECT id FROM cases ORDER BY id DESC LIMIT 1")
+        self.id = result[0]
+        
+        # Save location data if available
+        if self.longitude is not None and self.latitude is not None:
+            location = Location(
+                case_id=self.id,
+                longitude=self.longitude,
+                latitude=self.latitude,
+                address=self.location_address
+            )
+            await location.save()
+        
+        # Save lab report files if available
+        if self.lab_files and len(self.lab_files) > 0:
+            await LabReport.add_lab_reports_for_case(self.id, self.lab_files)
+            
         return self
     
     async def update_conformation_details(self):
@@ -163,7 +191,34 @@ class Case:
                 }
             else:
                 case.report = {}
-                
+            
+            # Get location details
+            location = await Location.get_location_by_case_id(case.id)
+            if location:
+                case.longitude = location.longitude
+                case.latitude = location.latitude
+                case.location_address = location.address
+                case.location_details = {
+                    "id": location.id,
+                    "case_id": location.case_id,
+                    "longitude": location.longitude,
+                    "latitude": location.latitude,
+                    "address": location.address
+                }
+            else:
+                case.location_details = None
+            
+            # Get lab report files
+            lab_reports = await LabReport.get_lab_reports_by_case_id(case.id)
+            case.lab_files = [lab_report.file for lab_report in lab_reports] if lab_reports else []
+            case.lab_reports = [
+                {
+                    "id": lab_report.id,
+                    "case_id": lab_report.case_id,
+                    "file": lab_report.file
+                } for lab_report in lab_reports
+            ] if lab_reports else []
+            
             return case
         return {}
     @staticmethod

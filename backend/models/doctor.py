@@ -39,7 +39,7 @@ class Doctor():
         if is_exists:
             return {"message": "User already exists", "status": 400}
         
-        user = await User.add_doctor_user(user)
+        user = await User.add_user(user)
 
         query_executor = AsyncQueryExecutor()
         query = "INSERT INTO doctors (id, institute_id, email, area, moh) VALUES (%s, %s, %s, %s, %s)"

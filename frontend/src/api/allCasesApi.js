@@ -206,21 +206,32 @@ export const getAllCases = async (userID) => {
   }
 };
 
-export const addNewCase = async (newCase) => {
+export const addNewCase = async (formData) => {
   try {
     if (IS_BACKEND == "false") {
       const newCaseId =
         "C" + (allCasesResponse.length + 1).toString().padStart(3, "0");
-      const caseToAdd = { ...newCase, caseId: newCaseId };
+      const caseToAdd = { ...formData, caseId: newCaseId };
       allCasesResponse.push(caseToAdd);
       return { message: "Case added successfully", case: caseToAdd };
     } else {
-      console.log(newCase);
-      const response = await axios.post(`${BASE_URL}/api/cases/add`, newCase, {
+      // Log the FormData contents for debugging
+      console.log("Files being sent:");
+      for (let pair of formData.getAll('files[]')) {
+        console.log('File:', pair.name);
+      }
+
+      const response = await axios.post(`${BASE_URL}/api/cases/add`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
         },
+        // Add timeout and max content length settings
+        timeout: 30000, // 30 seconds
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
       });
+      
       if (response.status === 200) {
         return { status: 200, message: "Case added successfully", data: response.data };
       }

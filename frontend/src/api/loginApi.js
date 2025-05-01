@@ -49,6 +49,7 @@ export const handleLogin = async (user) => {
           token: response.data.data.access_token,
           role: response.data.data.user.role,
           userTypeId: response.data.data.user.role,
+          isInitial: response.data.data.user.is_initial,
         };
         // Login successful
         return {

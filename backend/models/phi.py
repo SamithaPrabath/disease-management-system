@@ -37,7 +37,7 @@ class PHI():
         if is_exists:
             return {"message": "User already exists", "status": 400}
         
-        user = await User.add_phi_user(user)
+        user = await User.add_user(user)
 
         query_executor = AsyncQueryExecutor()
         query = "INSERT INTO phis (id, area, email, moh_id) VALUES (%s, %s, %s, %s)"

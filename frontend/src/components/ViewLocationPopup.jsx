@@ -39,14 +39,25 @@ const ViewLocationPopup = ({ AllPopup, closePopUp }) => {
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
-        const response = await getSingleCaseData(AllPopup.cardId);
-        setLocation({
-          address: response?.data?.address,
+        if (AllPopup?.cardId) {
+          const response = await getSingleCaseData(AllPopup.cardId);
+          setLocation({
+          address: response?.data?.location_address,
           coordinates: {
-            lat: response?.data?.lat,
-            lng: response?.data?.lng,
-          },
-        });
+            lat: response?.data?.location_details?.latitude,
+            lng: response?.data?.location_details?.longitude,
+            },
+          });
+        }
+        else {
+          setLocation({
+            address: "",
+            coordinates: {
+              lat: 6.9271,
+              lng: 79.8612,
+            },
+          });
+        }
       } catch (error) {
         console.error("Error fetching location data:", error);
       }

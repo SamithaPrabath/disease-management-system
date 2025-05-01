@@ -8,7 +8,7 @@ import { geDiseasesList } from "../../api/diseasesApi";
 import { getInstitutesList } from "../../api/institutesApi";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
 
 // Map container style
 const containerStyle = {
@@ -16,11 +16,15 @@ const containerStyle = {
   height: "400px",
 };
 
+// Define libraries array outside component to maintain reference
+const libraries = ["places", "maps"];
+
 const NewCase = ({ AllLogins, handleViewNewCase }) => {
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    libraries,
+    id: "google-map-script",
   });
   
   const [messageApi, contextHolder] = message.useMessage();
@@ -34,7 +38,39 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
     lng: 79.8612,
   });
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [locationDetails, setLocationDetails] = useState(null);
+  const [searchBox, setSearchBox] = useState(null);
   const navigate = useNavigate();
+
+  const onLoad = (ref) => {
+    setSearchBox(ref);
+  };
+
+  const onPlacesChanged = () => {
+    if (searchBox) {
+      const places = searchBox.getPlaces();
+      if (places && places.length > 0) {
+        const place = places[0];
+        const newLocation = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        };
+        setMapCenter(newLocation);
+        setSelectedLocation(newLocation);
+        formik.setFieldValue("latitude", newLocation.lat.toString());
+        formik.setFieldValue("longitude", newLocation.lng.toString());
+        formik.setFieldValue("locationAddress", place.formatted_address);
+
+        // Store location details
+        setLocationDetails({
+          address: place.formatted_address,
+          name: place.name,
+          placeId: place.place_id,
+          addressComponents: place.address_components,
+        });
+      }
+    }
+  };
 
   // Get user's current location
   useEffect(() => {
@@ -99,9 +135,10 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
       bhtNumber: "",
       address: "",
       labResult: "",
-      file: null,
+      files: [],
       latitude: "",
       longitude: "",
+      locationAddress: "",
     },
     validationSchema: newCaseSchema,
     validate: (values) => {
@@ -131,13 +168,21 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         const currentDate = new Date().toISOString().split("T")[0];
         values.notifiedDate = currentDate;
       }
+
+      // Handle files separately
+      if (values.files && values.files.length > 0) {
+        values.files.forEach((file, index) => {
+          formData.append('files[]', file); // Change to files[] to indicate array
+        });
+      }
+
+      // Handle other form fields
       Object.entries(values).forEach(([key, value]) => {
-        if (key === "file" && value) {
-          formData.append(key, value);
-        } else if (value) {
+        if (key !== 'files' && value) { // Skip files as we handled them above
           formData.append(key, value);
         }
       });
+
       if (remarks) formData.append("remarks", remarks);
       if (values.caseStatus === "Confirmed" && userTypeId) {
         formData.append("confirmedBy", userTypeId);
@@ -166,16 +211,43 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
   });
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    formik.setFieldValue("file", file);
+    const files = Array.from(event.target.files);
+    formik.setFieldValue("files", [...formik.values.files, ...files]);
+  };
+
+  const removeFile = (indexToRemove) => {
+    formik.setFieldValue(
+      "files",
+      formik.values.files.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const handleMapClick = (event) => {
-    const lat = event.latLng.lat();
-    const lng = event.latLng.lng();
-    setSelectedLocation({ lat, lng });
-    formik.setFieldValue("latitude", lat.toString());
-    formik.setFieldValue("longitude", lng.toString());
+    const clickedLat = event.latLng.lat();
+    const clickedLng = event.latLng.lng();
+    
+    // Create a Geocoder instance
+    const geocoder = new window.google.maps.Geocoder();
+    
+    // Get address for clicked location
+    geocoder.geocode(
+      { location: { lat: clickedLat, lng: clickedLng } },
+      (results, status) => {
+        if (status === "OK" && results[0]) {
+          setLocationDetails({
+            address: results[0].formatted_address,
+            name: results[0].name,
+            placeId: results[0].place_id,
+            addressComponents: results[0].address_components,
+          });
+          formik.setFieldValue("locationAddress", results[0].formatted_address);
+        }
+      }
+    );
+
+    setSelectedLocation({ lat: clickedLat, lng: clickedLng });
+    formik.setFieldValue("latitude", clickedLat.toString());
+    formik.setFieldValue("longitude", clickedLng.toString());
   };
 
   useEffect(() => {
@@ -533,34 +605,63 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             <label className="block text-gray-700">
               Location<span className="text-red-500">*</span>
             </label>
-            <div className="w-full h-[400px]">
+            <div className="flex flex-col gap-4">
               {isLoaded ? (
-                <GoogleMap
-                  mapContainerStyle={containerStyle}
-                  center={mapCenter}
-                  zoom={13}
-                  onClick={handleMapClick}
-                >
-                  {selectedLocation && (
-                    <Marker position={selectedLocation} />
-                  )}
-                </GoogleMap>
+                <>
+                  <div className="mb-2">
+                    <StandaloneSearchBox
+                      onLoad={onLoad}
+                      onPlacesChanged={onPlacesChanged}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Search for a location..."
+                        className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
+                      />
+                    </StandaloneSearchBox>
+                  </div>
+                  <div className="w-full h-[400px] relative">
+                    <GoogleMap
+                      mapContainerStyle={containerStyle}
+                      center={mapCenter}
+                      zoom={13}
+                      onClick={handleMapClick}
+                    >
+                      {selectedLocation && (
+                        <Marker position={selectedLocation} />
+                      )}
+                    </GoogleMap>
+                  </div>
+                </>
               ) : (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-[400px] bg-gray-100 rounded-md">
                   Loading Map...
                 </div>
               )}
+              {selectedLocation && locationDetails && (
+                <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
+                  <div className="space-y-2">
+                    {locationDetails.name && locationDetails.name !== locationDetails.address && (
+                      <div className="flex gap-2">
+                        <span className="font-medium text-gray-700">Place:</span>
+                        <span className="text-gray-600">{locationDetails.name}</span>
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <span className="font-medium text-gray-700">Location Address:</span>
+                      <span className="text-gray-600">{formik.values.locationAddress}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="font-medium text-gray-700">Coordinates:</span>
+                      <span className="text-gray-600">{selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {formik.touched.latitude && formik.errors.location && (
+                <p className="text-red-500 text-sm">{formik.errors.location}</p>
+              )}
             </div>
-            {selectedLocation && (
-              <div className="mt-2">
-                <p className="text-gray-600">
-                  Selected Location: Lat: {selectedLocation.lat.toFixed(6)}, Lng: {selectedLocation.lng.toFixed(6)}
-                </p>
-              </div>
-            )}
-            {formik.touched.latitude && formik.errors.location && (
-              <p className="text-red-500 text-sm">{formik.errors.location}</p>
-            )}
           </div>
 
           <div className="flex flex-col gap-3">
@@ -575,23 +676,42 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
               onBlur={formik.handleBlur}
               rows={3}
             />
-            <label
-              htmlFor="file-upload"
-              className="w-fit flex items-center gap-2 px-4 py-2 bg-gray-200 text-black font-medium rounded-md hover:bg-gray-300 transition duration-200 cursor-pointer"
-            >
-              <FaPaperclip className="text-lg" />
-              Attach Files
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              className="hidden"
-              onChange={handleFileChange}
-              accept=".pdf,.doc,.docx,.jpg,.png"
-            />
-            {formik.values.file && (
-              <p className="text-gray-600 text-sm">{formik.values.file.name}</p>
-            )}
+            <div className="space-y-3">
+              <label
+                htmlFor="file-upload"
+                className="w-fit flex items-center gap-2 px-4 py-2 bg-gray-200 text-black font-medium rounded-md hover:bg-gray-300 transition duration-200 cursor-pointer"
+              >
+                <FaPaperclip className="text-lg" />
+                Attach Files
+              </label>
+              <input
+                id="file-upload"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx,.jpg,.png"
+                multiple
+              />
+              {formik.values.files.length > 0 && (
+                <div className="space-y-2">
+                  <p className="font-medium text-gray-700">Attached Files:</p>
+                  <div className="space-y-2">
+                    {formik.values.files.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                        <span className="text-gray-600">{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-start gap-3">

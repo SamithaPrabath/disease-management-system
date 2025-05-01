@@ -3,6 +3,8 @@ from flask import request
 from .base_controller import BaseController
 from models.case import Case
 import asyncio
+import os
+from werkzeug.utils import secure_filename
 
 class CaseController(BaseController):
     @staticmethod
@@ -31,7 +33,50 @@ class CaseController(BaseController):
     def create_case():
         try:
             data = dict(request.form)
-            new_case = Case(**data)
+            files = request.files.getlist('files[]')  # Get all files from files[] array
+            
+            # Create uploads directory if it doesn't exist
+            upload_dir = os.path.join(os.getcwd(), 'uploads')
+            if not os.path.exists(upload_dir):
+                os.makedirs(upload_dir)
+            
+            # Handle file uploads
+            file_paths = []
+            for file in files:
+                if file and file.filename:
+                    # Secure the filename
+                    filename = secure_filename(file.filename)
+                    # Create a unique filename to avoid collisions
+                    unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+                    file_path = os.path.join(upload_dir, unique_filename)
+                    file.save(file_path)
+                    file_paths.append(file_path)
+            
+            new_case = Case(
+                patientName=data.get('patientName'),
+                guardian=data.get('guardian'),
+                age=data.get('age'),
+                sex=data.get('sex'),
+                diseaseName=data.get('diseaseName'),
+                caseStatus=data.get('caseStatus'),
+                nicNo=data.get('nicNo'),
+                phoneNumber=data.get('phoneNumber'),
+                instituteId=data.get('instituteId'),
+                dateOfOnset=data.get('dateOfOnset'),
+                dateOfAdmission=data.get('dateOfAdmission'),
+                ward=data.get('ward'),
+                bhtNumber=data.get('bhtNumber'),
+                address=data.get('address'),
+                notifiedDate=data.get('notifiedDate'),
+                confirmedBy=data.get('confirmedBy'),
+                notifier=data.get('notifier'),
+                confirmedDate=data.get('confirmedDate'),
+                labResult=data.get('labResult'),
+                longitude=data.get('longitude'),
+                latitude=data.get('latitude'),
+                location_address=data.get('locationAddress'),
+                lab_files=file_paths  # Store array of file paths
+            )
             asyncio.run(new_case.save())
             return CaseController.success_response(new_case)
         except Exception as e:

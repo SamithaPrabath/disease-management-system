@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IS_BACKEND = import.meta.env.VITE_IS_BACKEND;
@@ -21,11 +20,9 @@ const resetErrorResponse = {
   message: "Invalid user ID or initial status",
 };
 
-export const handlePasswordReset = async ({ userId, isInitial, newPassword }) => {
-    const navigate = useNavigate();
-
+export const handlePasswordReset = async (userId, isInitial, newPassword) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       if (
         userId === testResponse[0].userId &&
         isInitial === testResponse[0].isInitial
@@ -36,18 +33,27 @@ export const handlePasswordReset = async ({ userId, isInitial, newPassword }) =>
           data: { userId, message: "Password reset successful" },
           message: "Ok",
         };
-        navigate("/dashboard")
       } else {
         return resetErrorResponse;
       }
     } else {
-      const response = await axios.post(`${BASE_URL}/reset-password`, {
-        userId,
+      const response = await axios.put(`${BASE_URL}/api/users/${userId}/reset-password`, {
         isInitial,
         newPassword,
       });
-      return response.data;
-      navigate("/dashboard")
+      if (response.status == 200) {
+        return {
+          status: 200,
+          data: { userId, message: "Password reset successful" },
+          message: "Ok",
+        };
+      } else {
+        return {
+          status: response.status,
+          error: response.data.error,
+          message: response.data.message,
+        };
+      }
     }
   } catch (error) {
     console.error("Error resetting password:", error);
