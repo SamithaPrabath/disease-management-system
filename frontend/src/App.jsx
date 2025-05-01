@@ -10,6 +10,7 @@ import DashboardPhi from "./pages/phi/Dashboard";
 import DashboardDoc from "./pages/doctor/Dashboard";
 import DashboardIdu from "./pages/idu/Dashboard";
 import DashboardMoh from "./pages/moh/Dashboard";
+import DashboardAdmin from "./pages/admin/Dashboard";
 
 import NotFound from "./pages/NotFound";
 import { connect } from "react-redux";
@@ -50,6 +51,8 @@ const App = (props) => {
           element={
             decryptAndRetrieveToken() && isTokenValid() ? (
               response?.data?.role === "admin" ? (
+                <DashboardAdmin />
+              ) : response?.data?.role === "epi" ? (
                 <DashboardEpi />
               ) : response?.data?.role === "phi" ? (
                 <DashboardPhi />

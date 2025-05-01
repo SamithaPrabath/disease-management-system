@@ -5,6 +5,7 @@ from .base_controller import BaseController
 from models.moh import MOH
 from models.case import Case
 from datetime import datetime
+from utils.email_service import EmailService
 
 class MOHController(BaseController):
     @staticmethod
@@ -12,8 +13,21 @@ class MOHController(BaseController):
         try:
             data = request.get_json()
             moh_user = MOH(**data)
-            moh_user = asyncio.run(MOH.add_moh_user(moh_user))
-            return MOHController.success_response(moh_user)
+            result = asyncio.run(MOH.add_moh_user(moh_user))
+            
+            # Send welcome email if the MOH user was added successfully
+            if result.get("status") == 200:
+                email_result = EmailService.send_welcome_email(
+                    recipient_email=moh_user.email,
+                    name=moh_user.name,
+                    username=moh_user.username,
+                    role=moh_user.role,
+                    password=data.get("password")
+                )
+                # Add email sending result to the response
+                result['email_status'] = email_result
+                
+            return MOHController.success_response(result)
         except Exception as e:
             return MOHController.error_response(str(e))
         
