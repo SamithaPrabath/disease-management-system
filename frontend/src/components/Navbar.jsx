@@ -5,7 +5,9 @@ import { IoNotifications } from "react-icons/io5";
 import { HiUser } from "react-icons/hi2";
 import { connect, useDispatch } from "react-redux";
 import { resetStore } from "../redux/actions/log_out_actions";
+import { getNotifications, markNotificationAsRead } from "../api/notificationsApi";
 
+// Navbar component that uses Redux for user data and the notification API
 const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
   const [activeSection, setActiveSection] = useState("Home");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false); // State for user dropdown visibility
@@ -17,6 +19,11 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
 
   const [userName, setUserName] = useState("Null");
   const [userRole, setUserRole] = useState("Null");
+  
+  // Notifications state
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,12 +36,67 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
     fetchData();
   }, [AllLogins]);
 
-  // Mock notifications
-  const mockNotifications = [
-    { id: 1, text: "New message from John Doe" },
-    { id: 2, text: "Your report is ready" },
-    { id: 3, text: "Reminder: Meeting at 3 PM" },
-  ];
+  // Fetch notifications from backend
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      // Only fetch if user is logged in and we have user data
+      if (!sessionStorage.getItem("token") || !AllLogins?.data) return;
+      
+      setLoading(true);
+      try {
+        // Pass the user ID explicitly to getNotifications
+        const response = await getNotifications(AllLogins.data.userId);
+        
+        if (response.status === 200) {
+          setNotifications(response.data);
+          setError(null);
+        } else {
+          setError(response.message || "Failed to load notifications");
+          setNotifications([]);
+        }
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+        setError("Failed to load notifications");
+        setNotifications([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+    
+    // Set up polling to fetch notifications every 2 minutes
+    const intervalId = setInterval(fetchNotifications, 2 * 60 * 1000);
+    
+    return () => clearInterval(intervalId);
+  }, [AllLogins]); // Add AllLogins as dependency so notifications are refreshed when user changes
+
+  // Mark notification as read
+  const markAsRead = async (notificationId) => {
+    try {
+      if (!AllLogins?.data?.userId) {
+        console.error("User ID not available");
+        return;
+      }
+      
+      const response = await markNotificationAsRead(notificationId, AllLogins.data.userId);
+      
+      if (response.status === 200) {
+        // Update local state to reflect the change
+        setNotifications(prevNotifications => 
+          prevNotifications.map(notification => 
+            notification.id === notificationId 
+              ? { ...notification, read: true } 
+              : notification
+          )
+        );
+      } else {
+        console.error("Failed to mark notification as read:", response.message);
+      }
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
+  };
 
   // Handle smooth scrolling
   const handleClickScroll = (elementId) => {
@@ -95,6 +157,23 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
     // Force a hard reload to clear all state
     window.location.href = "/home";
   };
+
+  // Handle notification click
+  const handleNotificationClick = (notification) => {
+    // Mark notification as read
+    markAsRead(notification.id);
+    
+    // Navigate to relevant page if needed
+    if (notification.link) {
+      navigate(notification.link);
+    }
+    
+    // Close the dropdown
+    setIsNotificationDropdownVisible(false);
+  };
+
+  // Get unread notification count
+  const unreadCount = notifications.filter(notification => !notification.is_read).length;
 
   return (
     <div className="Navbar w-full min-w-[870px] h-[80px] px-[40px] py-[16px] flex flex-row items-center justify-between bg-white fixed top-0 left-0 z-50">
@@ -162,27 +241,63 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
                 >
                   <IoNotifications />
                 </button>
-                {/* Notification Count */}
-                <div
-                  className="absolute -top-1 -right-1 w-[20px] h-[20px] bg-[#0866FF] text-[#fff] text-[12px] rounded-[50%]
-                flex items-center justify-center
-                "
-                >
-                  {mockNotifications.length}
-                </div>
+                {/* Notification Count - Only show if there are unread notifications */}
+                {unreadCount > 0 && (
+                  <div
+                    className="absolute -top-1 -right-1 w-[20px] h-[20px] bg-[#0866FF] text-[#fff] text-[12px] rounded-[50%]
+                  flex items-center justify-center
+                  "
+                  >
+                    {unreadCount}
+                  </div>
+                )}
               </div>
 
               {/* Notification Dropdown Menu */}
               {isNotificationDropdownVisible && (
-                <div className="absolute right-0 mt-2 w-[250px] bg-white border border-[#E2E5E9] rounded-[6px] shadow-lg">
-                  {mockNotifications.map((notification) => (
+                <div className="absolute right-0 mt-2 w-[300px] bg-white border border-[#E2E5E9] rounded-[6px] shadow-lg max-h-[400px] overflow-y-auto">
+                  <div className="sticky top-0 bg-white p-2 border-b border-gray-200">
+                    <h3 className="font-medium text-[16px]">Notifications</h3>
+                  </div>
+                  
+                  {loading && (
+                    <div className="p-4 text-center text-gray-500">Loading notifications...</div>
+                  )}
+                  
+                  {error && (
+                    <div className="p-4 text-center text-red-500">{error}</div>
+                  )}
+                  
+                  {!loading && !error && notifications.length === 0 && (
+                    <div className="p-4 text-center text-gray-500">No notifications</div>
+                  )}
+                  
+                  {notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className="px-4 py-2 text-[14px] text-[#65686C] hover:bg-[#F5F5F5]"
+                      className={`px-4 py-3 text-[14px] border-b border-gray-100 hover:bg-[#F5F5F5] cursor-pointer ${
+                        notification.read ? "bg-white" : "bg-blue-50"
+                      }`}
+                      onClick={() => handleNotificationClick(notification)}
                     >
-                      {notification.text}
+                      <div className="font-medium">{notification.title}</div>
+                      <div className="text-gray-600">{notification.message}</div>
+                      <div className="text-[12px] text-gray-400 mt-1">
+                        {new Date(notification.update_time).toLocaleString()}
+                      </div>
                     </div>
                   ))}
+                  
+                  {notifications.length > 0 && (
+                    <div className="p-2 text-center">
+                      <button 
+                        className="text-blue-500 text-[14px] hover:underline"
+                        onClick={() => navigate("/notifications")}
+                      >
+                        View all notifications
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

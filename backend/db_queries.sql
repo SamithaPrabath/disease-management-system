@@ -32,3 +32,9 @@ ALTER TABLE `health_sentinel_db`.`lab_reports`
 CHANGE COLUMN `file` `file` TEXT NULL DEFAULT NULL ;
 
 
+ALTER TABLE `health_sentinel_db`.`notifications` 
+ADD COLUMN `title` VARCHAR(45) NULL AFTER `is_read`;
+
+
+ALTER TABLE `health_sentinel_db`.`notifications` 
+CHANGE COLUMN `message` `message` TEXT NULL DEFAULT NULL ;

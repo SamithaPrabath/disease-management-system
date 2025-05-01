@@ -10,6 +10,7 @@ import AssignphipopupReducer from './assignphipopup-reducer';
 import UnassigncasepopupReducer from './unassigncasepopup-reducer';
 import Assignmohpopup from './assignmohpopup-reducer';
 import ViewEditEvent from './viewEditEvent-reducer';
+import ReportFilesPopup from './reportfilespopup-reducer';
 
 const rootReducer = combineReducers(
     {
@@ -24,6 +25,7 @@ const rootReducer = combineReducers(
         unassigncasepopupReducer: UnassigncasepopupReducer,
         assignmohpopup: Assignmohpopup,
         viewEditEvent: ViewEditEvent,
+        reportFilesPopup: ReportFilesPopup,
     }
 )
 

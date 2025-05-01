@@ -5,7 +5,9 @@ from models.user import User
 from models.report import Report
 from models.location import Location
 from models.lab_report import LabReport
+from models.notification import Notification
 from utils.db.query_executor import AsyncQueryExecutor
+from datetime import datetime
 
 
 @dataclass
@@ -75,6 +77,22 @@ class Case:
         # Save lab report files if available
         if self.lab_files and len(self.lab_files) > 0:
             await LabReport.add_lab_reports_for_case(self.id, self.lab_files)
+        
+        # Send notification to the institute
+        if self.instituteId:
+            notification_message = f"A new case for {self.patientName} with disease {self.diseaseName} has been added."
+            notification_title = f"New Case: {self.diseaseName}"
+            
+            # Use system user (1) as sender, or the notifier if available
+            sender_id = self.notifier if self.notifier else 1
+            
+            # Create notification
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=self.instituteId,
+                title=notification_title
+            )
             
         return self
     
@@ -82,6 +100,39 @@ class Case:
         query_executor = AsyncQueryExecutor()
         query = "UPDATE cases SET confirmedBy = %s, confirmedDate = %s, caseStatus = %s, remarks = %s, natureOfConfirmation = %s WHERE id = %s"
         await query_executor.execute(query, (self.confirmedBy, self.confirmedDate, self.caseStatus, self.remarks, self.natureOfConfirmation, self.id))
+        
+        # Send notification to the institute that created the case (notifier)
+        if self.notifier:
+            notification_message = f"Case #{self.id} for patient {self.patientName} has been confirmed."
+            notification_title = f"Case Confirmed: #{self.id}"
+            
+            # Use the confirming user as sender
+            sender_id = self.confirmedBy if self.confirmedBy else 1
+            
+            # Create notification for notifier
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=self.notifier,
+                title=notification_title
+            )
+            
+        # If institute ID is different from notifier, notify them too
+        if self.instituteId and self.instituteId != self.notifier:
+            notification_message = f"Case #{self.id} for patient {self.patientName} has been confirmed."
+            notification_title = f"Case Confirmed: #{self.id}"
+            
+            # Use the confirming user as sender
+            sender_id = self.confirmedBy if self.confirmedBy else 1
+            
+            # Create notification for institute
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=self.instituteId,
+                title=notification_title
+            )
+            
         return self
 
     @staticmethod
@@ -215,7 +266,10 @@ class Case:
                 {
                     "id": lab_report.id,
                     "case_id": lab_report.case_id,
-                    "file": lab_report.file
+                    "file": {
+                        "fileName": lab_report.file,
+                        "fileUrl": f"http://localhost:5000/api/uploads/{lab_report.file}"
+                    }
                 } for lab_report in lab_reports
             ] if lab_reports else []
             
@@ -255,6 +309,26 @@ class Case:
         query_executor = AsyncQueryExecutor()
         query = "UPDATE cases SET assignedMoh = %s, mohAssignedDate = %s WHERE id = %s"
         await query_executor.execute(query, (assigned_moh, moh_assigned_date, case_id))
+        
+        # Send notification to the assigned MOH
+        if assigned_moh:
+            # Get case details
+            case = await Case.get_case_by_id(case_id)
+            
+            notification_message = f"You have been assigned to case #{case_id} - Patient: {case.patientName}, Disease: {case.diseaseName}"
+            notification_title = f"Case Assignment: #{case_id}"
+            
+            # Use admin (1) as sender
+            sender_id = 1
+            
+            # Create notification
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=assigned_moh,
+                title=notification_title
+            )
+        
         return {"message": "Case assignedMoh and mohAssignedDate updated successfully", "status": "success"}
 
     @staticmethod
@@ -262,6 +336,26 @@ class Case:
         query_executor = AsyncQueryExecutor()
         query = "UPDATE cases SET assignedPhi = %s, phiAssignedDate = %s WHERE id = %s"
         await query_executor.execute(query, (assigned_phi, phi_assigned_date, case_id))
+        
+        # Send notification to the assigned PHI
+        if assigned_phi:
+            # Get case details
+            case = await Case.get_case_by_id(case_id)
+            
+            notification_message = f"You have been assigned to case #{case_id} - Patient: {case.patientName}, Disease: {case.diseaseName}"
+            notification_title = f"Case Assignment: #{case_id}"
+            
+            # Use admin (1) as sender or the MOH who assigned if available
+            sender_id = case.assignedMoh if case.assignedMoh else 1
+            
+            # Create notification
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=assigned_phi,
+                title=notification_title
+            )
+        
         return {"message": "Case assignedPhi and phiAssignedDate updated successfully", "status": "success"}
 
     @staticmethod

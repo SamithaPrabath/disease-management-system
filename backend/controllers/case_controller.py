@@ -50,7 +50,7 @@ class CaseController(BaseController):
                     unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
                     file_path = os.path.join(upload_dir, unique_filename)
                     file.save(file_path)
-                    file_paths.append(file_path)
+                    file_paths.append(unique_filename)
             
             new_case = Case(
                 patientName=data.get('patientName'),

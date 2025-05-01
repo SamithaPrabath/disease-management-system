@@ -10,6 +10,7 @@ class Notification:
     receiver: int = None
     update_time: datetime = None
     is_read: bool = False
+    title: str = None
 
     @staticmethod
     async def get_notification_by_id(id):
@@ -26,14 +27,17 @@ class Notification:
         return [Notification(*result) for result in results] if results else []
 
     @staticmethod
-    async def create_notification(message, sender, receiver):
+    async def create_notification(message, sender, receiver, title):
         query_executor = AsyncQueryExecutor()
         query = """
-            INSERT INTO notifications (message, sender, receiver, update_time, is_read)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id
+            INSERT INTO notifications (message, sender, receiver, update_time, is_read, title)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
-        result = await query_executor.fetch_one(query, (message, sender, receiver, datetime.now(), False))
+        await query_executor.execute(query, (message, sender, receiver, datetime.now(), False, title))
+        
+        # Get the last inserted ID
+        query_executor1 = AsyncQueryExecutor()
+        result = await query_executor1.fetch_one("SELECT id FROM notifications ORDER BY id DESC LIMIT 1")
         return result[0] if result else None
 
     @staticmethod
