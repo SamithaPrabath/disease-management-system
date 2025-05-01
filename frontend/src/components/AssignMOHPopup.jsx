@@ -7,7 +7,7 @@ import { message } from "antd";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-
+import { getSingleCaseData } from "../api/allCasesApi";
 // Validation schema
 const assignMOHSchema = Yup.object().shape({
   assignedMoh: Yup.string().required("Please select a MOH"),
@@ -19,16 +19,18 @@ const containerStyle = {
   height: "200px", // Adjust height as needed
 };
 
-// Colombo, Sri Lanka coordinates
-const center = {
-  lat: 6.9271, // Latitude of Colombo
-  lng: 79.8612, // Longitude of Colombo
-};
 
 const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [mohList, setMohList] = useState([]);
+  const [location, setLocation] = useState({
+    address: "Colombo, Sri Lanka",
+    coordinates: {
+      lat: 6.9271, // Latitude of Colombo
+      lng: 79.8612, // Longitude of Colombo
+    },
+  });
 
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -42,6 +44,21 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
   }, [Assignmohpopup]);
 
   useEffect(() => {
+    const get_location = async () => {
+      const response = await getSingleCaseData(ViewsSingleCase?.[1]);
+      setLocation({
+      address: response?.data?.location_address,
+      coordinates: {
+        lat: response?.data?.location_details?.latitude,
+        lng: response?.data?.location_details?.longitude,
+        },
+      });
+    };
+    get_location();
+  }, [ViewsSingleCase]);
+  
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getMohListByLocation();
@@ -51,7 +68,6 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
         messageApi.error("Failed to fetch MOH list");
       }
     };
-
     if (isOpen) fetchData();
   }, [isOpen, messageApi]);
 
@@ -131,15 +147,15 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
 
                 {/* Location Section with Map */}
                 <div className="mt-4 text-gray-700">
-                  <p className="mb-2">Location: Colombo</p>
+                  <p className="mb-2">Location: {location.address}</p>
                   {isLoaded ? (
                     <GoogleMap
                       mapContainerStyle={containerStyle}
-                      center={center}
+                      center={location.coordinates}
                       zoom={13} // Adjust zoom level as needed
                     >
                       {/* Add a marker for Colombo */}
-                      <Marker position={center} />
+                      <Marker position={location.coordinates} />
                     </GoogleMap>
                   ) : (
                     <div className="flex items-center justify-center h-[200px] bg-gray-100">
