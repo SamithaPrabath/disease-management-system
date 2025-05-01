@@ -13,6 +13,22 @@ import { closeAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 import { viewReportFilesPopUp } from "../redux/actions/reportFilesPopUpAction";
 import ViewReportFilesPopup from "./ViewReportFilesPopup";
 
+// Helper function to parse contact data
+const parseContactsData = (data) => {
+  if (!data) return [];
+  
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch (error) {
+      console.error("Error parsing contacts data:", error);
+      return [];
+    }
+  }
+  
+  return Array.isArray(data) ? data : [];
+};
+
 const SingleCaseView = ({
   AllLogins,
   viewConfirmPopUp,
@@ -380,7 +396,7 @@ const SingleCaseView = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {singleCase?.report?.householdContacts?.map(
+                      {parseContactsData(singleCase?.report?.householdContacts).map(
                         (contact, index) => (
                           <tr
                             key={index}
@@ -418,7 +434,7 @@ const SingleCaseView = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {singleCase?.report?.otherContacts?.map(
+                      {parseContactsData(singleCase?.report?.otherContacts).map(
                         (contact, index) => (
                           <tr
                             key={index}
@@ -556,7 +572,7 @@ const SingleCaseView = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {singleCase?.report?.householdContacts?.map(
+                        {parseContactsData(singleCase?.report?.householdContacts).map(
                           (contact, index) => (
                             <tr
                               key={index}
@@ -598,7 +614,7 @@ const SingleCaseView = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {singleCase?.report?.otherContacts?.map(
+                        {parseContactsData(singleCase?.report?.otherContacts).map(
                           (contact, index) => (
                             <tr
                               key={index}

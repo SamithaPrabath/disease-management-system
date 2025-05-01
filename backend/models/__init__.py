@@ -5,6 +5,7 @@ from .moh import MOH
 from .case import Case
 from .location import Location
 from .lab_report import LabReport
+from .report import Report, HouseholdContact, OtherContact
 
 __all__ = [
     'User',
@@ -13,5 +14,8 @@ __all__ = [
     'MOH',
     'Case',
     'Location',
-    'LabReport'
+    'LabReport',
+    'Report',
+    'HouseholdContact',
+    'OtherContact'
 ] 

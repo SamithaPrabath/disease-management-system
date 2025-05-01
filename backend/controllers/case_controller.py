@@ -160,18 +160,28 @@ class CaseController(BaseController):
             # Get form data
             report_data = dict(request.form)
             
-            # Handle file upload if present
-            if 'file' in request.files:
-                file = request.files['file']
-                if file.filename:
-                    # Save the file and get its path
-                    # You'll need to implement your file saving logic here
-                    file_path = f"uploads/reports/{file.filename}"
+            # Handle file uploads - getting all files with the key 'files'
+            files = request.files.getlist('files')
+            
+            # Create uploads/reports directory if it doesn't exist
+            upload_dir = os.path.join(os.getcwd(), 'uploads')
+            if not os.path.exists(upload_dir):
+                os.makedirs(upload_dir)
+            
+            # Handle file uploads
+            file_paths = []
+            for file in files:
+                if file and file.filename:
+                    # Secure the filename
+                    filename = secure_filename(file.filename)
+                    # Create a unique filename to avoid collisions
+                    unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+                    file_path = os.path.join(upload_dir, unique_filename)
                     file.save(file_path)
-                    report_data['file'] = file_path
+                    file_paths.append(unique_filename)
             
             # Add report to case
-            result = asyncio.run(Case.add_report(case_id, report_data))
+            result = asyncio.run(Case.add_report(case_id, report_data, file_paths))
             return CaseController.success_response(result)
         except Exception as e:
             return CaseController.error_response(str(e), 500)

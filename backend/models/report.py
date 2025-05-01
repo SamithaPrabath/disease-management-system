@@ -1,5 +1,90 @@
 from dataclasses import dataclass
 from utils.db.query_executor import AsyncQueryExecutor
+import json
+from datetime import datetime
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+
+@dataclass
+class HouseholdContact:
+    id: int = None
+    report_id: int = None
+    name: str = None
+    age: int = None
+    disposition: str = None
+    date: str = None
+    
+    async def save(self):
+        query_executor = AsyncQueryExecutor()
+        query = """
+            INSERT INTO house_hold_contacts (
+                report_id, name, age, disposition, date
+            ) VALUES (%s, %s, %s, %s, %s)
+        """
+        await query_executor.execute(query, (
+            self.report_id, self.name, self.age, self.disposition, self.date
+        ))
+        return self
+    
+    @staticmethod
+    async def get_contacts_by_report_id(report_id):
+        query_executor = AsyncQueryExecutor()
+        query = f"SELECT * FROM house_hold_contacts WHERE report_id = {report_id}"
+        results = await query_executor.fetch_all(query)
+        if results:
+            return [HouseholdContact(
+                id=result[0],
+                report_id=result[1],
+                name=result[2],
+                age=result[3],
+                disposition=result[4],
+                date=result[5] if len(result) > 5 else None
+            ) for result in results]
+        return []
+
+
+@dataclass
+class OtherContact:
+    id: int = None
+    report_id: int = None
+    name: str = None
+    age: int = None
+    disposition: str = None
+    date: str = None
+    
+    async def save(self):
+        query_executor = AsyncQueryExecutor()
+        query = """
+            INSERT INTO other_contacts (
+                report_id, name, age, disposition, date
+            ) VALUES (%s, %s, %s, %s, %s)
+        """
+        await query_executor.execute(query, (
+            self.report_id, self.name, self.age, self.disposition, self.date
+        ))
+        return self
+    
+    @staticmethod
+    async def get_contacts_by_report_id(report_id):
+        query_executor = AsyncQueryExecutor()
+        query = f"SELECT * FROM other_contacts WHERE report_id = {report_id}"
+        results = await query_executor.fetch_all(query)
+        if results:
+            return [OtherContact(
+                id=result[0],
+                report_id=result[1],
+                name=result[2],
+                age=result[3],
+                disposition=result[4],
+                date=result[5]
+            ) for result in results]
+        return []
 
 
 @dataclass
@@ -39,6 +124,53 @@ class Report:
         query_executor1 = AsyncQueryExecutor()
         result = await query_executor1.fetch_one("SELECT id FROM report ORDER BY id DESC LIMIT 1")
         self.id = result[0]
+        
+        # Process and save household contacts
+        if self.householdContacts:
+            try:
+                household_contacts_data = json.loads(self.householdContacts) if isinstance(self.householdContacts, str) else self.householdContacts
+                for contact_data in household_contacts_data:
+                    # Make sure date is a string
+                    date = contact_data.get('date')
+                    if isinstance(date, datetime):
+                        date = date.strftime('%Y-%m-%d')
+                    
+                    contact = HouseholdContact(
+                        report_id=self.id,
+                        name=contact_data.get('name'),
+                        age=contact_data.get('age'),
+                        disposition=contact_data.get('disposition'),
+                        date=date
+                    )
+                    await contact.save()
+            except Exception as e:
+                print(f"Error saving household contacts: {str(e)}")
+                # Handle JSON and other errors
+                pass
+        
+        # Process and save other contacts
+        if self.otherContacts:
+            try:
+                other_contacts_data = json.loads(self.otherContacts) if isinstance(self.otherContacts, str) else self.otherContacts
+                for contact_data in other_contacts_data:
+                    # Make sure date is a string
+                    date = contact_data.get('date')
+                    if isinstance(date, datetime):
+                        date = date.strftime('%Y-%m-%d')
+                        
+                    contact = OtherContact(
+                        report_id=self.id,
+                        name=contact_data.get('name'),
+                        age=contact_data.get('age'),
+                        disposition=contact_data.get('disposition'),
+                        date=date
+                    )
+                    await contact.save()
+            except Exception as e:
+                print(f"Error saving other contacts: {str(e)}")
+                # Handle JSON and other errors
+                pass
+                
         return self
 
     @staticmethod
@@ -76,6 +208,32 @@ class Report:
 
             if res.reportCreatedDate:
                 res.reportCreatedDate = format_date_with_suffix(res.reportCreatedDate)
+                
+            # Get household contacts
+            household_contacts = await HouseholdContact.get_contacts_by_report_id(res.id)
+            if household_contacts:
+                contacts_data = []
+                for contact in household_contacts:
+                    contacts_data.append({
+                        'name': contact.name,
+                        'age': contact.age,
+                        'disposition': contact.disposition,
+                        'date': contact.date
+                    })
+                res.householdContacts = contacts_data
+                
+            # Get other contacts
+            other_contacts = await OtherContact.get_contacts_by_report_id(res.id)
+            if other_contacts:
+                contacts_data = []
+                for contact in other_contacts:
+                    contacts_data.append({
+                        'name': contact.name,
+                        'age': contact.age,
+                        'disposition': contact.disposition,
+                        'date': contact.date
+                    })
+                res.otherContacts = contacts_data
 
             return res
 
@@ -114,6 +272,59 @@ class Report:
             self.otherContacts, self.phiRemarks, self.file, self.reportCreatedDate,
             self.id
         ))
+        
+        # Delete existing contacts
+        delete_query1 = f"DELETE FROM house_hold_contacts WHERE report_id = {self.id}"
+        delete_query2 = f"DELETE FROM other_contacts WHERE report_id = {self.id}"
+        await query_executor.execute(delete_query1)
+        await query_executor.execute(delete_query2)
+        
+        # Process and save household contacts
+        if self.householdContacts:
+            try:
+                household_contacts_data = json.loads(self.householdContacts) if isinstance(self.householdContacts, str) else self.householdContacts
+                for contact_data in household_contacts_data:
+                    # Make sure date is a string
+                    date = contact_data.get('date')
+                    if isinstance(date, datetime):
+                        date = date.strftime('%Y-%m-%d')
+                        
+                    contact = HouseholdContact(
+                        report_id=self.id,
+                        name=contact_data.get('name'),
+                        age=contact_data.get('age'),
+                        disposition=contact_data.get('disposition'),
+                        date=date
+                    )
+                    await contact.save()
+            except Exception as e:
+                print(f"Error updating household contacts: {str(e)}")
+                # Handle JSON and other errors
+                pass
+        
+        # Process and save other contacts
+        if self.otherContacts:
+            try:
+                other_contacts_data = json.loads(self.otherContacts) if isinstance(self.otherContacts, str) else self.otherContacts
+                for contact_data in other_contacts_data:
+                    # Make sure date is a string
+                    date = contact_data.get('date')
+                    if isinstance(date, datetime):
+                        date = date.strftime('%Y-%m-%d')
+                        
+                    contact = OtherContact(
+                        report_id=self.id,
+                        name=contact_data.get('name'),
+                        age=contact_data.get('age'),
+                        disposition=contact_data.get('disposition'),
+                        date=date
+                    )
+                    await contact.save()
+            except Exception as e:
+                print(f"Error updating other contacts: {str(e)}")
+                # Handle JSON and other errors
+                pass
+                
         return self 
     
 

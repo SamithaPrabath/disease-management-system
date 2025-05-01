@@ -38,3 +38,45 @@ ADD COLUMN `title` VARCHAR(45) NULL AFTER `is_read`;
 
 ALTER TABLE `health_sentinel_db`.`notifications` 
 CHANGE COLUMN `message` `message` TEXT NULL DEFAULT NULL ;
+
+CREATE TABLE `health_sentinel_db`.`house_hold_contacts` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `report_id` INT NULL,
+  `name` VARCHAR(45) NULL,
+  `age` INT NULL,
+  `disposition` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE `health_sentinel_db`.`other_contacts` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `report_id` INT NULL,
+  `name` VARCHAR(45) NULL,
+  `age` INT NULL,
+  `disposition` VARCHAR(45) NULL,
+  `date` DATETIME NULL,
+  PRIMARY KEY (`id`));
+
+ALTER TABLE `health_sentinel_db`.`house_hold_contacts` 
+ADD INDEX `fk_house_hold_contacts_report_idx` (`report_id` ASC) VISIBLE;
+;
+ALTER TABLE `health_sentinel_db`.`house_hold_contacts` 
+ADD CONSTRAINT `fk_house_hold_contacts_report`
+  FOREIGN KEY (`report_id`)
+  REFERENCES `health_sentinel_db`.`report` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+ALTER TABLE `health_sentinel_db`.`other_contacts` 
+ADD INDEX `fk_other_contacts_report_idx` (`report_id` ASC) VISIBLE;
+;
+ALTER TABLE `health_sentinel_db`.`other_contacts` 
+ADD CONSTRAINT `fk_other_contacts_report`
+  FOREIGN KEY (`report_id`)
+  REFERENCES `health_sentinel_db`.`report` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+ALTER TABLE `health_sentinel_db`.`house_hold_contacts` 
+ADD COLUMN `date` DATETIME NULL AFTER `disposition`;
+

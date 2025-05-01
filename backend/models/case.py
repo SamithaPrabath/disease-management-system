@@ -8,7 +8,7 @@ from models.lab_report import LabReport
 from models.notification import Notification
 from utils.db.query_executor import AsyncQueryExecutor
 from datetime import datetime
-
+import json
 
 @dataclass
 class Case:
@@ -238,7 +238,9 @@ class Case:
                     "outcome": report.outcome,
                     "movementHistory": report.movementHistory,
                     "labResults": report.labResults,
-                    "phiRemarks": report.phiRemarks
+                    "phiRemarks": report.phiRemarks,
+                    "householdContacts": report.householdContacts,
+                    "otherContacts": report.otherContacts
                 }
             else:
                 case.report = {}
@@ -359,7 +361,7 @@ class Case:
         return {"message": "Case assignedPhi and phiAssignedDate updated successfully", "status": "success"}
 
     @staticmethod
-    async def add_report(case_id: int, report_data: dict):
+    async def add_report(case_id: int, report_data: dict, file_paths: list):
         # Create new report
         report = Report(
             ethnicGroup=report_data.get('ethnicGroup'),
@@ -373,7 +375,6 @@ class Case:
             householdContacts=report_data.get('householdContacts'),
             otherContacts=report_data.get('otherContacts'),
             phiRemarks=report_data.get('phiRemarks'),
-            file=report_data.get('file'),
             reportCreatedDate=report_data.get('reportCreatedDate')
         )
         
@@ -384,6 +385,10 @@ class Case:
         query_executor1 = AsyncQueryExecutor()
         query = "UPDATE cases SET report_id = %s WHERE id = %s"
         await query_executor1.execute(query, (saved_report.id, case_id))
+
+        # Save lab report files if available
+        if file_paths and len(file_paths) > 0:
+            await LabReport.add_lab_reports_for_case(case_id, file_paths)
         
         return {
             "message": "Report added and case updated successfully",
