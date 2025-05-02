@@ -174,7 +174,7 @@ export const getAllMOHList = async () => {
   }
 };
 
-export const getMohListByLocation = async () => {
+export const getMohListByLocation = async (location) => {
   try {
     if (IS_BACKEND == "false") {
       const response = mohResponse.filter((moh) => moh.area === location);
