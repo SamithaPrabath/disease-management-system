@@ -7,6 +7,7 @@ import { geDiseasesList } from "../../api/diseasesApi";
 import { viewAssignPHIPopUp } from "../../redux/actions/assginPHIPopupAction";
 import { viewAssignMOHPopUp } from "../../redux/actions/assignMOHPopupAction";
 import { mark_AsReceived, sendFinalReport } from "../../api/allCasesApi";
+import { reportSend } from "../../redux/actions/reportSendAction";
 import { message } from "antd";
 
 const Table = ({
@@ -17,6 +18,7 @@ const Table = ({
   viewConfirmPopUp,
   viewAssignPHIPopUp,
   viewAssignMOHPopUp,
+  reportSend,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -117,6 +119,7 @@ const Table = ({
       const response = await sendFinalReport(value);
 
       if (response.status === 200 && response.message) {
+        reportSend(true);
         messageApi.success(response.message);
       } else {
         throw new Error(response.message || "Failed to send final report");
@@ -321,7 +324,9 @@ const Table = ({
                             {!patient?.assignedPhi ? (
                               <button
                                 className={`text-white px-[16px] py-[8px] rounded-[6px] bg-blue-600 hover:bg-blue-700 transition cursor-pointer`}
-                                onClick={() => viewSingleCase(patient.caseId)}
+                                onClick={() =>
+                                  viewAssignPHIPopUp(patient.caseId)
+                                }
                               >
                                 Assign PHI
                               </button>
@@ -405,8 +410,9 @@ const mapDispatchToProps = (dispatch) => ({
   viewReport: (values) => dispatch(viewReport(values)),
   viewSingleCase: (values) => dispatch(viewSingleCase(values)),
   viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
-  viewAssignPHIPopUp: (value) => dispatch(viewAssignPHIPopUp()),
+  viewAssignPHIPopUp: (value) => dispatch(viewAssignPHIPopUp(value)),
   viewAssignMOHPopUp: (value) => dispatch(viewAssignMOHPopUp(value)),
+  reportSend: (values) => dispatch(reportSend(values)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
