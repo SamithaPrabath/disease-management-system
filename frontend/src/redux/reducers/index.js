@@ -11,6 +11,7 @@ import UnassigncasepopupReducer from './unassigncasepopup-reducer';
 import Assignmohpopup from './assignmohpopup-reducer';
 import ViewEditEvent from './viewEditEvent-reducer';
 import ViewAddNewCaseReducer from './viewAddNewCaseReducer';
+import ReportSendReducer from './reportSendReducer';
 
 const rootReducer = combineReducers(
     {
@@ -26,6 +27,7 @@ const rootReducer = combineReducers(
         assignmohpopup: Assignmohpopup,
         viewEditEvent: ViewEditEvent,
         viewAddNewCase: ViewAddNewCaseReducer,
+        reportSend: ReportSendReducer,
     }
 )
 
