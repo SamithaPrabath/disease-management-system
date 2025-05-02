@@ -30,7 +30,6 @@ const Dashboard = ({
     const fetchData = async () => {
       try {
         const response = await getAllCases(AllLogins.data.userId);
-        console.log(response);
         setAllCases(response.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);
