@@ -17,6 +17,8 @@ const HeaderBar = ({
   viewAssignPHIPopUp,
   viewUnAssignCasePopUp,
   viewAssignMOHPopUp,
+  Assignmohpopup,
+  Assignphipopup,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [singleCase, setSingleCase] = useState(null);
@@ -39,7 +41,7 @@ const HeaderBar = ({
     };
 
     fetchData();
-  }, [AllLogins, patientId]);
+  }, [AllLogins, patientId, Assignmohpopup, Assignphipopup]);
 
   const handleMarkAsReceived = async (caseId) => {
     try {
@@ -59,6 +61,8 @@ const HeaderBar = ({
       );
     }
   };
+
+  console.log("singleCase: ", singleCase);
 
   return (
     <>
@@ -86,7 +90,8 @@ const HeaderBar = ({
               </h2>
               <h5 className="text-[16px] text-[#171717] font-medium">
                 {singleCase?.caseStatus}{" "}
-                {singleCase?.natureOfConfirmation !== "" && singleCase?.natureOfConfirmation != null
+                {singleCase?.natureOfConfirmation !== "" &&
+                singleCase?.natureOfConfirmation != null
                   ? `(${singleCase?.natureOfConfirmation})`
                   : ""}
               </h5>
@@ -129,13 +134,12 @@ const HeaderBar = ({
                 <button
                   className={`px-6 py-2 rounded-md
               ${
-                singleCase?.assignedMoh == null
+                singleCase?.assignedMoh == ""
                   ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
                   : "text-gray-400 bg-gray-300 cursor-not-allowed"
               }
               `}
                   onClick={() => viewAssignMOHPopUp()}
-                  disabled={singleCase?.assignedMoh != null}
                 >
                   Assign MOH
                 </button>
@@ -168,7 +172,8 @@ const HeaderBar = ({
                 <button
                   className={`px-6 py-2 rounded-md
               ${
-                singleCase?.assignedPhi == userTypeId && !Object.keys(singleCase?.report ?? {}).length > 0
+                singleCase?.assignedPhi == userTypeId &&
+                !Object.keys(singleCase?.report ?? {}).length > 0
                   ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
                   : "text-gray-400 bg-gray-300 cursor-not-allowed"
               }
@@ -199,7 +204,9 @@ const HeaderBar = ({
               <div className="flex gap-3">
                 <button
                   className={`px-[16px] py-[8px] rounded-[6px] ${
-                    singleCase?.assignedPhi ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" : "bg-blue-600 text-white cursor-pointer"
+                    singleCase?.assignedPhi
+                      ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 text-white cursor-pointer"
                   }`}
                   onClick={() => viewAssignPHIPopUp()}
                   disabled={singleCase?.assignedPhi ? true : false}
@@ -280,6 +287,8 @@ const HeaderBar = ({
 const mapStateToProps = (state) => {
   return {
     AllLogins: state.allLogins,
+    Assignmohpopup: state.assignmohpopup,
+    Assignphipopup: state.assignphipopupReducer,
   };
 };
 
