@@ -18,11 +18,11 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
     sex: "",
     status: "",
   });
-  const [role, setRole] = useState("")
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     setPatients(rows); // Ensure state updates when rows change
-    setRole(AllLogins.data.role)
+    setRole(AllLogins.data.role);
   }, [rows]);
 
   const handleFilterChange = (e) =>
@@ -121,7 +121,9 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
                       <tr
                         key={patient.caseId}
                         className="hover:bg-gray-50 cursor-pointer"
-                        onClick={() => navigate(`/single-case-view/${patient.caseId}`)}
+                        onClick={() =>
+                          navigate(`/single-case-view/${patient.caseId}`)
+                        }
                       >
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
                           {patient.caseId}
@@ -130,7 +132,9 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
                           <div className="font-medium text-[#080809]">
                             {patient.patientName}
                           </div>
-                          <div className="text-[#65686C]">{patient.hospital}</div>
+                          <div className="text-[#65686C]">
+                            {patient.hospital}
+                          </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-[#080809]">
                           {patient.age}
@@ -156,25 +160,32 @@ const AllCasesTable = ({ AllLogins, tableData }) => {
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
-                          {
-                            role == "doctor" ? <button
-                            type="button"
-                            className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
-                          >
-                            Confirm Case
-                          </button> : role == "idu" ? <button
-                            type="button"
-                            className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
-                          >
-                            Assign MOH
-                          </button> : <p>Mark as Received</p>
-                          }
+                          {role == "doctor" ? (
+                            <button
+                              type="button"
+                              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
+                            >
+                              Confirm Case
+                            </button>
+                          ) : role == "idu" ? (
+                            <button
+                              type="button"
+                              className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
+                            >
+                              Assign MOH
+                            </button>
+                          ) : (
+                            <p>Mark as Received</p>
+                          )}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={tableHeaders.length} className="text-center py-4 text-gray-500">
+                      <td
+                        colSpan={tableHeaders.length}
+                        className="text-center py-4 text-gray-500"
+                      >
                         No matching records found.
                       </td>
                     </tr>
