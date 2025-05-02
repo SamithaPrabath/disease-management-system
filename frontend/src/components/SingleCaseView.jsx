@@ -20,6 +20,8 @@ const SingleCaseView = ({
   viewAssignPHIPopUp,
   viewAssignMOHPopUp,
   closeAssignMOHPopUp,
+  Assignmohpopup,
+  Assignphipopup,
 }) => {
   const [singleCase, setSingleCase] = useState([]);
   const [role, setRole] = useState("");
@@ -41,6 +43,8 @@ const SingleCaseView = ({
     viewAssignMOHPopUp,
     viewAssignPHIPopUp,
     viewConfirmPopUp,
+    Assignmohpopup,
+    Assignphipopup,
   ]);
 
   useEffect(() => {
@@ -593,6 +597,8 @@ const SingleCaseView = ({
 const mapStateToProps = (state) => {
   return {
     AllLogins: state.allLogins,
+    Assignmohpopup: state.assignmohpopup,
+    Assignphipopup: state.assignphipopupReducer,
   };
 };
 
