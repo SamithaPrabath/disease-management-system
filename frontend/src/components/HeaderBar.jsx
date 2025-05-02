@@ -19,6 +19,7 @@ const HeaderBar = ({
   viewAssignMOHPopUp,
   Assignmohpopup,
   Assignphipopup,
+  confirmPopUp,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [singleCase, setSingleCase] = useState(null);
@@ -41,7 +42,7 @@ const HeaderBar = ({
     };
 
     fetchData();
-  }, [AllLogins, patientId, Assignmohpopup, Assignphipopup]);
+  }, [AllLogins, patientId, Assignmohpopup, Assignphipopup, confirmPopUp]);
 
   const handleMarkAsReceived = async (caseId) => {
     try {
@@ -61,8 +62,6 @@ const HeaderBar = ({
       );
     }
   };
-
-  console.log("singleCase: ", singleCase);
 
   return (
     <>
@@ -289,6 +288,7 @@ const mapStateToProps = (state) => {
     AllLogins: state.allLogins,
     Assignmohpopup: state.assignmohpopup,
     Assignphipopup: state.assignphipopupReducer,
+    confirmPopUp: state.confirmPopUp,
   };
 };
 
