@@ -45,7 +45,6 @@ const SingleCaseView = ({
 
   useEffect(() => {
     setRole(AllLogins.data.role);
-    console.log(role === "idu");
   }, [singleCase]);
 
   const handlePopUpOpen = () => {
