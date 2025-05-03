@@ -8,7 +8,13 @@ import { getAllCases } from "../../api/allCasesApi";
 import AssignPHIPopup from "../../components/AssignPHIPopup";
 import AssignMOHPopup from "../../components/AssignMOHPopup";
 
-const Home = ({ viewReport, viewsSingleCase, allLogins, assignMOHPopup }) => {
+const Home = ({
+  viewReport,
+  viewsSingleCase,
+  allLogins,
+  assignMOHPopup,
+  confirmPopUp,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isViewReport, setIsViewReport] = useState(true);
   const [allCasesData, setAllCasesData] = useState([]);
@@ -30,7 +36,13 @@ const Home = ({ viewReport, viewsSingleCase, allLogins, assignMOHPopup }) => {
     };
 
     fetchData();
-  }, [viewReport, viewsSingleCase, allLogins, assignMOHPopup]);
+  }, [
+    viewReport,
+    viewsSingleCase,
+    allLogins,
+    assignMOHPopup,
+    confirmPopUp?.[0],
+  ]);
 
   useEffect(() => {
     setIsViewSingleCase(viewsSingleCase?.[0]);
@@ -104,6 +116,7 @@ const mapStateToProps = (state) => {
     viewsSingleCase: state.viewsSingleCase,
     allLogins: state.allLogins,
     assignMOHPopup: state.assignmohpopup,
+    confirmPopUp: state.confirmPopUp,
   };
 };
 
