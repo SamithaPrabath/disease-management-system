@@ -33,7 +33,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
       name: userData?.name || "",
       area: userData?.area || "",
       email: userData?.email || "",
-      phone: userData?.phone || "",
+      phoneNumber: userData?.phoneNumber || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes
     validationSchema: mohEditSchema,
@@ -160,19 +160,21 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
                 <label className="block text-gray-700">Phone Number</label>
                 <input
                   type="text"
-                  name="phone"
+                  name="phoneNumber"
                   className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                     isEnableEdit
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-gray-200 text-black"
                   }`}
-                  value={formik.values.phone}
+                  value={formik.values.phoneNumber}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   disabled={isEnableEdit}
                 />
-                {formik.touched.phone && formik.errors.phone && (
-                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
+                {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.phoneNumber}
+                  </p>
                 )}
               </div>
             </div>
