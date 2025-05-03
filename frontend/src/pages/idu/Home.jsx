@@ -8,7 +8,7 @@ import { getAllCases } from "../../api/allCasesApi";
 import AssignPHIPopup from "../../components/AssignPHIPopup";
 import AssignMOHPopup from "../../components/AssignMOHPopup";
 
-const Home = (props) => {
+const Home = ({ viewReport, viewsSingleCase, allLogins, assignMOHPopup }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isViewReport, setIsViewReport] = useState(true);
   const [allCasesData, setAllCasesData] = useState([]);
@@ -17,12 +17,12 @@ const Home = (props) => {
   const [isViewSingleCase, setIsViewSingleCase] = useState(false);
 
   useEffect(() => {
-    setIsViewReport(props.ViewReport?.[0]);
+    setIsViewReport(viewReport?.[0]);
 
     // Fetch all cases data
     const fetchData = async () => {
       try {
-        const response = await getAllCases(props.AllLogins?.data?.userId);
+        const response = await getAllCases(allLogins?.data?.userId);
         setAllCasesData(response.data);
       } catch (error) {
         console.error("Failed to fetch cases data:", error);
@@ -30,12 +30,12 @@ const Home = (props) => {
     };
 
     fetchData();
-  }, [props.ViewReport]);
+  }, [viewReport, viewsSingleCase, allLogins, assignMOHPopup]);
 
   useEffect(() => {
-    setIsViewSingleCase(props.ViewsSingleCase?.[0]);
-    setPatientId(props.ViewsSingleCase?.[1]);
-  }, [props.ViewsSingleCase]);
+    setIsViewSingleCase(viewsSingleCase?.[0]);
+    setPatientId(viewsSingleCase?.[1]);
+  }, [viewsSingleCase]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
@@ -100,9 +100,10 @@ const Home = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    ViewReport: state.viewReportReducer,
-    ViewsSingleCase: state.viewsSingleCase,
-    AllLogins: state.allLogins,
+    viewReport: state.viewReportReducer,
+    viewsSingleCase: state.viewsSingleCase,
+    allLogins: state.allLogins,
+    assignMOHPopup: state.assignmohpopup,
   };
 };
 
