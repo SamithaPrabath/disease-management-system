@@ -40,19 +40,40 @@ const Report = ({ viewReport, closeViewReport }) => {
       try {
         const formData = new FormData();
 
-        Object.entries(values).forEach(([key, value]) => {
-          formData.append(key, value);
+        // Handle regular fields
+        const regularFields = [
+          "caseId",
+          "ethnicGroup",
+          "dischargeDate",
+          "isolationStatus",
+          "isolationDateFrom",
+          "isolationDateTo",
+          "outcome",
+          "movementHistory",
+          "labResults",
+          "phiRemarks",
+        ];
+
+        regularFields.forEach((field) => {
+          formData.append(field, values[field] || "");
         });
+
+        // Convert contact arrays to JSON strings
+        formData.append(
+          "householdContacts",
+          JSON.stringify(values.householdContacts)
+        );
+        formData.append("otherContacts", JSON.stringify(values.otherContacts));
 
         if (file) {
           formData.append("file", file);
         }
 
-        console.log(formData)
+        console.log(formData);
 
         const response = await addReport(formData);
         messageApi.success(response.message);
-        setTimeout(()=>closeViewReport(), 1000)
+        setTimeout(() => closeViewReport(), 1000);
       } catch (error) {
         console.error("Failed to update report:", error);
         messageApi.error("Failed to update report. Please try again.");
@@ -77,7 +98,7 @@ const Report = ({ viewReport, closeViewReport }) => {
           {/* Ethnic Group */}
           <div className="mb-4">
             <label className="block text-gray-700">
-              Ethnic Group of the Patient
+              Ethnic Group of the Patient*
             </label>
             <select
               name="ethnicGroup"
@@ -104,7 +125,7 @@ const Report = ({ viewReport, closeViewReport }) => {
 
           {/* Date of Discharge */}
           <div className="mb-4">
-            <label className="block text-gray-700">Date of Discharge</label>
+            <label className="block text-gray-700">Date of Discharge*</label>
             <input
               type="date"
               name="dischargeDate"
@@ -169,7 +190,7 @@ const Report = ({ viewReport, closeViewReport }) => {
             {/* Isolation Date */}
             <div className="w-full md:w-1/3">
               <label className="block text-gray-700 font-medium mb-2">
-                Isolation Date
+                Isolation Date*
               </label>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
@@ -242,7 +263,7 @@ const Report = ({ viewReport, closeViewReport }) => {
           {/* Movement History */}
           <div className="mb-4">
             <label className="block text-gray-700">
-              Patient’s movement during three weeks prior to onset
+              Patient's movement during three weeks prior to onset*
             </label>
             <textarea
               name="movementHistory"
@@ -429,7 +450,7 @@ const Report = ({ viewReport, closeViewReport }) => {
 
           {/* PHI Remarks */}
           <div className="mb-4">
-            <label className="block text-gray-700">PHI Remarks</label>
+            <label className="block text-gray-700">PHI Remarks*</label>
             <textarea
               name="phiRemarks"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
