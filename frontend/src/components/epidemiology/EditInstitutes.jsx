@@ -3,7 +3,10 @@ import { instituteEditSchema } from "../../yupSchema/epidemiologySchema";
 import { viewEdit } from "../../redux/actions/viewEditAction";
 import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
-import { getAllInstitutesData, updateInstitutes } from "../../api/institutesApi";
+import {
+  getAllInstitutesData,
+  updateInstitutes,
+} from "../../api/institutesApi";
 import { message } from "antd";
 import { sriLankaProvinces } from "../../assets/citysAndProvinces";
 
@@ -35,7 +38,7 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
     initialValues: {
       name: userData?.name || "",
       email: userData?.email || "",
-      phone: userData?.phone || "",
+      phoneNumber: userData?.phoneNumber || "",
       address: userData?.address || "",
       province: userData?.province || "",
       city: userData?.city || "",
@@ -146,17 +149,19 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                 <label className="block text-gray-700">Phone Number</label>
                 <input
                   type="text"
-                  name="phone"
+                  name="phoneNumber"
                   className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                     isEnableEdit
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-gray-200 text-black"
                   }`}
-                  {...formik.getFieldProps("phone")}
+                  {...formik.getFieldProps("phoneNumber")}
                   disabled={isEnableEdit}
                 />
-                {formik.touched.phone && formik.errors.phone && (
-                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
+                {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.phoneNumber}
+                  </p>
                 )}
               </div>
             </div>
@@ -198,7 +203,9 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                   disabled={isEnableEdit}
                 >
                   {isEnableEdit ? (
-                    <option value={formik.values.province}>{formik.values.province}</option>
+                    <option value={formik.values.province}>
+                      {formik.values.province}
+                    </option>
                   ) : (
                     sriLankaProvinces.map((province) => (
                       <option key={province.province} value={province.province}>
@@ -208,7 +215,9 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                   )}
                 </select>
                 {formik.touched.province && formik.errors.province && (
-                  <p className="text-red-500 text-sm">{formik.errors.province}</p>
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.province}
+                  </p>
                 )}
               </div>
 
@@ -227,14 +236,15 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                   onBlur={formik.handleBlur}
                   disabled={isEnableEdit || !formik.values.province}
                 >
-                    {isEnableEdit ? (
-                      <option value={formik.values.city}>{formik.values.city}</option>
-                    ) : (
-                      
-                      cities.map((city) => (
-                        <option key={city} value={city}>
-                          {city}
-                        </option>
+                  {isEnableEdit ? (
+                    <option value={formik.values.city}>
+                      {formik.values.city}
+                    </option>
+                  ) : (
+                    cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
                     ))
                   )}
                 </select>
@@ -253,7 +263,9 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-gray-400 cursor-not-allowed"
                 }`}
-                disabled={isEnableEdit || !formik.isValid || formik.isSubmitting}
+                disabled={
+                  isEnableEdit || !formik.isValid || formik.isSubmitting
+                }
               >
                 {formik.isSubmitting ? "Submitting..." : "Submit"}
               </button>
