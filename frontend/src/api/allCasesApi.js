@@ -38,8 +38,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-03-02",
     assignedMoh: "M001",
     mohAssignedDate: "2024-03-02",
-    sendReport: "true",
-    markAsReceived: "true",
+    sendReport: true,
+    markAsReceived: true,
   },
   {
     caseId: "C002",
@@ -71,8 +71,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-05-30",
     assignedMoh: "",
     mohAssignedDate: "",
-    sendReport: "",
-    markAsReceived: "",
+    sendReport: false,
+    markAsReceived: false,
   },
   {
     caseId: "C003",
@@ -104,8 +104,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-03-02",
     assignedMoh: "M001",
     mohAssignedDate: "2024-03-02",
-    sendReport: "",
-    markAsReceived: "",
+    sendReport: false,
+    markAsReceived: false,
   },
   {
     caseId: "C004",
@@ -137,8 +137,8 @@ export const allCasesResponse = [
     phiAssignedDate: "",
     assignedMoh: "",
     mohAssignedDate: "",
-    sendReport: "",
-    markAsReceived: "",
+    sendReport: false,
+    markAsReceived: false,
   },
 ];
 
@@ -518,24 +518,21 @@ export const sendFinalReport = async (value) => {
 };
 
 export const mark_AsReceived = async (value) => {
+  console.log(value);
   try {
     if (IS_BACKEND == "false") {
-      const caseIndex = allCasesResponse.findIndex(
-        (data) => data.caseId === value.caseId
-      );
-
-      if (caseIndex !== -1) {
-        allCasesResponse[caseIndex] = {
-          ...allCasesResponse[caseIndex],
+      const index = allCasesResponse.findIndex((caseItem) => caseItem.caseId === value.caseId);
+      if (index !== -1) {
+        allCasesResponse[index] = {
+          ...allCasesResponse[index],
           markAsReceived: value.markAsReceived,
+
         };
 
-        return {
-          status: 200,
-          message: "Mark As Received successfully",
-        };
+        console.log(allCasesResponse);
+        return { status: 200, message: "Record updated successfully" };
       } else {
-        throw new Error("Case not found");
+        return { status: 404, message: "Record not found" };
       }
     } else {
       const response = await axios.put(`${BASE_URL}/api/cases/${value.caseId}/mark-received`, value);
@@ -544,6 +541,31 @@ export const mark_AsReceived = async (value) => {
       }
       return { status: 400, message: "Failed to mark as received", data: [] };
     }
+    // if (IS_BACKEND == "false") {
+    //   const caseIndex = allCasesResponse.findIndex(
+    //     (data) => data.caseId === value.caseId
+    //   );
+
+    //   if (caseIndex !== -1) {
+    //     allCasesResponse[caseIndex] = {
+    //       ...allCasesResponse[caseIndex],
+    //       markAsReceived: value.markAsReceived,
+    //     };
+
+    //     return {
+    //       status: 200,
+    //       message: "Mark As Received successfully",
+    //     };
+    //   } else {
+    //     throw new Error("Case not found");
+    //   }
+    // } else {
+    //   const response = await axios.put(`${BASE_URL}/api/cases/${value.caseId}/mark-received`, value);
+    //   if (response.status === 200) {
+    //     return { status: 200, message: "Mark As Received successfully", data: response.data };
+    //   }
+    //   return { status: 400, message: "Failed to mark as received", data: [] };
+    // }
   } catch (error) {
     console.error("Error confirming case:", error);
     throw error;
