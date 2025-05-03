@@ -228,7 +228,7 @@ const SingleCaseView = ({
           </div>
         </div>
 
-        {(singleCase?.markAsReceived == "true" ||
+        {(singleCase?.markAsReceived == true ||
           role == "admin" ||
           role == "moh" ||
           role == "phi" ||
@@ -404,10 +404,10 @@ const SingleCaseView = ({
             </div>
           </div>
         ) : (
-          singleCase.markAsReceived == "false" &&
+          singleCase.markAsReceived == false &&
           ((Object.keys(singleCase?.report || {}).length > 0 &&
             role == "moh") ||
-            (role == "admin" && singleCase.sendReport == "true")) && (
+            (role == "admin" && singleCase.sendReport == true)) && (
             <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
               <div className="flex flex-row items-center justify-between">
                 <h1 className="text-2xl font-medium">
