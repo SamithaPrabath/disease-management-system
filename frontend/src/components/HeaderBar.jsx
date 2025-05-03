@@ -30,7 +30,7 @@ const HeaderBar = ({
     const fetchData = async () => {
       if (AllLogins?.data) {
         setRole(AllLogins.data.role);
-        setUserTypeId(AllLogins.data.userId);
+        setUserTypeId(AllLogins.data.userTypeId);
       }
 
       try {
@@ -161,7 +161,7 @@ const HeaderBar = ({
                               : "text-white bg-blue-600 cursor-pointer"
                           }
                         `}
-                    onClick={() => viewReport(singleCase?.id)}
+                    onClick={() => viewReport(singleCase?.caseId)}
                     disabled={Object.keys(singleCase?.report ?? {}).length > 0}
                   >
                     Add Report
