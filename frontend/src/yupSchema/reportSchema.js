@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const reportSchema = Yup.object({
-  caseId:Yup.string().required("Id is required"),
+  caseId: Yup.string().required("Id is required"),
   ethnicGroup: Yup.string().required("Ethnic Group is required"),
   dischargeDate: Yup.date().required("Date of Discharge is required"),
   isolationDateFrom: Yup.date().required("Isolation start date is required"),
@@ -16,6 +16,5 @@ export const reportSchema = Yup.object({
   ),
   isolationStatus: Yup.string().required("Isolation status is required"),
   outcome: Yup.string().required("Outcome is required"),
-  labResults: Yup.string().required("Laboratory results are required"),
   phiRemarks: Yup.string().required("PHI Remarks are required"),
 });
