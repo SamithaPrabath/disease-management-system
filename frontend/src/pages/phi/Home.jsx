@@ -7,7 +7,13 @@ import Report from "../../components/phi/Report";
 import { getAllCases } from "../../api/allCasesApi";
 import UnAssignCasePopup from "../../components/UnAssignCasePopup";
 
-const Home = ({ ViewReport, ViewsSingleCase, AllLogins, ConfirmPopUp }) => {
+const Home = ({
+  ViewReport,
+  ViewsSingleCase,
+  AllLogins,
+  ConfirmPopUp,
+  UnAssignCasePopUp,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isViewReport, setIsViewReport] = useState(true);
   const [allCasesData, setAllCasesData] = useState([]);
@@ -29,7 +35,13 @@ const Home = ({ ViewReport, ViewsSingleCase, AllLogins, ConfirmPopUp }) => {
     };
 
     fetchData();
-  }, [AllLogins, ConfirmPopUp?.[0], ViewReport?.[0], showNewCase]);
+  }, [
+    AllLogins,
+    ConfirmPopUp?.[0],
+    ViewReport?.[0],
+    showNewCase,
+    UnAssignCasePopUp,
+  ]);
 
   useEffect(() => {
     setIsViewSingleCase(ViewsSingleCase);
@@ -106,6 +118,7 @@ const mapStateToProps = (state) => {
     ViewsSingleCase: state.viewsSingleCase,
     AllLogins: state.allLogins,
     ConfirmPopUp: state.confirmPopUp,
+    UnAssignCasePopUp: state.unassigncasepopupReducer,
   };
 };
 
