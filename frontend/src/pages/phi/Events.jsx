@@ -1,18 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import { getAllEvents, deleteEvent } from "../../api/eventsApi";
-import AddEvent from "../../components/moh/AddEvent";
+import AddEvent from "../../components/phi/AddEvent";
 import { message } from "antd";
 import { connect } from "react-redux";
 import { viewEditEvent } from "../../redux/actions/viewEditEventAction";
-import EditEvent from "../../components/moh/EditEvent";
+import EditEvent from "../../components/phi/EditEvent";
 
-const Events = ({AllLogins, viewEditEvent}) => {
+const Events = ({ AllLogins, viewEditEvent }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [allEvents, setAllEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
+
+  // Format date to "15 March 2025" format
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  // Format time to "01.30 AM" format
+  const formatTime = (timeString) => {
+    const [hours, minutes] = timeString.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours));
+    date.setMinutes(parseInt(minutes));
+    return date
+      .toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+      .replace(":", ".");
+  };
 
   // Fetch all events on component mount
   useEffect(() => {
@@ -21,7 +46,7 @@ const Events = ({AllLogins, viewEditEvent}) => {
       setAllEvents(response.data);
     };
     fetchEvents();
-  }, [isAddEventOpen, messageApi, AllLogins]);
+  }, [isAddEventOpen, AllLogins]);
 
   // Handle search input change
   const handleSearchChange = (e) => {
@@ -41,7 +66,7 @@ const Events = ({AllLogins, viewEditEvent}) => {
     if (result.message) {
       const updatedEvents = allEvents.filter((event) => event.id !== id);
       setAllEvents(updatedEvents);
-      messageApi.success(result.message)
+      messageApi.success(result.message);
     }
   };
 
@@ -52,7 +77,7 @@ const Events = ({AllLogins, viewEditEvent}) => {
   return (
     <>
       {contextHolder}
-      <EditEvent/>
+      <EditEvent />
       <div className="Events w-full min-w-[870px] min-h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]">
         {isAddEventOpen ? (
           <AddEvent handleAddEvent={handleAddEvent} />
@@ -96,8 +121,8 @@ const Events = ({AllLogins, viewEditEvent}) => {
                   />
                   <div className="p-[16px]">
                     <p className="Date text-[16px] text-[#65686C] font-normal flex gap-2">
-                      <span>{event.startDate}</span>
-                      <span>{event.startTime}</span>
+                      <span>{formatDate(event.startDate)}</span>
+                      <span>{formatTime(event.startTime)}</span>
                     </p>
                     <h1 className="text-[20px] text-[#080809] font-medium">
                       {event.eventName}
@@ -134,14 +159,15 @@ const Events = ({AllLogins, viewEditEvent}) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  viewEditEvent: (value) => dispatch(viewEditEvent(value)),
-});
-
 const mapStateToProps = (state) => {
   return {
     AllLogins: state.allLogins,
+    viewEditEvent: state.viewEditEvent,
   };
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  viewEditEvent: (value) => dispatch(viewEditEvent(value)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Events);
