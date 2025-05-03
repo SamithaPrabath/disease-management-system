@@ -11,7 +11,7 @@ export const doctorResponse = [
     moh: "Colombo",
     area: "sample",
     email: "john.doe@email.com",
-    phone: "0764524589",
+    phoneNumber: "0764524589",
     userName: "testDoc1",
     password: "123",
     role: "doctor",
@@ -23,7 +23,7 @@ export const doctorResponse = [
     moh: "Kandy",
     area: "sample",
     email: "john.doe@email.com",
-    phone: "0764524589",
+    phoneNumber: "0764524589",
     userName: "testDoc1",
     password: "123",
     role: "doctor",
@@ -53,7 +53,7 @@ export const registerDoctor = async (user) => {
         doctorResponse.push(newUser);
 
         console.log(newUser)
-        
+
         return newUser;
       }
     } else {
