@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { phiEditSchema } from "../../yupSchema/epidemiologySchema";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { getAllPhiData, updatePhi } from "../../api/phiApi";
 import { message } from "antd";
 import { getAllMohData } from "../../api/mohApi";
@@ -40,7 +39,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
       moh: userData?.moh || "",
       area: userData?.area || "",
       email: userData?.email || "",
-      phone: userData?.phone || "",
+      phoneNumber: userData?.phoneNumber || "",
       moh_id: userData?.moh_id || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes
@@ -133,7 +132,9 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
                 disabled={isEnableEdit}
               >
                 {isEnableEdit ? (
-                  <option value={formik.values.moh_id}>{formik.values.moh}</option>
+                  <option value={formik.values.moh_id}>
+                    {formik.values.moh}
+                  </option>
                 ) : (
                   mohData.map((moh) => (
                     <option key={moh.id} value={moh.id}>
@@ -194,19 +195,21 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
                 <label className="block text-gray-700">Phone Number</label>
                 <input
                   type="text"
-                  name="phone"
+                  name="phoneNumber"
                   className={`w-full px-4 py-2 rounded-md focus:outline-none ${
                     isEnableEdit
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-gray-200 text-black"
                   }`}
-                  value={formik.values.phone}
+                  value={formik.values.phoneNumber}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   disabled={isEnableEdit}
                 />
-                {formik.touched.phone && formik.errors.phone && (
-                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
+                {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.phoneNumber}
+                  </p>
                 )}
               </div>
             </div>
