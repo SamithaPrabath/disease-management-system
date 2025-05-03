@@ -20,6 +20,7 @@ const HeaderBar = ({
   Assignmohpopup,
   Assignphipopup,
   confirmPopUp,
+  UnAssignCasePopUp,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [singleCase, setSingleCase] = useState(null);
@@ -42,7 +43,14 @@ const HeaderBar = ({
     };
 
     fetchData();
-  }, [AllLogins, patientId, Assignmohpopup, Assignphipopup, confirmPopUp]);
+  }, [
+    AllLogins,
+    patientId,
+    Assignmohpopup,
+    Assignphipopup,
+    confirmPopUp,
+    UnAssignCasePopUp,
+  ]);
 
   const handleMarkAsReceived = async (caseId) => {
     try {
@@ -289,6 +297,7 @@ const mapStateToProps = (state) => {
     Assignmohpopup: state.assignmohpopup,
     Assignphipopup: state.assignphipopupReducer,
     confirmPopUp: state.confirmPopUp,
+    UnAssignCasePopUp: state.unassigncasepopupReducer,
   };
 };
 
