@@ -23,8 +23,6 @@ const errorResponse = {
 
 export const handleLogin = async (user) => {
   try {
-    console.log("IS_BACKEND", IS_BACKEND);
-    console.log("BASE_URL", BASE_URL);
     if (IS_BACKEND === "false") {
       if (
         user.username === testUser.username &&
