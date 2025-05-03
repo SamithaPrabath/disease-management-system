@@ -191,7 +191,7 @@ const HeaderBar = ({
                     : "text-gray-400 bg-gray-300 cursor-not-allowed"
                 }
               `}
-                  onClick={() => viewConfirmPopUp()}
+                  onClick={() => viewConfirmPopUp(patientId)}
                   disabled={
                     singleCase?.caseStatus == "Suspected" ? false : true
                   }
