@@ -7,7 +7,7 @@ import { viewAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
 import { viewUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction";
 import { viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 import { message } from "antd";
-
+import { markAsReceivedButtonClicked } from "../redux/actions/markAsReceivedAction";
 const HeaderBar = ({
   AllLogins,
   viewConfirmPopUp,
@@ -21,6 +21,8 @@ const HeaderBar = ({
   Assignphipopup,
   confirmPopUp,
   UnAssignCasePopUp,
+  markAsReceived,
+  markAsReceivedButtonClicked,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [singleCase, setSingleCase] = useState(null);
@@ -50,16 +52,18 @@ const HeaderBar = ({
     Assignphipopup,
     confirmPopUp,
     UnAssignCasePopUp,
+    markAsReceived,
   ]);
 
   const handleMarkAsReceived = async (caseId) => {
     try {
-      const markAsReceived = "true";
+      const markAsReceived = true;
       const value = { markAsReceived, caseId };
       const response = await mark_AsReceived(value);
 
       if (response.status === 200 && response.message) {
         messageApi.success(response.message);
+        markAsReceivedButtonClicked(true);
       } else {
         throw new Error(response.message || "Failed to send final report");
       }
@@ -255,13 +259,13 @@ const HeaderBar = ({
               <button
                 className={`text-[16px] font-medium px-[16px] py-[8px] rounded-[6px]
                 ${
-                  singleCase?.caseStatus == "Suspected"
+                  !singleCase?.markAsReceived
                     ? "text-white bg-blue-600 cursor-pointer"
                     : "text-gray-400 bg-gray-300 cursor-not-allowed"
                 }
                 `}
                 onClick={() => handleMarkAsReceived(singleCase?.caseId)}
-                disabled={singleCase?.markAsReceived == "true" ? true : false}
+                disabled={singleCase?.markAsReceived == true ? true : false}
               >
                 Mark as Received
               </button>
@@ -298,6 +302,7 @@ const mapStateToProps = (state) => {
     Assignphipopup: state.assignphipopupReducer,
     confirmPopUp: state.confirmPopUp,
     UnAssignCasePopUp: state.unassigncasepopupReducer,
+    markAsReceived: state.markAsReceived,
   };
 };
 
@@ -307,6 +312,8 @@ const mapDispatchToProps = (dispatch) => ({
   viewAssignPHIPopUp: () => dispatch(viewAssignPHIPopUp()),
   viewUnAssignCasePopUp: () => dispatch(viewUnAssignCasePopUp()),
   viewAssignMOHPopUp: () => dispatch(viewAssignMOHPopUp()),
+  markAsReceivedButtonClicked: (value) =>
+    dispatch(markAsReceivedButtonClicked(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderBar);
