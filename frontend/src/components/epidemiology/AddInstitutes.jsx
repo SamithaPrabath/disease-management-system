@@ -16,7 +16,7 @@ const AddInstitutes = ({ handleBack }) => {
       name: "",
       registrationNumber: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       address: "",
       province: "",
       city: "",
@@ -38,7 +38,9 @@ const AddInstitutes = ({ handleBack }) => {
         }
       } catch (error) {
         console.error("Error during registration:", error);
-        messageApi.error(error.message || "An error occurred during registration");
+        messageApi.error(
+          error.message || "An error occurred during registration"
+        );
       } finally {
         setSubmitting(false);
       }
@@ -90,9 +92,12 @@ const AddInstitutes = ({ handleBack }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.registrationNumber && formik.errors.registrationNumber && (
-              <p className="text-red-500 text-sm">{formik.errors.registrationNumber}</p>
-            )}
+            {formik.touched.registrationNumber &&
+              formik.errors.registrationNumber && (
+                <p className="text-red-500 text-sm">
+                  {formik.errors.registrationNumber}
+                </p>
+              )}
           </div>
 
           {/* Email & Phone Number - Two-column layout */}
@@ -116,14 +121,16 @@ const AddInstitutes = ({ handleBack }) => {
               <label className="block text-gray-700">Phone Number</label>
               <input
                 type="text"
-                name="phone"
+                name="phoneNumber"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                value={formik.values.phone}
+                value={formik.values.phoneNumber}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.phone && formik.errors.phone && (
-                <p className="text-red-500 text-sm">{formik.errors.phone}</p>
+              {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+                <p className="text-red-500 text-sm">
+                  {formik.errors.phoneNumber}
+                </p>
               )}
             </div>
           </div>
