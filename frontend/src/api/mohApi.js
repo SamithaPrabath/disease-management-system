@@ -45,7 +45,7 @@ export const registerMoh = async (user) => {
           id: (mohResponse.length + 1).toString().padStart(3, "0"),
         };
         mohResponse.push(newUser);
-        return { status: 201, message: "User registered successfully", data: newUser };
+        return { status: 200, message: "User registered successfully", data: newUser };
       }
     } else {
       const response = await axios.post(`${BASE_URL}/api/mohs/add`, user, {
