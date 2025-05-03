@@ -9,6 +9,7 @@ import { viewAssignMOHPopUp } from "../../redux/actions/assignMOHPopupAction";
 import { mark_AsReceived, sendFinalReport } from "../../api/allCasesApi";
 import { reportSend } from "../../redux/actions/reportSendAction";
 import { message } from "antd";
+import { markAsReceivedButtonClicked } from "../../redux/actions/markAsReceivedAction";
 
 const Table = ({
   AllLogins,
@@ -19,6 +20,7 @@ const Table = ({
   viewAssignPHIPopUp,
   viewAssignMOHPopUp,
   reportSend,
+  markAsReceivedButtonClicked,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -114,7 +116,7 @@ const Table = ({
 
   const handleSendFinalReport = async (caseId) => {
     try {
-      const sendReport = "true";
+      const sendReport = true;
       const value = { sendReport, caseId };
       const response = await sendFinalReport(value);
 
@@ -134,13 +136,13 @@ const Table = ({
 
   const handleMarkAsReceived = async (caseId) => {
     try {
-      const markAsReceived = "true";
+      const markAsReceived = true;
       const value = { markAsReceived, caseId };
       const response = await mark_AsReceived(value);
 
       if (response.status === 200 && response.message) {
+        markAsReceivedButtonClicked(true);
         messageApi.success(response.message);
-        window.location.reload();
       } else {
         throw new Error(response.message || "Failed to send final report");
       }
@@ -372,7 +374,7 @@ const Table = ({
                         ) : (
                           <button
                             className={`px-[16px] py-[8px] rounded-[6px] ${
-                              patient.markAsReceived == "true"
+                              patient.markAsReceived
                                 ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
                                 : "bg-blue-600 text-white cursor-pointer"
                             }
@@ -380,9 +382,7 @@ const Table = ({
                             onClick={() =>
                               handleMarkAsReceived(patient?.caseId)
                             }
-                            disabled={
-                              patient.markAsReceived == "true" ? true : false
-                            }
+                            disabled={patient.markAsReceived}
                           >
                             Mark as Received
                           </button>
@@ -413,6 +413,8 @@ const mapDispatchToProps = (dispatch) => ({
   viewAssignPHIPopUp: (value) => dispatch(viewAssignPHIPopUp(value)),
   viewAssignMOHPopUp: (value) => dispatch(viewAssignMOHPopUp(value)),
   reportSend: (values) => dispatch(reportSend(values)),
+  markAsReceivedButtonClicked: (value) =>
+    dispatch(markAsReceivedButtonClicked(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
