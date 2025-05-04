@@ -13,7 +13,7 @@ class Doctor():
     institute_id: int = None
     email: str = None
     area: str = None
-    moh: str = None
+    reg_number: str = None
     name: str = None
     phoneNumber: str = None
     username: str = None
@@ -42,8 +42,8 @@ class Doctor():
         user = await User.add_user(user)
 
         query_executor = AsyncQueryExecutor()
-        query = "INSERT INTO doctors (id, institute_id, email, area, moh) VALUES (%s, %s, %s, %s, %s)"
-        await query_executor.execute(query, (user.id, self.institute_id, self.email, self.area, self.moh))
+        query = "INSERT INTO doctors (id, institute_id, email, area, reg_number) VALUES (%s, %s, %s, %s, %s)"
+        await query_executor.execute(query, (user.id, self.institute_id, self.email, self.area, self.reg_number))
         
         return {"message": "Doctor added successfully", "status": 200}
 
@@ -62,7 +62,7 @@ class Doctor():
                 user.email = doctor.email
                 user.area = doctor.area
                 user.institute_id = doctor.institute_id
-                user.moh_id = doctor.moh
+                user.reg_number = doctor.moh
                 user.password_hash = ""
 
                 moh_user = await MOH.get_moh_user_by_id(doctor.moh)

@@ -284,7 +284,7 @@ class Case:
         user = await User.get_user_by_id(user_id)
 
         if user.role == "admin" or user.role == "epi":
-            query = "SELECT id FROM cases order by id desc"
+            query = "SELECT id FROM cases where sendReport is not null order by id desc"
             results = await query_executor.fetch_all(query)
         else:
             query = "SELECT id FROM cases where notifier = %s or confirmedBy = %s or instituteId = %s or assignedMoh = %s or assignedPhi = %s order by id desc"

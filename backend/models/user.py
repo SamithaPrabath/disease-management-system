@@ -21,6 +21,7 @@ class User:
     moh_id: str = None
     institute_id: str = None
     is_initial: str = None
+    reg_number: str = None
 
     @staticmethod
     async def get_user_by_id(id):

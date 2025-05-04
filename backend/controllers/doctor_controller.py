@@ -14,7 +14,7 @@ class DoctorController(BaseController):
             phoneNumber=data['phoneNumber'],
             username=data['username'],
             password=data['password'],
-            moh=data['moh'],
+            reg_number=data['reg_number'],
             area=data['area'],
             role=data['role'],
             institute_id=data['instituteId']
