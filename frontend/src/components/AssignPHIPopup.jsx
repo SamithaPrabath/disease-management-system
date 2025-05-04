@@ -63,6 +63,14 @@ const AssignPopup = ({
       try {
         const response = await getPhiListByLocation(AllLogins.data.userId);
         setPhiList(response.data || []);
+        const response2 = await getSingleCaseData(Assignphipopup?.[1]);
+        setLocation({
+          address: response2?.data?.location_address,
+          coordinates: {
+            lat: response2?.data?.location_details?.latitude,
+            lng: response2?.data?.location_details?.longitude,
+          },
+        });
       } catch (error) {
         console.error("Error fetching PHI list:", error);
         messageApi.error("Failed to fetch PHI list");

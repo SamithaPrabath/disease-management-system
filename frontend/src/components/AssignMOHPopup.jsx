@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IoIosCloseCircle } from "react-icons/io";
 import { connect } from "react-redux";
 import { getMohListByLocation, mohAssignToCase } from "../api/mohApi";
-import { closeAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
+import { closeAssignMOHPopUp, viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 import { message } from "antd";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -25,6 +25,7 @@ const AssignPopup = ({
   Assignmohpopup,
   ViewsSingleCase,
   closeAssignMOHPopUp,
+  ViewAssignMOHPopUp,
   AllLogins,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -65,6 +66,15 @@ const AssignPopup = ({
       try {
         const response = await getMohListByLocation();
         setMohList(response.data || []);
+
+        const response2 = await getSingleCaseData(Assignmohpopup?.[1]);
+        setLocation({
+          address: response2?.data?.location_address,
+          coordinates: {
+            lat: response2?.data?.location_details?.latitude,
+            lng: response2?.data?.location_details?.longitude,
+          },
+      });
       } catch (error) {
         console.error("Error fetching MOH list:", error);
         messageApi.error("Failed to fetch MOH list");
@@ -192,12 +202,14 @@ const AssignPopup = ({
 
 const mapStateToProps = (state) => ({
   Assignmohpopup: state.assignmohpopup,
+  ViewAssignMOHPopUp: state.viewAssignMOHPopUp,
   ViewsSingleCase: state.viewsSingleCase,
   AllLogins: state.allLogins,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   closeAssignMOHPopUp: () => dispatch(closeAssignMOHPopUp()),
+  viewAssignMOHPopUp: (value) => dispatch(viewAssignMOHPopUp(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignPopup);

@@ -296,6 +296,9 @@ export const getSingleCaseData = async (caseId) => {
       if (!caseData) {
         return { status: 404, message: "Case not found" };
       }
+      if (!caseId) {
+        return { status: 404, message: "Case ID not found" };
+      }
 
       //Report Response
       const report =
@@ -368,6 +371,9 @@ export const getSingleCaseData = async (caseId) => {
         data: singleCaseResponse,
       };
     } else {
+      if (!caseId) {
+        return { status: 404, message: "Case ID not found" };
+      }
       // API call to fetch single case data
       const response = await axios.get(
         `${BASE_URL}/api/cases/${caseId}`
