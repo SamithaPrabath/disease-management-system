@@ -51,7 +51,7 @@ const App = (props) => {
           element={
             decryptAndRetrieveToken() && isTokenValid() ? (
               response?.data?.role === "admin" ? (
-                <DashboardEpi />
+                <DashboardAdmin />
               ) : response?.data?.role === "epi" ? (
                 <DashboardEpi />
               ) : response?.data?.role === "phi" ? (

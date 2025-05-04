@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import Navbar from "../../components/Navbar";
 
-import Home from './Home';
-import EpidemiologyUnit from './EpidemiologyUnit';
+import ResetPasswordRequests from '../../components/admin/ResetPasswordRequests';
+import EpidemiologicalUnits from './EpidemiologicalUnits';
 import { connect } from "react-redux";
 
 const Dashboard = (props) => {
   const Links = [
-    { id: "Home", component: <Home AllLogins={props.AllLogins} /> },
-    { id: "Epidemiology Unit", component: <EpidemiologyUnit /> },
+    { id: "Reset Password Requests", component: <ResetPasswordRequests /> },
+    { id: "Epidemiological Units", component: <EpidemiologicalUnits /> },
   ];
 
   const [activeComponent, setActiveComponent] = useState(Links[0].id);
