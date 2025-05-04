@@ -67,7 +67,7 @@ const AddInstitutes = ({ handleBack }) => {
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Institute Name */}
           <div>
-            <label className="block text-gray-700">Institute Name</label>
+            <label className="block text-gray-700">Institute Name <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="name"
@@ -83,7 +83,7 @@ const AddInstitutes = ({ handleBack }) => {
 
           {/* Registration Number */}
           <div>
-            <label className="block text-gray-700">Registration Number</label>
+            <label className="block text-gray-700">Registration Number <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="registrationNumber"
@@ -103,7 +103,7 @@ const AddInstitutes = ({ handleBack }) => {
           {/* Email & Phone Number - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Email Address</label>
+              <label className="block text-gray-700">Email Address <span className="text-red-500">*</span></label>
               <input
                 type="email" // Corrected from 'text' to 'email'
                 name="email"
@@ -118,7 +118,7 @@ const AddInstitutes = ({ handleBack }) => {
             </div>
 
             <div>
-              <label className="block text-gray-700">Phone Number</label>
+              <label className="block text-gray-700">Phone Number <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="phoneNumber"
@@ -137,7 +137,7 @@ const AddInstitutes = ({ handleBack }) => {
 
           {/* Address */}
           <div>
-            <label className="block text-gray-700">Address</label>
+            <label className="block text-gray-700">Address <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="address"
@@ -154,7 +154,7 @@ const AddInstitutes = ({ handleBack }) => {
           {/* Province & City - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Province</label>
+              <label className="block text-gray-700">Province <span className="text-red-500">*</span></label>
               <select
                 name="province"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
@@ -175,7 +175,7 @@ const AddInstitutes = ({ handleBack }) => {
             </div>
 
             <div>
-              <label className="block text-gray-700">City</label>
+              <label className="block text-gray-700">City <span className="text-red-500">*</span></label>
               <select
                 name="city"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${
@@ -205,7 +205,7 @@ const AddInstitutes = ({ handleBack }) => {
           {/* Username & Password - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Username</label>
+              <label className="block text-gray-700">Username <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="username"
@@ -220,7 +220,7 @@ const AddInstitutes = ({ handleBack }) => {
             </div>
 
             <div className="relative">
-              <label className="block text-gray-700">Password</label>
+              <label className="block text-gray-700">Password <span className="text-red-500">*</span></label>
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
