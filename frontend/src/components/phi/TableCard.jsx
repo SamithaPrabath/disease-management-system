@@ -96,7 +96,7 @@ const Table = ({
   useEffect(() => {
     setPatients(rows); // Ensure state updates when rows change
     setRole(AllLogins.data.role);
-    setUserTypeId(AllLogins.data.userTypeId);
+    setUserTypeId(AllLogins.data.userId);
   }, [rows]);
 
   const [diseasesList, setDiseasesList] = useState([]);
