@@ -550,7 +550,7 @@ const NewCase = ({ AllLogins, closeAddNewCase }) => {
 
             <div className="w-1/4 flex flex-col gap-3">
               <label className="block text-gray-700">
-                Date of Onset<span className="text-red-500">*</span>.
+                Date of Onset<span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
