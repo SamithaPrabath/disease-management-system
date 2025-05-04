@@ -117,7 +117,7 @@ const Table = ({
   const handleSendFinalReport = async (caseId) => {
     try {
       const sendReport = true;
-      const value = { sendReport, caseId };
+      const value = { sendReport, caseId, userId: userTypeId };
       const response = await sendFinalReport(value);
 
       if (response.status === 200 && response.message) {

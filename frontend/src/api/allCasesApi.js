@@ -506,7 +506,7 @@ export const getCasesCount = async () => {
 
 export const sendFinalReport = async (value) => {
   try {
-    if (IS_BACKEND) {
+    if (IS_BACKEND == "false") {
       const caseIndex = allCasesResponse.findIndex(
         (data) => data.caseId === value.caseId
       );
@@ -525,8 +525,11 @@ export const sendFinalReport = async (value) => {
         throw new Error("Case not found");
       }
     } else {
-      const response = await axios.put(`${BASE_URL}/sendFinalReport`, value);
-      return response.data;
+      const response = await axios.put(`${BASE_URL}/api/cases/${value.caseId}/update-send-report`, value);
+      if (response.status === 200) {
+        return { status: 200, message: "Send final report successfully", data: response.data };
+      }
+      return { status: 400, message: "Failed to send final report", data: [] };
     }
   } catch (error) {
     console.error("Error confirming case:", error);

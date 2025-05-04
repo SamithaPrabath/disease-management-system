@@ -8,6 +8,7 @@ import { viewUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction"
 import { viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 import { message } from "antd";
 import { markAsReceivedButtonClicked } from "../redux/actions/markAsReceivedAction";
+import { sendFinalReport } from "../api/allCasesApi";
 const HeaderBar = ({
   AllLogins,
   viewConfirmPopUp,
@@ -64,6 +65,25 @@ const HeaderBar = ({
       if (response.status === 200 && response.message) {
         messageApi.success(response.message);
         markAsReceivedButtonClicked(true);
+      } else {
+        throw new Error(response.message || "Failed to send final report");
+      }
+    } catch (error) {
+      console.error("Error sending final report:", error);
+      messageApi.error(
+        error.message || "An error occurred while sending the final report"
+      );
+    }
+  };
+  
+  const handleSendFinalReport = async (caseId) => {
+    try {
+      const sendReport = true;
+      const value = { sendReport, caseId, userId: userTypeId };
+      const response = await sendFinalReport(value);
+
+      if (response.status === 200 && response.message) {
+        messageApi.success(response.message);
       } else {
         throw new Error(response.message || "Failed to send final report");
       }
@@ -249,7 +269,7 @@ const HeaderBar = ({
                         : "bg-blue-600 text-white cursor-pointer"
                     }
                                 `}
-                    onClick={() => handleSendFinalReport(singleCase?.caseId)}
+                    onClick={() => handleSendFinalReport(singleCase?.id)}
                   >
                     Send Final Report
                   </button>

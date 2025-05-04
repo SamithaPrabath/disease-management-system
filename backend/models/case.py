@@ -295,7 +295,7 @@ class Case:
     @staticmethod
     async def get_all_cases_by_admin():
         query_executor = AsyncQueryExecutor()
-        query = "SELECT id FROM cases where caseStatus = 'Confirmed' order by id desc"
+        query = "SELECT id FROM cases where sendReport is not null order by id desc"
         results = await query_executor.fetch_all(query)
         return [await Case.get_case_by_id(result[0]) for result in results] if results else []
 
@@ -466,6 +466,35 @@ class Case:
                 locations.append(location)
                 
         return locations
+
+    @staticmethod
+    async def update_send_report(case_id: int, send_report: str):
+        """
+        Update the sendReport field for a case
+        
+        Args:
+            case_id (int): The ID of the case to update
+            send_report (str): The new value for sendReport field ('true' or 'false')
+            
+        Returns:
+            dict: A dictionary with the update status
+        """
+        try:
+            query_executor = AsyncQueryExecutor()
+            query = "UPDATE cases SET sendReport = %s WHERE id = %s"
+            await query_executor.execute(query, (send_report, case_id))
+            
+            return {
+                "status": "success",
+                "message": "Case sendReport status updated successfully",
+                "case_id": case_id,
+                "sendReport": send_report
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"Error updating sendReport status: {str(e)}"
+            }
 
 def format_date_with_suffix(date_obj):
     day = date_obj.day

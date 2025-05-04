@@ -225,3 +225,30 @@ class CaseController(BaseController):
             return CaseController.success_response(markers)
         except Exception as e:
             return CaseController.error_response(str(e), 500)
+
+    @staticmethod
+    def update_send_report(case_id):
+        """
+        Update the sendReport field for a case
+        
+        Args:
+            case_id: The ID of the case to update
+        """
+        try:
+            data = request.get_json()
+            send_report = data.get('userId')
+            
+            # Validate the sendReport field
+            if send_report is None:
+                return CaseController.error_response("sendReport field is required", 400)
+                
+            # Update the sendReport status
+            result = asyncio.run(Case.update_send_report(case_id, send_report))
+            
+            if result.get('status') == 'error':
+                return CaseController.error_response(result.get('message'), 500)
+                
+            return CaseController.success_response(result)
+            
+        except Exception as e:
+            return CaseController.error_response(str(e), 500)
