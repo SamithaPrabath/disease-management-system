@@ -2,9 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 
-from models.moh import MOH
 from models.user import User
-from models.phi import PHI
 from utils.db.query_executor import AsyncQueryExecutor
 
 @dataclass
@@ -55,18 +53,22 @@ class Doctor():
         
         users = []
         if result:
-            doctor_users = [Doctor(*doctor) for doctor in result]
+            doctor_users = [Doctor(
+                id=doctor[0],
+                institute_id=doctor[1],
+                email=doctor[2],
+                area=doctor[3],
+                reg_number=doctor[4]
+            ) for doctor in result]
         
             for doctor in doctor_users:
                 user = await User.get_user_by_id(doctor.id)
                 user.email = doctor.email
                 user.area = doctor.area
                 user.institute_id = doctor.institute_id
-                user.reg_number = doctor.moh
+                user.reg_number = doctor.reg_number
                 user.password_hash = ""
 
-                moh_user = await MOH.get_moh_user_by_id(doctor.moh)
-                user.moh = moh_user.name
                 users.append(user)
 
             return users
@@ -95,14 +97,14 @@ class Doctor():
             UPDATE doctors 
             SET email = %s,
                 area = %s,
-                moh = %s
+                reg_number = %s
             WHERE id = %s
         """
 
         query_executor1 = AsyncQueryExecutor()
         await query_executor1.execute(
             doctor_update_query, 
-            (data.get('email'), data.get('area'), data.get('moh'), id)
+            (data.get('email'), data.get('area'), data.get('reg_number'), id)
         )
         
         return {"message": "Doctor user updated successfully", "status": 200}

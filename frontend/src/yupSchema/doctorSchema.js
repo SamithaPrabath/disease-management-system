@@ -2,7 +2,7 @@ import * as Yup from "yup";
 
 export const doctorSchema = Yup.object({
     name: Yup.string().required("Full Name is required"),
-    moh: Yup.string().required("MOH is required"),
+    reg_number: Yup.string().required("Registration Number is required"),
     area: Yup.string().required("Area is required"),
     email: Yup.string()
     .email("Please enter a valid email address")
@@ -22,7 +22,7 @@ export const doctorSchema = Yup.object({
 
   export const doctorEditSchema = Yup.object({
     name: Yup.string().required("Full Name is required"),
-    moh: Yup.string().required("MOH is required"),
+    reg_number: Yup.string().required("Registration Number is required"),
     area: Yup.string().required("Area is required"),
     email: Yup.string()
     .email("Please enter a valid email address")

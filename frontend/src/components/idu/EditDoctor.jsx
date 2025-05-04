@@ -39,7 +39,7 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
   const formik = useFormik({
     initialValues: {
           name: userData[0]?.name || "",
-          moh: userData[0]?.moh || "",
+          reg_number: userData[0]?.reg_number || "",
           area: userData[0]?.area || "",
           email: userData[0]?.email || "",
           phoneNumber: userData[0]?.phone || "",
@@ -117,29 +117,22 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
             )}
           </div>
 
-          {/* MOH */}
+          {/* Registration Number */}
           <div>
-            <label className="block text-gray-700">MOH {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
-            <select
-              name="moh"
-              className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
-              value={formik.values.moh}
+            <label className="block text-gray-700">Registration Number {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
+            <input
+              type="text"
+              name="reg_number"
+              className={`w-full px-4 py-2 rounded-md focus:outline-none ${
+                isEnableEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-300 text-black"
+              }`}
+              value={formik.values.reg_number}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={isEnableEdit}
-            >
-              {isEnableEdit ? (
-                <option value={formik.values.moh_id}>{formik.values.moh}</option>
-              ) : (
-                mohData.map((moh) => (
-                  <option key={moh.id} value={moh.id}>
-                    {moh.name}
-                  </option>
-                ))
-              )}
-            </select>
-            {formik.touched.moh && formik.errors.moh && (
-              <p className="text-red-500 text-sm">{formik.errors.moh}</p>
+            />
+            {formik.touched.reg_number && formik.errors.reg_number && (
+              <p className="text-red-500">{formik.errors.reg_number}</p>
             )}
           </div>
 

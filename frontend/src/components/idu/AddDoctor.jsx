@@ -29,7 +29,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
   const formik = useFormik({
     initialValues: {
       name: "",
-      moh: "",
+      reg_number: "",
       area: "",
       email: "",
       phoneNumber: "",
@@ -82,25 +82,19 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
               <p className="text-red-500">{formik.errors.name}</p>
             )}
           </div>
-          {/* MOH */}
+          {/* Registration Number */}
           <div>
-            <label className="block text-gray-700">MOH <span className="text-red-500">*</span></label>
-            <select
-              name="moh"
-              className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
-              value={formik.values.moh}
+            <label className="block text-gray-700">Registration Number <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              name="reg_number"
+              className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
+              value={formik.values.reg_number}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-            >
-              <option value="">Select MOH</option>
-              {mohList.map((moh) => (
-                <option key={moh.id} value={moh.id}>
-                  {moh.name}
-                </option>
-              ))}
-            </select>
-            {formik.touched.moh && formik.errors.moh && (
-              <p className="text-red-500">{formik.errors.moh}</p>
+            />
+            {formik.touched.reg_number && formik.errors.reg_number && (
+              <p className="text-red-500">{formik.errors.reg_number}</p>
             )}
           </div>
 

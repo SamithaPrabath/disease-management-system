@@ -7,33 +7,36 @@ from utils.email_service import EmailService
 class DoctorController(BaseController):
     
     def add_doctor(self):
-        data = request.get_json()
-        doctor = Doctor(
-            name=data['name'],
-            email=data['email'],
-            phoneNumber=data['phoneNumber'],
-            username=data['username'],
-            password=data['password'],
-            reg_number=data['reg_number'],
-            area=data['area'],
-            role=data['role'],
-            institute_id=data['instituteId']
-        )
-        result = asyncio.run(Doctor.add_doctor_user(doctor))
-        
-        # Send welcome email if the doctor was added successfully
-        if result.get('status') == 200:
-            email_result = EmailService.send_welcome_email(
-                recipient_email=doctor.email,
-                name=doctor.name,
-                username=doctor.username,
-                role=doctor.role,
-                password=data['password']
+        try:
+            data = request.get_json()
+            doctor = Doctor(
+                name=data['name'],
+                email=data['email'],
+                phoneNumber=data['phoneNumber'],
+                username=data['username'],
+                password=data['password'],
+                reg_number=data['reg_number'],
+                area=data['area'],
+                role=data['role'],
+                institute_id=data['instituteId']
             )
-            # Add email sending result to the response
-            result['email_status'] = email_result
+            result = asyncio.run(Doctor.add_doctor_user(doctor))
             
-        return jsonify(result), result.get('status', 200)
+            # Send welcome email if the doctor was added successfully
+            if result.get('status') == 200:
+                email_result = EmailService.send_welcome_email(
+                    recipient_email=doctor.email,
+                    name=doctor.name,
+                    username=doctor.username,
+                    role=doctor.role,
+                    password=data['password']
+                )
+                # Add email sending result to the response
+                result['email_status'] = email_result
+                
+            return jsonify(result), result.get('status', 200)
+        except Exception as e:
+            return DoctorController.error_response(str(e), 500)
 
     def get_all_doctors(self):
         try:
