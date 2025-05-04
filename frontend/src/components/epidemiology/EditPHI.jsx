@@ -101,7 +101,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
           <form onSubmit={formik.handleSubmit} className="space-y-4">
             {/* Full Name */}
             <div>
-              <label className="block text-gray-700">Full Name</label>
+              <label className="block text-gray-700">Full Name {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <input
                 type="text"
                 name="name"
@@ -122,7 +122,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
 
             {/* MOH */}
             <div>
-              <label className="block text-gray-700">MOH</label>
+              <label className="block text-gray-700">MOH {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <select
                 name="moh"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -150,7 +150,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
 
             {/* Area */}
             <div>
-              <label className="block text-gray-700">Area</label>
+              <label className="block text-gray-700">Area {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <input
                 type="text"
                 name="area"
@@ -172,7 +172,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
             {/* Email & Phone Number - Two-column layout */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700">Email Address</label>
+                <label className="block text-gray-700">Email Address {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
                 <input
                   type="email"
                   name="email"
@@ -192,7 +192,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
               </div>
 
               <div>
-                <label className="block text-gray-700">Phone Number</label>
+                <label className="block text-gray-700">Phone Number {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
                 <input
                   type="text"
                   name="phoneNumber"
