@@ -334,7 +334,15 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
               </div>
               <div className="text-gray-400 flex flex-row items-center justify-between text-[10px] uppercase gap-1">
                 <div className="active w-[10px] h-[10px] bg-green-500 rounded-[50%]" />
-                {userRole}
+                {userRole === "epi" ? (
+                  <p className="text-[14px] text-gray-500 font-bold">
+                    Epidemiologist
+                  </p>
+                ) : (
+                  <p className="text-[14px] text-gray-500 font-bold">
+                    {userRole}
+                  </p>
+                )}
               </div>
             </div>
           </div>
