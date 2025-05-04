@@ -94,7 +94,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
           <form onSubmit={formik.handleSubmit} className="space-y-4">
             {/* Full Name */}
             <div>
-              <label className="block text-gray-700">Full Name</label>
+              <label className="block text-gray-700">Full Name {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <input
                 type="text"
                 name="name"
@@ -115,7 +115,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
 
             {/* Area */}
             <div>
-              <label className="block text-gray-700">Area</label>
+              <label className="block text-gray-700">Area {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <input
                 type="text"
                 name="area"
@@ -137,7 +137,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
             {/* Email & Phone Number - Two-column layout */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700">Email Address</label>
+                <label className="block text-gray-700">Email Address {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
                 <input
                   type="email"
                   name="email"
@@ -157,7 +157,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
               </div>
 
               <div>
-                <label className="block text-gray-700">Phone Number</label>
+                <label className="block text-gray-700">Phone Number {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
                 <input
                   type="text"
                   name="phoneNumber"

@@ -53,7 +53,7 @@ const AddMOH = ({ handleBack }) => {
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-gray-700">Full Name</label>
+            <label className="block text-gray-700">Full Name <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="name"
@@ -69,7 +69,7 @@ const AddMOH = ({ handleBack }) => {
 
           {/* Area */}
           <div>
-            <label className="block text-gray-700">Area</label>
+            <label className="block text-gray-700">Area <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="area"
@@ -86,7 +86,7 @@ const AddMOH = ({ handleBack }) => {
           {/* Email & Phone Number - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Email Address</label>
+              <label className="block text-gray-700">Email Address <span className="text-red-500">*</span></label>
               <input
                 type="email"
                 name="email"
@@ -101,7 +101,7 @@ const AddMOH = ({ handleBack }) => {
             </div>
 
             <div>
-              <label className="block text-gray-700">Phone Number</label>
+              <label className="block text-gray-700">Phone Number <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="phoneNumber"
@@ -121,7 +121,7 @@ const AddMOH = ({ handleBack }) => {
           {/* Username & Password - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Username</label>
+              <label className="block text-gray-700">Username <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="username"
@@ -136,7 +136,7 @@ const AddMOH = ({ handleBack }) => {
             </div>
 
             <div className="relative">
-              <label className="block text-gray-700">Password</label>
+              <label className="block text-gray-700">Password <span className="text-red-500">*</span></label>
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
