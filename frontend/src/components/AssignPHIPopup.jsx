@@ -19,12 +19,15 @@ const containerStyle = {
   height: "200px", // Adjust height as needed
 };
 
-
-const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, AllLogins}) => {
+const AssignPopup = ({
+  Assignphipopup,
+  ViewsSingleCase,
+  closeAssignPHIPopUp,
+  AllLogins,
+}) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [phiList, setPhiList] = useState([]);
-  const [caseId, setCaseId] = useState("");
   const [location, setLocation] = useState({
     address: "Colombo, Sri Lanka",
     coordinates: {
@@ -40,8 +43,7 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, All
   });
 
   useEffect(() => {
-    setIsOpen(Assignphipopup);
-    setCaseId(ViewsSingleCase?.[1]);
+    setIsOpen(Assignphipopup || false);
   }, [Assignphipopup]);
 
   useEffect(() => {
@@ -57,7 +59,6 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, All
     };
     get_location();
   }, [ViewsSingleCase]);
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,18 +72,18 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, All
     };
 
     if (isOpen) fetchData();
-  }, [isOpen, messageApi]);
+  }, [isOpen, Assignphipopup?.[0]]);
 
   const formik = useFormik({
     initialValues: {
-      caseId: ViewsSingleCase?.[1] || "",
+      caseId: ViewsSingleCase?.[1] || Assignphipopup?.[1] || "",
       assignedPhi: "",
       phiAssignedDate: new Date().toISOString().split("T")[0],
     },
     validationSchema: assignPHISchema,
     onSubmit: async (values, { resetForm }) => {
-      if(values.caseId == ""){
-        values.caseId = ViewsSingleCase?.[1]
+      if (values.caseId == "") {
+        values.caseId = ViewsSingleCase?.[1];
       }
       console.log(values);
       try {
@@ -107,7 +108,7 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, All
       {contextHolder}
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
-          <div className="bg-white w-[400px] h-[500px] rounded-[8px] shadow-sm flex flex-col">
+          <div className="bg-white w-[400px] min-h-[500px] max-h-[95vh] overflow-y-auto rounded-[8px] shadow-sm flex flex-col">
             {/* Header Section */}
             <div className="h-[56px] px-[16px] py-[8px] flex items-center justify-between border-b border-[#E2E5E9]">
               <h1 className="w-full text-center text-[24px] font-medium">
@@ -142,7 +143,9 @@ const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, All
                     ))}
                   </select>
                   {formik.touched.assignedPhi && formik.errors.assignedPhi && (
-                    <p className="text-red-500 text-sm">{formik.errors.assignedPhi}</p>
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.assignedPhi}
+                    </p>
                   )}
                 </div>
 
