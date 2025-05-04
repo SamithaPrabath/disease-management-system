@@ -69,7 +69,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-gray-700">Full Name</label>
+            <label className="block text-gray-700">Full Name <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="name"
