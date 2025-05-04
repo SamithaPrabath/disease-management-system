@@ -19,15 +19,12 @@ const containerStyle = {
   height: "200px", // Adjust height as needed
 };
 
-const AssignPopup = ({
-  Assignphipopup,
-  ViewsSingleCase,
-  closeAssignPHIPopUp,
-  AllLogins,
-}) => {
+
+const AssignPopup = ({ Assignphipopup, ViewsSingleCase, closeAssignPHIPopUp, AllLogins}) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [phiList, setPhiList] = useState([]);
+  const [caseId, setCaseId] = useState("");
   const [location, setLocation] = useState({
     address: "Colombo, Sri Lanka",
     coordinates: {
@@ -38,42 +35,13 @@ const AssignPopup = ({
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
 
-  const handleMapClick = async (event) => {
-    const lat = event.latLng.lat();
-    const lng = event.latLng.lng();
-    setSelectedLocation({ lat, lng });
-
-    try {
-      const geocoder = new window.google.maps.Geocoder();
-      const response = await geocoder.geocode({ location: { lat, lng } });
-
-      if (response.results[0]) {
-        // Find the district from address components
-        const addressComponents = response.results[0].address_components;
-        const district = addressComponents.find(
-          (component) =>
-            component.types.includes("administrative_area_level_2") ||
-            component.types.includes("sublocality_level_1")
-        );
-
-        if (district) {
-          setSelectedDistrict(district.short_name);
-        } else {
-          console.log(
-            `Selected coordinates (${lat}, ${lng}) but couldn't determine district`
-          );
-        }
-      }
-    } catch (error) {
-      console.error("Error getting district name:", error);
-    }
-  };
-
   useEffect(() => {
-    setIsOpen(Assignphipopup || false); // Ensure boolean fallback
+    setIsOpen(Assignphipopup);
+    setCaseId(ViewsSingleCase?.[1]);
   }, [Assignphipopup]);
 
   useEffect(() => {
@@ -89,13 +57,12 @@ const AssignPopup = ({
     };
     get_location();
   }, [ViewsSingleCase]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getPhiListByLocation(
-          selectedDistrict || "Colombo"
-        );
+        const response = await getPhiListByLocation(AllLogins.data.userId);
         setPhiList(response.data || []);
       } catch (error) {
         console.error("Error fetching PHI list:", error);
@@ -104,34 +71,33 @@ const AssignPopup = ({
     };
 
     if (isOpen) fetchData();
-  }, [isOpen, selectedDistrict, Assignphipopup?.[0]]);
+  }, [isOpen, messageApi]);
 
   const formik = useFormik({
     initialValues: {
-      caseId: ViewsSingleCase?.[1] || Assignphipopup?.[1] || "", // Ensure fallback if undefined
+      caseId: ViewsSingleCase?.[1] || "",
       assignedPhi: "",
-      phiAssignedDate: new Date().toISOString().split("T")[0], // Today's date
+      phiAssignedDate: new Date().toISOString().split("T")[0],
     },
-    enableReinitialize: true, // Updates initialValues if ViewsSingleCase changes
     validationSchema: assignPHISchema,
-    onSubmit: async (values, { resetForm, setSubmitting }) => {
-      setSubmitting(true);
+    onSubmit: async (values, { resetForm }) => {
+      if(values.caseId == ""){
+        values.caseId = ViewsSingleCase?.[1]
+      }
+      console.log(values);
       try {
         const response = await phiAssignToCase(values);
-        if (response.status === 200 && response.message) {
+
+        if (response?.message) {
           messageApi.success(response.message);
           resetForm();
           setTimeout(() => closeAssignPHIPopUp(), 1000);
         } else {
-          messageApi.error(response.message || "Failed to assign PHI");
+          throw new Error("No response message");
         }
       } catch (error) {
         console.error("Error during PHI assignment:", error);
-        messageApi.error(
-          error.message || "An error occurred during PHI assignment"
-        );
-      } finally {
-        setSubmitting(false);
+        messageApi.error("An error occurred during PHI assignment");
       }
     },
   });
@@ -141,7 +107,7 @@ const AssignPopup = ({
       {contextHolder}
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
-          <div className="bg-white w-[400px] min-h-[500px] max-h-[95vh] overflow-y-auto rounded-[8px] shadow-sm flex flex-col">
+          <div className="bg-white w-[400px] h-[500px] rounded-[8px] shadow-sm flex flex-col">
             {/* Header Section */}
             <div className="h-[56px] px-[16px] py-[8px] flex items-center justify-between border-b border-[#E2E5E9]">
               <h1 className="w-full text-center text-[24px] font-medium">
@@ -150,7 +116,6 @@ const AssignPopup = ({
               <button
                 className="p-2 text-gray-600 hover:text-black transition"
                 onClick={() => closeAssignPHIPopUp()}
-                aria-label="Close"
               >
                 <IoIosCloseCircle className="text-[40px] text-[#E2E5E9] hover:text-[#d11a2a] cursor-pointer transition" />
               </button>
@@ -164,11 +129,10 @@ const AssignPopup = ({
                   </label>
                   <select
                     name="assignedPhi"
-                    className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300"
+                    className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
                     value={formik.values.assignedPhi}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    disabled={formik.isSubmitting}
                   >
                     <option value="">Select PHI</option>
                     {phiList.map((phi) => (
@@ -178,9 +142,7 @@ const AssignPopup = ({
                     ))}
                   </select>
                   {formik.touched.assignedPhi && formik.errors.assignedPhi && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.assignedPhi}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.assignedPhi}</p>
                   )}
                 </div>
 
@@ -203,13 +165,16 @@ const AssignPopup = ({
                   )}
                 </div>
 
+                {/* Hidden Case ID */}
+                <input
+                  type="hidden"
+                  name="caseId"
+                  value={formik.values.caseId}
+                />
+
                 <button
                   type="submit"
-                  className={`w-full mt-4 px-6 py-2 rounded-md text-white font-medium transition ${
-                    formik.isSubmitting || !formik.isValid
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                  }`}
+                  className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 mt-3 disabled:bg-blue-400"
                   disabled={formik.isSubmitting || !formik.isValid}
                 >
                   {formik.isSubmitting ? "Assigning..." : "Assign"}
