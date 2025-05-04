@@ -9,7 +9,12 @@ import { getInstitutesList } from "../../api/institutesApi";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { closeAddNewCase } from "../../redux/actions/viewAddNewCaseAction";
-import { GoogleMap, Marker, useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  useJsApiLoader,
+  StandaloneSearchBox,
+} from "@react-google-maps/api";
 
 // Map container style
 const containerStyle = {
@@ -18,8 +23,8 @@ const containerStyle = {
 };
 
 const NewCase = ({ AllLogins, closeAddNewCase }) => {
-// Define libraries array outside component to maintain reference
-const libraries = ["places", "maps"];
+  // Define libraries array outside component to maintain reference
+  const libraries = ["places", "maps"];
 
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded } = useJsApiLoader({
@@ -175,13 +180,14 @@ const libraries = ["places", "maps"];
       // Handle files separately
       if (values.files && values.files.length > 0) {
         values.files.forEach((file, index) => {
-          formData.append('files[]', file); // Change to files[] to indicate array
+          formData.append("files[]", file); // Change to files[] to indicate array
         });
       }
 
       // Handle other form fields
       Object.entries(values).forEach(([key, value]) => {
-        if (key !== 'files' && value) { // Skip files as we handled them above
+        if (key !== "files" && value) {
+          // Skip files as we handled them above
           formData.append(key, value);
         }
       });
@@ -227,10 +233,10 @@ const libraries = ["places", "maps"];
   const handleMapClick = (event) => {
     const clickedLat = event.latLng.lat();
     const clickedLng = event.latLng.lng();
-    
+
     // Create a Geocoder instance
     const geocoder = new window.google.maps.Geocoder();
-    
+
     // Get address for clicked location
     geocoder.geocode(
       { location: { lat: clickedLat, lng: clickedLng } },
@@ -675,19 +681,33 @@ const libraries = ["places", "maps"];
               {selectedLocation && locationDetails && (
                 <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
                   <div className="space-y-2">
-                    {locationDetails.name && locationDetails.name !== locationDetails.address && (
-                      <div className="flex gap-2">
-                        <span className="font-medium text-gray-700">Place:</span>
-                        <span className="text-gray-600">{locationDetails.name}</span>
-                      </div>
-                    )}
+                    {locationDetails.name &&
+                      locationDetails.name !== locationDetails.address && (
+                        <div className="flex gap-2">
+                          <span className="font-medium text-gray-700">
+                            Place:
+                          </span>
+                          <span className="text-gray-600">
+                            {locationDetails.name}
+                          </span>
+                        </div>
+                      )}
                     <div className="flex gap-2">
-                      <span className="font-medium text-gray-700">Location Address:</span>
-                      <span className="text-gray-600">{formik.values.locationAddress}</span>
+                      <span className="font-medium text-gray-700">
+                        Location Address:
+                      </span>
+                      <span className="text-gray-600">
+                        {formik.values.locationAddress}
+                      </span>
                     </div>
                     <div className="flex gap-2">
-                      <span className="font-medium text-gray-700">Coordinates:</span>
-                      <span className="text-gray-600">{selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}</span>
+                      <span className="font-medium text-gray-700">
+                        Coordinates:
+                      </span>
+                      <span className="text-gray-600">
+                        {selectedLocation.lat.toFixed(6)},{" "}
+                        {selectedLocation.lng.toFixed(6)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -731,7 +751,10 @@ const libraries = ["places", "maps"];
                   <p className="font-medium text-gray-700">Attached Files:</p>
                   <div className="space-y-2">
                     {formik.values.files.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between bg-gray-50 p-2 rounded-md"
+                      >
                         <span className="text-gray-600">{file.name}</span>
                         <button
                           type="button"
