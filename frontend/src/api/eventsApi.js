@@ -8,20 +8,20 @@ let eventsResponse = [
   {
     id: "001",
     eventName: "Health Check-Up Camp",
-    startDate: "Sat, Oct 15",
+    startDate: "2024-10-15",
     location: "Maharagama Hospital",
     description: "Join our free health check-up camp...",
     image: "./src/assets/hero.png",
-    startTime: "01.00 PM",
+    startTime: "13:00",
   },
   {
     id: "002",
     eventName: "Health Camp",
-    startDate: "Sat, Oct 15",
+    startDate: "2024-12-15",
     location: "Maharagama Hospital",
     description: "Join our free health check-up camp...",
     image: "./src/assets/logo.png",
-    startTime: "05.00 PM",
+    startTime: "17:00",
   },
 ];
 
@@ -89,7 +89,7 @@ export const createEvent = async (eventData, userId) => {
       };
       eventsResponse.push(newEvent);
       return {
-        status: 201,
+        status: 200,
         message: "Event created successfully",
         data: newEvent,
       };
@@ -130,19 +130,25 @@ export const updateEvent = async (id, updatedEvent) => {
     }
 
     if (IS_BACKEND == "false") {
-      const index = eventsResponse.findIndex((event) => event.id === id);
-      if (index !== -1) {
-        eventsResponse[index] = { ...eventsResponse[index], ...updatedEvent };
-        return {
-          status: 200,
-          message: "Event updated successfully",
-          data: eventsResponse[index],
-        };
+      const eventIndex = eventsResponse.findIndex(
+        (eventItem) => eventItem.id === id
+      );
+
+      if (eventIndex === -1) {
+        return { status: 404, message: `Event with ID ${id} not found` };
       }
-      return {
-        status: 404,
-        message: "Event not found",
+
+      eventsResponse[eventIndex] = {
+        ...eventsResponse[eventIndex],
+        eventName: updatedEvent.get("eventName"),
+        startDate: updatedEvent.get("startDate"),
+        startTime: updatedEvent.get("startTime"),
+        location: updatedEvent.get("location"),
+        description: updatedEvent.get("description"),
+        image: updatedEvent.get("image"),
       };
+
+      return { status: 200, message: "Event updated successfully" };
     } else {
       const response = await axios.put(`${BASE_URL}/api/events/update-event/${id}`, updatedEvent);
       if (response.status === 200) {
@@ -158,6 +164,36 @@ export const updateEvent = async (id, updatedEvent) => {
         data: response.data,
       };
     }
+
+    // if (IS_BACKEND == "false") {
+    //   const index = eventsResponse.findIndex((event) => event.id === id);
+    //   if (index !== -1) {
+    //     eventsResponse[index] = { ...eventsResponse[index], ...updatedEvent };
+    //     return {
+    //       status: 200,
+    //       message: "Event updated successfully",
+    //       data: eventsResponse[index],
+    //     };
+    //   }
+    //   return {
+    //     status: 404,
+    //     message: "Event not found",
+    //   };
+    // } else {
+    //   const response = await axios.put(`${BASE_URL}/api/events/update-event/${id}`, updatedEvent);
+    //   if (response.status === 200) {
+    //     return {
+    //       status: 200,
+    //       message: "Event updated successfully",
+    //       data: response.data.data,
+    //     };
+    //   }
+    //   return {
+    //     status: response.status,
+    //     message: response.data.message,
+    //     data: response.data,
+    //   };
+    // }
   } catch (error) {
     console.error("Error updating event:", error);
     return {

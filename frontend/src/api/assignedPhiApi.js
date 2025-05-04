@@ -21,63 +21,45 @@ export const assignedPhiResponse = [
   },
 ];
 
-export const assignedPhi = async () => {};
+export const assignedPhi = async () => { };
 
 export const unAssignedPhi = async (unAssignData) => {
-    try {
-      if (IS_BACKEND == "false") {
-        // Update the main case data
-        const caseIndex = allCasesResponse.findIndex(
-          (data) => data.caseId === unAssignData.caseId
-        );
-  
-        // Update the assigned phi response
-        const phiAssignmentIndex = assignedPhiResponse.findIndex(
-          (data) => data.caseId === unAssignData.caseId
-        );
-  
-        if (caseIndex !== -1 && phiAssignmentIndex !== -1) {
-          // Update main case record
-          allCasesResponse[caseIndex] = {
-            ...allCasesResponse[caseIndex],
-            assignedPhi: "",
-          };
-  
-          // Update phi assignment record
-          assignedPhiResponse[phiAssignmentIndex] = {
-            ...assignedPhiResponse[phiAssignmentIndex],
-            assignedStatus: "unassigned",
-            remarks: unAssignData.remarks,
-          };
-  
-          return {
-            status: 200,
-            message: "PHI unassigned successfully",
-            data: {
-              case: allCasesResponse[caseIndex],
-              phiAssignment: assignedPhiResponse[phiAssignmentIndex]
-            }
-          };
-        } else {
-          throw new Error("Case or PHI assignment not found");
-        }
-      } else {
-        const response = await axios.put(`${BASE_URL}/api/cases/${unAssignData.caseId}/assign-phi`, 
-          {'assignedPhi': 0, 'phiAssignedDate': Date.now()} , {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          });
-        if (response.status === 200) {
-          return {
-            status: 200,
-            message: "PHI unassigned successfully",
-            data: response.data,
-          };
-        }
+  try {
+    if (IS_BACKEND == "false") {
+      const caseIndex = allCasesResponse.findIndex(
+        (caseItem) => caseItem.caseId === unAssignData.caseId
+      );
+
+      if (caseIndex === -1) {
+        return { status: 404, message: `Case with ID ${unAssignData.caseId} not found` };
       }
-    } catch (error) {
-      console.error("Error unassigning PHI:", error);
-      throw error;
+
+      allCasesResponse[caseIndex] = {
+        ...allCasesResponse[caseIndex],
+        assignedPhi: "",
+        phiAssignedDate: "", // Default to current date if not provided
+      };
+
+      assignedPhiResponse[caseIndex] = {
+        ...assignedPhiResponse[caseIndex],
+        assignedStatus: "unassigned",
+        remarks: unAssignData.remarks,
+      };
+
+      return { status: 200, message: "PHI unassigned successfully" };
+    } else {
+      const response = await axios.put(
+        `${BASE_URL}/api/cases/${unAssignData.caseId}/assign-phi`,
+        { assignedPhi: "", phiAssignedDate: "" }
+      );
+      if (response.status == 200) {
+        return { status: 200, message: "PHI unassigned successfully", data: response.data.data };
+      } else {
+        return { status: 400, message: response.data.message };
+      }
     }
-  };
+  } catch (error) {
+    console.error("Error unassigning PHI:", error);
+    throw error;
+  }
+};

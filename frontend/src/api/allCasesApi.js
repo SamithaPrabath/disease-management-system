@@ -38,8 +38,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-03-02",
     assignedMoh: "M001",
     mohAssignedDate: "2024-03-02",
-    sendReport: "true",
-    markAsReceived: "true",
+    sendReport: true,
+    markAsReceived: true,
   },
   {
     caseId: "C002",
@@ -61,7 +61,7 @@ export const allCasesResponse = [
     ward: "Ward 10",
     bhtNumber: "BHT12345",
     address: "123 Main Street, Colombo",
-    lat: 6.9271, 
+    lat: 6.9271,
     lng: 79.8612,
     labResult: "Positive for HbA1c",
     file: null,
@@ -71,8 +71,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-05-30",
     assignedMoh: "",
     mohAssignedDate: "",
-    sendReport: "",
-    markAsReceived: "",
+    sendReport: false,
+    markAsReceived: false,
   },
   {
     caseId: "C003",
@@ -94,7 +94,7 @@ export const allCasesResponse = [
     ward: "ICU",
     bhtNumber: "BHT12345",
     address: "123 Main Street, Colombo",
-    lat: 6.9106, 
+    lat: 6.9106,
     lng: 79.8876,
     labResult: "Positive for HbA1c",
     file: null,
@@ -104,8 +104,8 @@ export const allCasesResponse = [
     phiAssignedDate: "2024-03-02",
     assignedMoh: "M001",
     mohAssignedDate: "2024-03-02",
-    sendReport: "",
-    markAsReceived: "",
+    sendReport: false,
+    markAsReceived: false,
   },
   {
     caseId: "C004",
@@ -127,7 +127,7 @@ export const allCasesResponse = [
     ward: "Ward 10",
     bhtNumber: "BHT12345",
     address: "123 Main Street, Colombo",
-    lat: 6.8949, 
+    lat: 6.8949,
     lng: 79.853,
     labResult: "Positive for HbA1c",
     file: null,
@@ -137,8 +137,8 @@ export const allCasesResponse = [
     phiAssignedDate: "",
     assignedMoh: "",
     mohAssignedDate: "",
-    sendReport: "",
-    markAsReceived: "",
+    sendReport: false,
+    markAsReceived: false,
   },
 ];
 
@@ -147,7 +147,7 @@ export const getAllCases = async (userID) => {
     if (IS_BACKEND == "false") {
       // Safer version with proper null checks
 
-      const response =  allCasesResponse.map((caseItem) => {
+      const response = allCasesResponse.map((caseItem) => {
         const matchingReport = reportResponse.find(
           (report) => report.caseId === caseItem.caseId // Use caseId for matching
         );
@@ -195,7 +195,7 @@ export const getAllCases = async (userID) => {
           markAsReceived,
           report,
         }));
-        
+
         return { status: 200, message: "data fetch successfully", data: filteredCases };
       }
       return { status: 400, message: "Failed to fetch data", data: [] };
@@ -245,28 +245,33 @@ export const addNewCase = async (formData) => {
 
 export const confirmCase = async (confirmData) => {
   try {
+    if (!confirmData || !confirmData.id || !confirmData.confirmedBy) {
+      throw new Error("Invalid input: caseId and confirmedBy are required");
+    }
+
     if (IS_BACKEND == "false") {
       const caseIndex = allCasesResponse.findIndex(
-        (data) => data.caseId === confirmData.caseId
+        (caseItem) => caseItem.caseId === confirmData.id
       );
 
-      if (caseIndex !== -1) {
-        allCasesResponse[caseIndex] = {
-          ...allCasesResponse[caseIndex],
-          natureOfConfirmation: confirmData.natureOfConfirmation,
-          confirmationRemarks: confirmData.confirmationRemarks,
-          confirmedBy: confirmData.confirmedBy,
-          confirmedDate: confirmData.confirmedDate,
-          caseStatus: "Confirmed",
-        };
-
-        return {
-          status: 200,
-          message: "Case confirmed successfully",
-        };
-      } else {
-        throw new Error("Case not found");
+      if (caseIndex === -1) {
+        return { status: 404, message: `Case with ID ${confirmData.id} not found` };
       }
+
+      allCasesResponse[caseIndex] = {
+        ...allCasesResponse[caseIndex],
+        natureOfConfirmation: confirmData.natureOfConfirmation,
+        confirmationRemarks: confirmData.confirmationRemarks,
+        confirmedBy: confirmData.confirmedBy,
+        confirmedDate: confirmData.confirmedDate,
+        caseStatus: "Confirmed",
+      };
+
+      return {
+        status: 200,
+        message: "Case confirmed successfully",
+        data: allCasesResponse[caseIndex], // Optional: return updated case
+      };
     } else {
       const response = await axios.put(`${BASE_URL}/api/cases/confirm/${confirmData.id}`, confirmData);
       if (response.status === 200) {
@@ -335,17 +340,17 @@ export const getSingleCaseData = async (caseId) => {
       //Assigned PHI
       let assignedPhiDetails = [{}];
 
-      if(caseData.assignedPhi != ""){
-           assignedPhiDetails = phiResponse.filter((phi) => phi.id == caseData.assignedPhi)
-      .map(({ area, moh, name, role, registrationNumber }) => ({ name, role, area, moh, registrationNumber }));
+      if (caseData.assignedPhi != "") {
+        assignedPhiDetails = phiResponse.filter((phi) => phi.id == caseData.assignedPhi)
+          .map(({ area, moh, name, role, registrationNumber }) => ({ name, role, area, moh, registrationNumber }));
       }
 
       //Assigned MOH
       let assignedMohDetails = [{}];
 
-      if(caseData.assignedMoh != ""){
-           assignedMohDetails = mohResponse.filter((moh) => moh.id == caseData.assignedMoh)
-      .map(({ area, name, role, registrationNumber }) => ({ name, role, area, registrationNumber }));
+      if (caseData.assignedMoh != "") {
+        assignedMohDetails = mohResponse.filter((moh) => moh.id == caseData.assignedMoh)
+          .map(({ area, name, role, registrationNumber }) => ({ name, role, area, registrationNumber }));
       }
 
       const singleCaseResponse = {
@@ -468,13 +473,13 @@ export const getCasesCount = async () => {
           acc[diseaseName] = (acc[diseaseName] || 0) + 1;
           return acc;
         }, {});
-  
+
         activeCasesCount = Object.entries(casesByDisease).map(([diseaseName, count], index) => ({
           diseaseName,
           count,
           color: getColorForDisease(diseaseName, index), // Assign a color
         }));
-  
+
         return {
           status: 200,
           message: "Data fetched successfully",
@@ -524,24 +529,21 @@ export const sendFinalReport = async (value) => {
 };
 
 export const mark_AsReceived = async (value) => {
+  console.log(value);
   try {
     if (IS_BACKEND == "false") {
-      const caseIndex = allCasesResponse.findIndex(
-        (data) => data.caseId === value.caseId
-      );
-
-      if (caseIndex !== -1) {
-        allCasesResponse[caseIndex] = {
-          ...allCasesResponse[caseIndex],
+      const index = allCasesResponse.findIndex((caseItem) => caseItem.caseId === value.caseId);
+      if (index !== -1) {
+        allCasesResponse[index] = {
+          ...allCasesResponse[index],
           markAsReceived: value.markAsReceived,
+
         };
 
-        return {
-          status: 200,
-          message: "Mark As Received successfully",
-        };
+        console.log(allCasesResponse);
+        return { status: 200, message: "Record updated successfully" };
       } else {
-        throw new Error("Case not found");
+        return { status: 404, message: "Record not found" };
       }
     } else {
       const response = await axios.put(`${BASE_URL}/api/cases/${value.caseId}/mark-received`, value);
@@ -550,6 +552,31 @@ export const mark_AsReceived = async (value) => {
       }
       return { status: 400, message: "Failed to mark as received", data: [] };
     }
+    // if (IS_BACKEND == "false") {
+    //   const caseIndex = allCasesResponse.findIndex(
+    //     (data) => data.caseId === value.caseId
+    //   );
+
+    //   if (caseIndex !== -1) {
+    //     allCasesResponse[caseIndex] = {
+    //       ...allCasesResponse[caseIndex],
+    //       markAsReceived: value.markAsReceived,
+    //     };
+
+    //     return {
+    //       status: 200,
+    //       message: "Mark As Received successfully",
+    //     };
+    //   } else {
+    //     throw new Error("Case not found");
+    //   }
+    // } else {
+    //   const response = await axios.put(`${BASE_URL}/api/cases/${value.caseId}/mark-received`, value);
+    //   if (response.status === 200) {
+    //     return { status: 200, message: "Mark As Received successfully", data: response.data };
+    //   }
+    //   return { status: 400, message: "Failed to mark as received", data: [] };
+    // }
   } catch (error) {
     console.error("Error confirming case:", error);
     throw error;

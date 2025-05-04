@@ -8,7 +8,13 @@ import Navbar from "../../components/Navbar";
 import AssignPHIPopup from "../../components/AssignPHIPopup";
 import ConfirmCasePopup from "../../components/ConfirmCasePopup";
 
-const Dashboard = (props) => {
+const Dashboard = ({
+  AllLogins,
+  ViewsSingleCase,
+  Assignphipopup,
+  confirmPopUp,
+  reportSend,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [allCasesData, setAllCasesData] = useState([]);
   const [patientId, setPatientId] = useState("");
@@ -19,7 +25,7 @@ const Dashboard = (props) => {
     // Fetch all cases data
     const fetchData = async () => {
       try {
-        const response = await getAllCases(props.AllLogins.data.userId);
+        const response = await getAllCases(AllLogins.data.userId);
         setAllCasesData(response.data);
       } catch (error) {
         console.error("Failed to fetch cases data:", error);
@@ -27,12 +33,12 @@ const Dashboard = (props) => {
     };
 
     fetchData();
-  }, [props.ViewReport]);
+  }, [Assignphipopup, confirmPopUp, reportSend]);
 
   useEffect(() => {
-    setIsViewSingleCase(props.ViewsSingleCase?.[0]);
-    setPatientId(props.ViewsSingleCase?.[1]);
-  }, [props.ViewsSingleCase]);
+    setIsViewSingleCase(ViewsSingleCase?.[0]);
+    setPatientId(ViewsSingleCase?.[1]);
+  }, [ViewsSingleCase]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
@@ -57,43 +63,39 @@ const Dashboard = (props) => {
 
   return (
     <>
-      <Navbar
-        Sections={[]}
-        onNavClick={null}
-        activeId={null}
-      />
+      <Navbar Sections={[]} onNavClick={null} activeId={null} />
       <div className="Home w-full bg-[#F2F4F7] pt-[112px] pb-[32px] px-[32px] flex flex-col gap-[72px]">
-      {isViewSingleCase ? (
-        <SingleCaseView patientId={patientId} />
-      ) : (
-        <>
-          <div className="Home w-full min-w-[870px] min-h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]">
-            <div className="w-full flex flex-row items-center justify-between">
-              {/* Heading */}
-              <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-              Notifiable Disease Notifications
-              </h2>
+        {isViewSingleCase ? (
+          <SingleCaseView patientId={patientId} />
+        ) : (
+          <>
+            <div className="Home w-full min-w-[870px] min-h-[500px] bg-white flex flex-col items-center justify-center px-[32px] py-[48px] gap-[32px]">
+              <div className="w-full flex flex-row items-center justify-between">
+                {/* Heading */}
+                <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
+                  Notifiable Disease Notifications
+                </h2>
 
-              {/* Search Input with Icon */}
-              <div className="relative">
-                <input
-                  className="bg-[#E2E5E9] w-[250px] h-[50px] rounded-[8px] px-[16px] py-[14px] text-black placeholder-gray-600 focus:outline-none"
-                  type="text"
-                  placeholder="Search By Name"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                <CiSearch className="absolute right-[16px] top-1/2 transform -translate-y-1/2 text-gray-500 text-xl" />
+                {/* Search Input with Icon */}
+                <div className="relative">
+                  <input
+                    className="bg-[#E2E5E9] w-[250px] h-[50px] rounded-[8px] px-[16px] py-[14px] text-black placeholder-gray-600 focus:outline-none"
+                    type="text"
+                    placeholder="Search By Name"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+                  <CiSearch className="absolute right-[16px] top-1/2 transform -translate-y-1/2 text-gray-500 text-xl" />
+                </div>
               </div>
-            </div>
 
-            <TableCard tableData={tableData} />
-          </div>
-        </>
-      )}
+              <TableCard tableData={tableData} />
+            </div>
+          </>
+        )}
       </div>
-      <AssignPHIPopup/>
-      <ConfirmCasePopup/>
+      <AssignPHIPopup />
+      <ConfirmCasePopup />
     </>
   );
 };
@@ -102,8 +104,11 @@ const mapStateToProps = (state) => {
   return {
     ViewReport: state.viewReportReducer,
     ViewsSingleCase: state.viewsSingleCase,
-    AssignphipopupReducer: state.assignphipopupReducer,
+    Assignphipopup: state.assignphipopupReducer,
     AllLogins: state.allLogins,
+    Assignmohpopup: state.assignmohpopup,
+    confirmPopUp: state.confirmPopUp,
+    reportSend: state.reportSend,
   };
 };
 

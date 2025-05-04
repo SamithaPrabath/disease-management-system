@@ -5,18 +5,23 @@ import { closeUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction
 import { message } from "antd";
 import { unAssignedPhi } from "../api/assignedPhiApi";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { getSingleCaseData } from "../api/allCasesApi";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 // Map container style
 const containerStyle = {
   width: "100%",
-  height: "200px", // Adjust height as needed
+  height: "200px",
 };
 
-// Colombo, Sri Lanka coordinates
-const center = {
-  lat: 6.9271, // Latitude of Colombo
-  lng: 79.8612, // Longitude of Colombo
-};
+// Validation Schema
+const UnassignSchema = Yup.object().shape({
+  assignedStatus: Yup.string().required("Please select an option"),
+  remarks: Yup.string()
+    .required("Remarks are required")
+    .min(20, "Remarks must be at least 20 characters"),
+});
 
 const UnAssignCasePopup = ({
   AllLogins,
@@ -24,14 +29,9 @@ const UnAssignCasePopup = ({
   closeUnAssignCasePopUp,
   ViewsSingleCase,
 }) => {
+  const [singleCaseData, setSingleCaseData] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const [errors, setErrors] = useState({
-    option: "",
-    remarks: "",
-  });
   const [userTypeId, setUserTypeId] = useState("");
 
   // Load the Google Maps API
@@ -43,58 +43,45 @@ const UnAssignCasePopup = ({
 
   useEffect(() => {
     setUserTypeId(AllLogins.data.userTypeId);
-  }, [AllLogins]);
+
+    const fetchSingleCaseData = async () => {
+      const response = await getSingleCaseData(ViewsSingleCase?.[1]);
+      setSingleCaseData(response.data);
+    };
+
+    fetchSingleCaseData();
+  }, [AllLogins, ViewsSingleCase]);
+
+  const location = {
+    lat: singleCaseData?.lat,
+    lng: singleCaseData?.lng,
+  };
 
   useEffect(() => {
     setIsOpen(UnassigncasepopupReducer);
-    // Reset form when opening
-    if (UnassigncasepopupReducer) {
-      setSelectedOption("");
-      setRemarks("");
-      setErrors({ option: "", remarks: "" });
-    }
   }, [UnassigncasepopupReducer]);
 
-  const validateForm = () => {
-    const newErrors = {
-      option: "",
-      remarks: "",
-    };
-
-    if (!selectedOption) {
-      newErrors.option = "Please select an option";
-    }
-
-    if (!remarks.trim()) {
-      newErrors.remarks = "Remarks are required";
-    } else if (remarks.trim().length < 20) {
-      newErrors.remarks = "Remarks must be at least 20 characters";
-    }
-
-    setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const values = {
-      assignedStatus: selectedOption,
-      remarks: remarks,
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const submitValues = {
+      ...values,
       assignedPhi: userTypeId,
       caseId: ViewsSingleCase?.[1],
     };
 
     try {
-      const response = await unAssignedPhi(values);
+      const response = await unAssignedPhi(submitValues);
 
       if (response && response.message) {
         messageApi.success(response.message);
+        setTimeout(() => closeUnAssignCasePopUp(), 1000);
       } else {
         messageApi.error("Unassigned failed");
       }
     } catch (error) {
       console.error("Error during unassigning:", error);
       messageApi.error("An error occurred during unassigning.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -103,8 +90,7 @@ const UnAssignCasePopup = ({
       {contextHolder}
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
-          <div className="bg-white w-[400px] min-h-[500px] rounded-[8px] shadow-sm flex flex-col">
-            {/* Header Section */}
+          <div className="bg-white w-[400px] min-h-[500px] max-h-[95vh] overflow-y-auto rounded-[8px] shadow-sm flex flex-col">
             <div className="h-[56px] px-[16px] py-[8px] flex items-center justify-between border-b border-[#E2E5E9]">
               <h1 className="w-full text-center text-[24px] font-medium">
                 Un-assign Case
@@ -118,76 +104,86 @@ const UnAssignCasePopup = ({
             </div>
 
             <div className="p-[16px]">
-              <form onSubmit={handleSubmit}>
-                {/* Radio Options */}
-                <div className="flex items-center mb-2">
-                  <input
-                    type="radio"
-                    id="unassignedRadio"
-                    name="unassignedRadio"
-                    value="unassigned"
-                    checked={selectedOption === "unassigned"}
-                    onChange={(e) => setSelectedOption(e.target.value)}
-                    className="form-radio h-4 w-4 text-blue-600"
-                  />
-                  <label
-                    htmlFor="unassignedRadio"
-                    className="ml-2 text-gray-700"
-                  >
-                    Unassign from the case
-                  </label>
-                </div>
-                {errors.option && (
-                  <p className="text-red-500 text-sm mb-4">{errors.option}</p>
-                )}
-
-                {/* Remarks Section */}
-                <div className="mt-4">
-                  <h2 className="text-[20px] font-medium text-gray-800 mb-2">
-                    Remarks
-                  </h2>
-                  <textarea
-                    name="phiRemarks"
-                    value={remarks}
-                    onChange={(e) => setRemarks(e.target.value)}
-                    className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                      errors.remarks ? "bg-red-100" : "bg-gray-200"
-                    }`}
-                    rows="4"
-                    placeholder="Enter remarks..."
-                  />
-                  {errors.remarks && (
-                    <p className="text-red-500 text-sm mt-1">{errors.remarks}</p>
-                  )}
-                </div>
-
-                {/* Location Section with Map */}
-                <div className="mt-4 text-gray-700">
-                  <p className="mb-2">Location: Colombo</p>
-                  {isLoaded ? (
-                    <GoogleMap
-                      mapContainerStyle={containerStyle}
-                      center={center}
-                      zoom={13} // Adjust zoom level as needed
-                    >
-                      {/* Add a marker for Colombo */}
-                      <Marker position={center} />
-                    </GoogleMap>
-                  ) : (
-                    <div className="flex items-center justify-center h-[200px] bg-gray-100">
-                      Loading Map...
+              <Formik
+                initialValues={{
+                  assignedStatus: "",
+                  remarks: "",
+                }}
+                validationSchema={UnassignSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ errors, touched, isSubmitting }) => (
+                  <Form>
+                    <div className="flex items-center mb-2">
+                      <Field
+                        type="radio"
+                        id="unassignedRadio"
+                        name="assignedStatus"
+                        value="unassigned"
+                        className="form-radio h-4 w-4 text-blue-600"
+                      />
+                      <label
+                        htmlFor="unassignedRadio"
+                        className="ml-2 text-gray-700"
+                      >
+                        Unassign from the case
+                      </label>
                     </div>
-                  )}
-                </div>
+                    {errors.assignedStatus && touched.assignedStatus && (
+                      <p className="text-red-500 text-sm mb-4">
+                        {errors.assignedStatus}
+                      </p>
+                    )}
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 mt-6 cursor-pointer"
-                >
-                  Confirm Unassignment
-                </button>
-              </form>
+                    <div className="mt-4">
+                      <h2 className="text-[20px] font-medium text-gray-800 mb-2">
+                        Remarks
+                      </h2>
+                      <Field
+                        as="textarea"
+                        name="remarks"
+                        className={`w-full px-4 py-2 rounded-md focus:outline-none ${
+                          errors.remarks && touched.remarks
+                            ? "bg-red-100"
+                            : "bg-gray-200"
+                        }`}
+                        rows="4"
+                        placeholder="Enter remarks..."
+                      />
+                      {errors.remarks && touched.remarks && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.remarks}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-4 text-gray-700">
+                      <p className="mb-2">Location: Colombo</p>
+                      {isLoaded ? (
+                        <GoogleMap
+                          mapContainerStyle={containerStyle}
+                          center={location}
+                          zoom={13}
+                        >
+                          <Marker position={location} />
+                        </GoogleMap>
+                      ) : (
+                        <div className="flex items-center justify-center h-[200px] bg-gray-100">
+                          Loading Map...
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 mt-6 cursor-pointer disabled:opacity-50"
+                    >
+                      {isSubmitting ? "Submitting..." : "Confirm Unassignment"}
+                    </button>
+                  </Form>
+                )}
+              </Formik>
             </div>
           </div>
         </div>

@@ -5,8 +5,11 @@ import { viewConfirmPopUp } from "../../redux/actions/confirmCasePopUpAction";
 import { connect } from "react-redux";
 import { geDiseasesList } from "../../api/diseasesApi";
 import { viewAssignPHIPopUp } from "../../redux/actions/assginPHIPopupAction";
+import { viewAssignMOHPopUp } from "../../redux/actions/assignMOHPopupAction";
 import { mark_AsReceived, sendFinalReport } from "../../api/allCasesApi";
+import { reportSend } from "../../redux/actions/reportSendAction";
 import { message } from "antd";
+import { markAsReceivedButtonClicked } from "../../redux/actions/markAsReceivedAction";
 
 const Table = ({
   AllLogins,
@@ -15,6 +18,9 @@ const Table = ({
   viewSingleCase,
   viewConfirmPopUp,
   viewAssignPHIPopUp,
+  viewAssignMOHPopUp,
+  reportSend,
+  markAsReceivedButtonClicked,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -42,20 +48,24 @@ const Table = ({
     if (e.target.name === "date") {
       const date = new Date(e.target.value);
       const day = date.getDate();
-      const month = date.toLocaleString('default', { month: 'short' });
+      const month = date.toLocaleString("default", { month: "short" });
       const year = date.getFullYear();
-      
+
       // Add ordinal suffix to day
       const getOrdinalSuffix = (day) => {
-        if (day > 3 && day < 21) return 'th';
+        if (day > 3 && day < 21) return "th";
         switch (day % 10) {
-          case 1: return 'st';
-          case 2: return 'nd';
-          case 3: return 'rd';
-          default: return 'th';
+          case 1:
+            return "st";
+          case 2:
+            return "nd";
+          case 3:
+            return "rd";
+          default:
+            return "th";
         }
       };
-      
+
       const formattedDate = `${day}${getOrdinalSuffix(day)} ${month} ${year}`;
       if (date == "Invalid Date") {
         setFilters({ ...filters, [e.target.name]: "" });
@@ -86,7 +96,7 @@ const Table = ({
   useEffect(() => {
     setPatients(rows); // Ensure state updates when rows change
     setRole(AllLogins.data.role);
-    setUserTypeId(AllLogins.data.userId);
+    setUserTypeId(AllLogins.data.userTypeId);
   }, [rows]);
 
   const [diseasesList, setDiseasesList] = useState([]);
@@ -106,43 +116,47 @@ const Table = ({
 
   const handleSendFinalReport = async (caseId) => {
     try {
-      const sendReport = "true";
+      const sendReport = true;
       const value = { sendReport, caseId };
       const response = await sendFinalReport(value);
-  
+
       if (response.status === 200 && response.message) {
+        reportSend(true);
         messageApi.success(response.message);
       } else {
         throw new Error(response.message || "Failed to send final report");
       }
     } catch (error) {
       console.error("Error sending final report:", error);
-      messageApi.error(error.message || "An error occurred while sending the final report");
+      messageApi.error(
+        error.message || "An error occurred while sending the final report"
+      );
     }
   };
 
   const handleMarkAsReceived = async (caseId) => {
     try {
-      const markAsReceived = "true";
+      const markAsReceived = true;
       const value = { markAsReceived, caseId };
       const response = await mark_AsReceived(value);
-  
+
       if (response.status === 200 && response.message) {
+        markAsReceivedButtonClicked(true);
         messageApi.success(response.message);
-        window.location.reload();
       } else {
         throw new Error(response.message || "Failed to send final report");
       }
     } catch (error) {
       console.error("Error sending final report:", error);
-      messageApi.error(error.message || "An error occurred while sending the final report");
+      messageApi.error(
+        error.message || "An error occurred while sending the final report"
+      );
     }
   };
 
-
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <form className="w-full flex flex-row items-center gap-[26px]">
         <h5 className="text-[16px] font-medium">Filter by :</h5>
         <select
@@ -158,12 +172,12 @@ const Table = ({
             </option>
           ))}
         </select>
-        <input 
+        <input
           type="date"
           name="date"
-          id="date" 
-          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]" 
-          onChange={handleFilterChange} 
+          id="date"
+          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
+          onChange={handleFilterChange}
         />
 
         <select
@@ -207,7 +221,10 @@ const Table = ({
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredPatients?.map((patient) => (
-                    <tr key={patient.caseId} className="hover:bg-gray-50 text-center">
+                    <tr
+                      key={patient.caseId}
+                      className="hover:bg-gray-50 text-center"
+                    >
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-[#080809] sm:pl-6">
                         {patient.caseId}
                       </td>
@@ -270,12 +287,12 @@ const Table = ({
                           <button
                             type="button"
                             className={`px-[16px] py-[8px] rounded-[6px] ${
-                              patient.assignedMoh ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" :  "bg-blue-600 text-white cursor-pointer"
+                              patient.assignedMoh
+                                ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                                : "bg-blue-600 text-white cursor-pointer"
                             }`}
-                            onClick={() => viewSingleCase(patient.caseId)}
-                            disabled={
-                              patient.assignedMoh ? true : false
-                            }
+                            onClick={() => viewAssignMOHPopUp(patient.caseId)}
+                            disabled={patient.assignedMoh ? true : false}
                           >
                             Assign MOH
                           </button>
@@ -291,7 +308,7 @@ const Table = ({
                             ) : (
                               <button
                                 className={`px-[16px] py-[8px] rounded-[6px] ${
-                                  Object.keys(patient.report).length > 0 
+                                  Object.keys(patient.report).length > 0
                                     ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
                                     : "bg-blue-600 text-white cursor-pointer"
                                 }`}
@@ -309,13 +326,13 @@ const Table = ({
                             {!patient?.assignedPhi ? (
                               <button
                                 className={`text-white px-[16px] py-[8px] rounded-[6px] bg-blue-600 hover:bg-blue-700 transition cursor-pointer`}
-                                onClick={() => viewSingleCase(patient.caseId)}
+                                onClick={() =>
+                                  viewAssignPHIPopUp(patient.caseId)
+                                }
                               >
                                 Assign PHI
                               </button>
-                            ) :
-
-                            patient?.caseStatus === "Suspected" ? (
+                            ) : patient?.caseStatus === "Suspected" ? (
                               <button
                                 type="button"
                                 className={`px-[16px] py-[8px] rounded-[6px]
@@ -336,33 +353,39 @@ const Table = ({
                               >
                                 Confirm Case
                               </button>
-                            ) :  
-                              Object.keys(patient?.report).length > 0 && 
-                              <button
-                                className={`px-[16px] py-[8px] rounded-[6px] ${
-                                  patient.sendReport ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" :  "bg-blue-600 text-white cursor-pointer"
-                                }
+                            ) : (
+                              Object.keys(patient?.report).length > 0 && (
+                                <button
+                                  className={`px-[16px] py-[8px] rounded-[6px] ${
+                                    patient.sendReport
+                                      ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                                      : "bg-blue-600 text-white cursor-pointer"
+                                  }
                                 `}
-                                onClick={() => handleSendFinalReport(patient?.caseId)}
-                              >
-                                Send Final Report
-                              </button>
-                            }
+                                  onClick={() =>
+                                    handleSendFinalReport(patient?.caseId)
+                                  }
+                                >
+                                  Send Final Report
+                                </button>
+                              )
+                            )}
                           </>
                         ) : (
                           <button
-                                className={`px-[16px] py-[8px] rounded-[6px] ${
-                                  patient.markAsReceived == "true" ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" :  "bg-blue-600 text-white cursor-pointer"
-                                }
+                            className={`px-[16px] py-[8px] rounded-[6px] ${
+                              patient.markAsReceived
+                                ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                                : "bg-blue-600 text-white cursor-pointer"
+                            }
                                 `}
-                                onClick={() => handleMarkAsReceived(patient?.caseId)}
-                                disabled={
-                                  patient.markAsReceived == "true" ? true : false
-                                }
-                              >
-                                Mark as Received
-                              </button>
-        
+                            onClick={() =>
+                              handleMarkAsReceived(patient?.caseId)
+                            }
+                            disabled={patient.markAsReceived}
+                          >
+                            Mark as Received
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -387,7 +410,11 @@ const mapDispatchToProps = (dispatch) => ({
   viewReport: (values) => dispatch(viewReport(values)),
   viewSingleCase: (values) => dispatch(viewSingleCase(values)),
   viewConfirmPopUp: (value) => dispatch(viewConfirmPopUp(value)),
-  viewAssignPHIPopUp: (value) => dispatch(viewAssignPHIPopUp()),
+  viewAssignPHIPopUp: (value) => dispatch(viewAssignPHIPopUp(value)),
+  viewAssignMOHPopUp: (value) => dispatch(viewAssignMOHPopUp(value)),
+  reportSend: (values) => dispatch(reportSend(values)),
+  markAsReceivedButtonClicked: (value) =>
+    dispatch(markAsReceivedButtonClicked(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);

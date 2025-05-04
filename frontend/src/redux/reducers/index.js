@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import AllLoginReducer from './login-reducer';
 import AllResetPasswordReducer from "./resetPassword-reducer"
 import AllPopupReducer from './popup-reducer'
@@ -10,6 +10,9 @@ import AssignphipopupReducer from './assignphipopup-reducer';
 import UnassigncasepopupReducer from './unassigncasepopup-reducer';
 import Assignmohpopup from './assignmohpopup-reducer';
 import ViewEditEvent from './viewEditEvent-reducer';
+import ViewAddNewCaseReducer from './viewAddNewCaseReducer';
+import ReportSendReducer from './reportSendReducer';
+import MarkAsReceivedReducer from './markAsRecived-reducer';
 import ReportFilesPopup from './reportfilespopup-reducer';
 
 const rootReducer = combineReducers(
@@ -25,6 +28,9 @@ const rootReducer = combineReducers(
         unassigncasepopupReducer: UnassigncasepopupReducer,
         assignmohpopup: Assignmohpopup,
         viewEditEvent: ViewEditEvent,
+        viewAddNewCase: ViewAddNewCaseReducer,
+        reportSend: ReportSendReducer,
+        markAsReceived: MarkAsReceivedReducer,
         reportFilesPopup: ReportFilesPopup,
     }
 )

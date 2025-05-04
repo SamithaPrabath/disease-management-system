@@ -53,8 +53,12 @@ const EditEvent = ({ ViewEditEvent, closeViewEditEvent, AllLogins }) => {
           if (value) formData.append(key, value);
         });
 
+        // Handle image: if new image is selected use it, otherwise keep existing image
         if (image) {
           formData.append("image", image);
+        } else if (eventData?.image) {
+          // If no new image but there's an existing image, send it as a string
+          formData.append("image", eventData.image);
         }
 
         const response = await updateEvent(eventData?.id, formData);

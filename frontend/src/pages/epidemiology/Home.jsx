@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { getAllCases, getCasesCount } from "../../api/allCasesApi";
 import CasesCard from "../../components/CasesCard";
 
-const Home = (props) => {
+const Home = ({ ViewReport, AllLogins, ViewsSingleCase, MarkAsReceived }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [allCasesData, setAllCasesData] = useState([]);
   const [patientId, setPatientId] = useState("");
@@ -27,13 +27,13 @@ const Home = (props) => {
     };
 
     fetchData();
-  }, [props.ViewReport]);
+  }, [ViewReport]);
 
   useEffect(() => {
     // Fetch all cases data
     const fetchData = async () => {
       try {
-        const response = await getAllCases(props.AllLogins?.data?.userId);
+        const response = await getAllCases(AllLogins?.data?.userId);
         setAllCasesData(response.data);
       } catch (error) {
         console.error("Failed to fetch cases data:", error);
@@ -41,12 +41,12 @@ const Home = (props) => {
     };
 
     fetchData();
-  }, [props.ViewReport, props.AllLogins]);
+  }, [ViewReport, AllLogins, MarkAsReceived]);
 
   useEffect(() => {
-    setIsViewSingleCase(props.ViewsSingleCase?.[0]);
-    setPatientId(props.ViewsSingleCase?.[1]);
-  }, [props.ViewsSingleCase]);
+    setIsViewSingleCase(ViewsSingleCase?.[0]);
+    setPatientId(ViewsSingleCase?.[1]);
+  }, [ViewsSingleCase]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
@@ -78,7 +78,7 @@ const Home = (props) => {
             <div className="w-full flex flex-row items-center justify-between">
               {/* Heading */}
               <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
-              Notifiable Disease Notifications
+                Notifiable Disease Notifications
               </h2>
 
               {/* Search Input with Icon */}
@@ -109,6 +109,7 @@ const mapStateToProps = (state) => {
     ViewReport: state.viewReportReducer,
     ViewsSingleCase: state.viewsSingleCase,
     AllLogins: state.allLogins,
+    MarkAsReceived: state.markAsReceived,
   };
 };
 

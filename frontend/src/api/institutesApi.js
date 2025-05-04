@@ -64,7 +64,7 @@ export const registerInstitutes = async (user) => {
           id: (institutesResponse.length + 1).toString().padStart(3, "0"),
         };
         institutesResponse.push(newUser);
-        return { status: 201, message: "Institute registered successfully" };
+        return { status: 200, message: "Institute registered successfully" };
       }
     } else {
       const response = await axios.post(`${BASE_URL}/api/institutes/create`, user);

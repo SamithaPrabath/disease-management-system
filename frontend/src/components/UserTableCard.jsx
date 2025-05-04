@@ -24,10 +24,7 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
 
   const filteredUsers = rows?.filter((user) => {
     const query = searchQuery.toLowerCase();
-    return (
-      query === "" ||
-      user.name?.toLowerCase().includes(query)
-    );
+    return query === "" || user.name?.toLowerCase().includes(query);
   });
 
   const [data, setData] = useState(filteredUsers);
@@ -37,7 +34,7 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
   }, [rows, searchQuery, tableHeaders, tableData]);
 
   const handleDelete = async (id) => {
-    console.log(id)
+    console.log(id);
     try {
       let response;
       if (mode === "phi") response = await deletePhi(id);
@@ -51,15 +48,23 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
         setData((prevData) => prevData.filter((user) => user.id !== id));
       } else {
         if (mode === "moh") {
-          messageApi.error("Can't delete MOH because it is assigned to a case and PHIs");
+          messageApi.error(
+            "Can't delete MOH because it is assigned to a case and PHIs"
+          );
         } else if (mode === "phi") {
           messageApi.error("Can't delete PHI because it is assigned to a case");
         } else if (mode === "institutes") {
-          messageApi.error("Can't delete Institute because it is assigned to a case");
+          messageApi.error(
+            "Can't delete Institute because it is assigned to a case"
+          );
         } else if (mode === "diseases") {
-          messageApi.error("Can't delete Disease because it is assigned to a case");
+          messageApi.error(
+            "Can't delete Disease because it is assigned to a case"
+          );
         } else if (mode === "doctor") {
-          messageApi.error("Can't delete Doctor because it is assigned to a case");
+          messageApi.error(
+            "Can't delete Doctor because it is assigned to a case"
+          );
         } else {
           messageApi.error(response.message);
         }
@@ -131,9 +136,9 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
                         </td>
                       ) : null}
 
-                      {user.phone ? (
+                      {user.phoneNumber ? (
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-[#080809]">
-                          {user.phone}
+                          {user.phoneNumber}
                         </td>
                       ) : null}
 

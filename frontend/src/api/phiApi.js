@@ -33,7 +33,7 @@ export const phiResponse = [
 
 export const registerPhi = async (user) => {
   try {
-    
+
     if (IS_BACKEND == "false") {
       const existingUser = phiResponse.find(
         (phi) => phi.name === user.name || phi.registrationNumber === user.registrationNumber
@@ -49,7 +49,7 @@ export const registerPhi = async (user) => {
         };
         phiResponse.push(newUser);
         console.log("New user registered:", newUser);
-        return { status: 201, message: "User registered successfully", data: newUser };
+        return { status: 200, message: "User registered successfully", data: newUser };
       }
     } else {
       const response = await axios.post(`${BASE_URL}/api/phis/add`, user);
@@ -189,12 +189,12 @@ export const phiAssignToCase = async (value) => {
       const response = await axios.put(
         `${BASE_URL}/api/cases/${value.caseId}/assign-phi`,
         { assignedPhi: value.assignedPhi, phiAssignedDate: value.phiAssignedDate }
-        );
-        if (response.status == 200) {
-          return { status: 200, message: "PHI assigned successfully", data: response.data.data };
-        } else {
-          return { status: 400, message: response.data.message };
-        }
+      );
+      if (response.status == 200) {
+        return { status: 200, message: "PHI assigned successfully", data: response.data.data };
+      } else {
+        return { status: 400, message: response.data.message };
+      }
     }
   } catch (error) {
     console.error("Error assigning PHI to case:", error);

@@ -8,6 +8,7 @@ import { geDiseasesList } from "../../api/diseasesApi";
 import { getInstitutesList } from "../../api/institutesApi";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { closeAddNewCase } from "../../redux/actions/viewAddNewCaseAction";
 import { GoogleMap, Marker, useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
 
 // Map container style
@@ -16,17 +17,17 @@ const containerStyle = {
   height: "400px",
 };
 
+const NewCase = ({ AllLogins, closeAddNewCase }) => {
 // Define libraries array outside component to maintain reference
 const libraries = ["places", "maps"];
 
-const NewCase = ({ AllLogins, handleViewNewCase }) => {
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries,
     id: "google-map-script",
   });
-  
+
   const [messageApi, contextHolder] = message.useMessage();
   const [diseasesList, setDiseasesList] = useState([]);
   const [institutesList, setInstitutesList] = useState([]);
@@ -88,7 +89,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         },
         (error) => {
           console.error("Error getting user location:", error);
-          messageApi.warning("Unable to get current location, using default location");
+          messageApi.warning(
+            "Unable to get current location, using default location"
+          );
         }
       );
     } else {
@@ -112,8 +115,8 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
   }, [messageApi]);
 
   useEffect(() => {
-    setUserTypeId(AllLogins.data.userId);
-    setNotifier(AllLogins.data.userId);
+    setUserTypeId(AllLogins.data.userTypeId);
+    setNotifier(AllLogins.data.userTypeId);
   }, [AllLogins]);
 
   const formik = useFormik({
@@ -153,7 +156,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
       if (values.age && Number(values.age) < 18 && !values.guardian) {
         errors.guardian = "Guardian is required for patients under 18";
       }
-      if (!values.latitude || !values.longitude) {
+      if (!selectedLocation || !selectedLocation.lat || !selectedLocation.lng) {
         errors.location = "Please select a location on the map";
       }
       return errors;
@@ -188,7 +191,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         formData.append("confirmedBy", userTypeId);
       }
       if (notifier) formData.append("notifier", notifier);
-      
+
+      console.log(formData);
+
       try {
         const response = await addNewCase(formData);
         if (response?.message) {
@@ -196,10 +201,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
           resetForm();
           setRemarks("");
           setSelectedLocation(null);
-          setTimeout(() => {
-            handleViewNewCase();
-            window.location.href = "/dashboard";
-          }, 1000);
+          setTimeout(() => closeAddNewCase(), 1000);
         } else {
           throw new Error("No response message");
         }
@@ -259,6 +261,20 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
     }
   }, [formik.values.age]);
 
+  // Add effect to handle case status changes
+  useEffect(() => {
+    if (formik.values.caseStatus !== "Confirmed") {
+      formik.setFieldValue("natureOfConfirmation", "");
+      setRemarks("");
+    }
+  }, [formik.values.caseStatus]);
+
+  // Format date to YYYY-MM-DD for input fields
+  const formatDateForInput = (date) => {
+    if (!date) return "";
+    return new Date(date).toISOString().split("T")[0];
+  };
+
   return (
     <>
       {contextHolder}
@@ -270,7 +286,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
           <div className="flex flex-row gap-3">
             <div className="w-1/2 flex flex-col gap-3">
-              <label className="block text-gray-700">Name of Patient<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Name of Patient<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 name="patientName"
@@ -287,7 +305,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Age<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Age<span className="text-red-500">*</span>
+              </label>
               <input
                 type="number"
                 name="age"
@@ -303,7 +323,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Sex<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Sex<span className="text-red-500">*</span>
+              </label>
               <select
                 name="sex"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -325,7 +347,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             <div className="w-1/2 flex flex-col gap-3">
               <label className="block text-gray-700">
                 {Number(formik.values.age) < 18 ? "Guardian" : "Guardian"}
-                <span className="text-red-500">{Number(formik.values.age) < 18 ? "*" : ""}</span>
+                <span className="text-red-500">
+                  {Number(formik.values.age) < 18 ? "*" : ""}
+                </span>
               </label>
               <input
                 type="text"
@@ -346,7 +370,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Disease<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Disease<span className="text-red-500">*</span>
+              </label>
               <select
                 name="diseaseName"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -369,7 +395,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Case Status<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Case Status<span className="text-red-500">*</span>
+              </label>
               <select
                 name="caseStatus"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -447,7 +475,10 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
           <div className="flex flex-row gap-3">
             <div className="w-1/2 flex flex-col gap-3">
               <label className="block text-gray-700">
-                NIC No<span className="text-red-500">{Number(formik.values.age) >= 18 ? "*" : ""}</span>
+                NIC No
+                <span className="text-red-500">
+                  {Number(formik.values.age) >= 18 ? "*" : ""}
+                </span>
               </label>
               <input
                 type="text"
@@ -468,7 +499,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/2 flex flex-col gap-3">
-              <label className="block text-gray-700">Phone Number<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Phone Number<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 name="phoneNumber"
@@ -487,7 +520,9 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
 
           <div className="flex flex-row gap-3">
             <div className="w-1/2 flex flex-col gap-3">
-              <label className="block text-gray-700">Institute<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Institute<span className="text-red-500">*</span>
+              </label>
               <select
                 name="instituteId"
                 className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -497,10 +532,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
               >
                 <option value="">Select Institute</option>
                 {institutesList.map((institute) => (
-                  <option
-                    key={institute.id}
-                    value={institute.id}
-                  >
+                  <option key={institute.id} value={institute.id}>
                     {institute.name}
                   </option>
                 ))}
@@ -518,10 +550,10 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
                 type="date"
                 name="dateOfOnset"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                value={formik.values.dateOfOnset}
+                value={formatDateForInput(formik.values.dateOfOnset)}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                max={new Date().toISOString().split("T")[0]}
+                max={formatDateForInput(new Date())}
               />
               {formik.touched.dateOfOnset && formik.errors.dateOfOnset && (
                 <p className="text-red-500 text-sm">
@@ -531,15 +563,17 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Date of Admission<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700">
+                Date of Admission<span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 name="dateOfAdmission"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
-                value={formik.values.dateOfAdmission}
+                value={formatDateForInput(formik.values.dateOfAdmission)}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                max={new Date().toISOString().split("T")[0]}
+                max={formatDateForInput(new Date())}
               />
               {formik.touched.dateOfAdmission &&
                 formik.errors.dateOfAdmission && (
@@ -725,7 +759,7 @@ const NewCase = ({ AllLogins, handleViewNewCase }) => {
             <button
               type="button"
               className="bg-gray-300 text-black px-6 py-2 rounded-md hover:bg-gray-400 transition duration-200 cursor-pointer"
-              onClick={handleViewNewCase}
+              onClick={closeAddNewCase}
             >
               Back
             </button>
@@ -742,4 +776,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(NewCase);
+const mapDispatchToProps = {
+  closeAddNewCase: closeAddNewCase,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewCase);

@@ -138,7 +138,7 @@ const Report = ({ viewReport, closeViewReport }) => {
           {/* Ethnic Group */}
           <div className="mb-4">
             <label className="block text-gray-700">
-              Ethnic Group of the Patient
+              Ethnic Group of the Patient*
             </label>
             <select
               name="ethnicGroup"
@@ -165,7 +165,7 @@ const Report = ({ viewReport, closeViewReport }) => {
 
           {/* Date of Discharge */}
           <div className="mb-4">
-            <label className="block text-gray-700">Date of Discharge</label>
+            <label className="block text-gray-700">Date of Discharge*</label>
             <input
               type="date"
               name="dischargeDate"
@@ -230,7 +230,7 @@ const Report = ({ viewReport, closeViewReport }) => {
             {/* Isolation Date */}
             <div className="w-full md:w-1/3">
               <label className="block text-gray-700 font-medium mb-2">
-                Isolation Date
+                Isolation Date*
               </label>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
@@ -303,7 +303,7 @@ const Report = ({ viewReport, closeViewReport }) => {
           {/* Movement History */}
           <div className="mb-4">
             <label className="block text-gray-700">
-              Patient's movement during three weeks prior to onset
+              Patient's movement during three weeks prior to onset*
             </label>
             <textarea
               name="movementHistory"
@@ -518,7 +518,7 @@ const Report = ({ viewReport, closeViewReport }) => {
 
           {/* PHI Remarks */}
           <div className="mb-4">
-            <label className="block text-gray-700">PHI Remarks</label>
+            <label className="block text-gray-700">PHI Remarks*</label>
             <textarea
               name="phiRemarks"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"

@@ -7,7 +7,7 @@ import { viewAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
 import { viewUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction";
 import { viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 import { message } from "antd";
-
+import { markAsReceivedButtonClicked } from "../redux/actions/markAsReceivedAction";
 const HeaderBar = ({
   AllLogins,
   viewConfirmPopUp,
@@ -17,6 +17,12 @@ const HeaderBar = ({
   viewAssignPHIPopUp,
   viewUnAssignCasePopUp,
   viewAssignMOHPopUp,
+  Assignmohpopup,
+  Assignphipopup,
+  confirmPopUp,
+  UnAssignCasePopUp,
+  markAsReceived,
+  markAsReceivedButtonClicked,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [singleCase, setSingleCase] = useState(null);
@@ -27,7 +33,7 @@ const HeaderBar = ({
     const fetchData = async () => {
       if (AllLogins?.data) {
         setRole(AllLogins.data.role);
-        setUserTypeId(AllLogins.data.userId);
+        setUserTypeId(AllLogins.data.userTypeId);
       }
 
       try {
@@ -39,16 +45,25 @@ const HeaderBar = ({
     };
 
     fetchData();
-  }, [AllLogins, patientId]);
+  }, [
+    AllLogins,
+    patientId,
+    Assignmohpopup,
+    Assignphipopup,
+    confirmPopUp,
+    UnAssignCasePopUp,
+    markAsReceived,
+  ]);
 
   const handleMarkAsReceived = async (caseId) => {
     try {
-      const markAsReceived = "true";
+      const markAsReceived = true;
       const value = { markAsReceived, caseId };
       const response = await mark_AsReceived(value);
 
       if (response.status === 200 && response.message) {
         messageApi.success(response.message);
+        markAsReceivedButtonClicked(true);
       } else {
         throw new Error(response.message || "Failed to send final report");
       }
@@ -86,7 +101,8 @@ const HeaderBar = ({
               </h2>
               <h5 className="text-[16px] text-[#171717] font-medium">
                 {singleCase?.caseStatus}{" "}
-                {singleCase?.natureOfConfirmation !== "" && singleCase?.natureOfConfirmation != null
+                {singleCase?.natureOfConfirmation !== "" &&
+                singleCase?.natureOfConfirmation != null
                   ? `(${singleCase?.natureOfConfirmation})`
                   : ""}
               </h5>
@@ -129,13 +145,12 @@ const HeaderBar = ({
                 <button
                   className={`px-6 py-2 rounded-md
               ${
-                singleCase?.assignedMoh == null
+                singleCase?.assignedMoh == ""
                   ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
                   : "text-gray-400 bg-gray-300 cursor-not-allowed"
               }
               `}
                   onClick={() => viewAssignMOHPopUp()}
-                  disabled={singleCase?.assignedMoh != null}
                 >
                   Assign MOH
                 </button>
@@ -158,7 +173,7 @@ const HeaderBar = ({
                               : "text-white bg-blue-600 cursor-pointer"
                           }
                         `}
-                    onClick={() => viewReport(singleCase?.id)}
+                    onClick={() => viewReport(singleCase?.caseId)}
                     disabled={Object.keys(singleCase?.report ?? {}).length > 0}
                   >
                     Add Report
@@ -168,7 +183,8 @@ const HeaderBar = ({
                 <button
                   className={`px-6 py-2 rounded-md
               ${
-                singleCase?.assignedPhi == userTypeId && !Object.keys(singleCase?.report ?? {}).length > 0
+                singleCase?.assignedPhi == userTypeId &&
+                !Object.keys(singleCase?.report ?? {}).length > 0
                   ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
                   : "text-gray-400 bg-gray-300 cursor-not-allowed"
               }
@@ -187,7 +203,7 @@ const HeaderBar = ({
                     : "text-gray-400 bg-gray-300 cursor-not-allowed"
                 }
               `}
-                  onClick={() => viewConfirmPopUp()}
+                  onClick={() => viewConfirmPopUp(patientId)}
                   disabled={
                     singleCase?.caseStatus == "Suspected" ? false : true
                   }
@@ -199,7 +215,9 @@ const HeaderBar = ({
               <div className="flex gap-3">
                 <button
                   className={`px-[16px] py-[8px] rounded-[6px] ${
-                    singleCase?.assignedPhi ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed" : "bg-blue-600 text-white cursor-pointer"
+                    singleCase?.assignedPhi
+                      ? "bg-[#E2E5E9] text-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 text-white cursor-pointer"
                   }`}
                   onClick={() => viewAssignPHIPopUp()}
                   disabled={singleCase?.assignedPhi ? true : false}
@@ -241,13 +259,13 @@ const HeaderBar = ({
               <button
                 className={`text-[16px] font-medium px-[16px] py-[8px] rounded-[6px]
                 ${
-                  singleCase?.caseStatus == "Suspected"
+                  !singleCase?.markAsReceived
                     ? "text-white bg-blue-600 cursor-pointer"
                     : "text-gray-400 bg-gray-300 cursor-not-allowed"
                 }
                 `}
                 onClick={() => handleMarkAsReceived(singleCase?.caseId)}
-                disabled={singleCase?.markAsReceived == "true" ? true : false}
+                disabled={singleCase?.markAsReceived == true ? true : false}
               >
                 Mark as Received
               </button>
@@ -280,6 +298,11 @@ const HeaderBar = ({
 const mapStateToProps = (state) => {
   return {
     AllLogins: state.allLogins,
+    Assignmohpopup: state.assignmohpopup,
+    Assignphipopup: state.assignphipopupReducer,
+    confirmPopUp: state.confirmPopUp,
+    UnAssignCasePopUp: state.unassigncasepopupReducer,
+    markAsReceived: state.markAsReceived,
   };
 };
 
@@ -289,6 +312,8 @@ const mapDispatchToProps = (dispatch) => ({
   viewAssignPHIPopUp: () => dispatch(viewAssignPHIPopUp()),
   viewUnAssignCasePopUp: () => dispatch(viewUnAssignCasePopUp()),
   viewAssignMOHPopUp: () => dispatch(viewAssignMOHPopUp()),
+  markAsReceivedButtonClicked: (value) =>
+    dispatch(markAsReceivedButtonClicked(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderBar);

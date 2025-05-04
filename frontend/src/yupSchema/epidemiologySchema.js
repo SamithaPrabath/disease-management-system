@@ -28,7 +28,7 @@ export const phiEditSchema = Yup.object({
     .email("Please enter a valid email address")
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email address")
     .required("Email is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^\d{10}$/, "Phone Number must be 10 digits")
     .required("Phone Number is required"),
 });
@@ -40,7 +40,7 @@ export const mohSchema = Yup.object({
     .email("Please enter a valid email address")
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email address")
     .required("Email is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^\d{10}$/, "Phone Number must be 10 digits")
     .required("Phone Number is required"),
   username: Yup.string().min(4, "Username must be at least 4 characters").required("Username is required"),
@@ -59,7 +59,7 @@ export const mohEditSchema = Yup.object({
     .email("Please enter a valid email address")
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email address")
     .required("Email is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^\d{10}$/, "Phone Number must be 10 digits")
     .required("Phone Number is required"),
 });
@@ -71,7 +71,7 @@ export const instituteSchema = Yup.object().shape({
     .email("Please enter a valid email address")
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email address")
     .required("Email is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^\d{10}$/, "Phone number must be 10 digits")
     .required("Phone number is required"),
   address: Yup.string().required("Address is required"),
@@ -92,7 +92,7 @@ export const instituteEditSchema = Yup.object().shape({
     .email("Please enter a valid email address")
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email address")
     .required("Email is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^\d{10}$/, "Phone number must be 10 digits")
     .required("Phone number is required"),
   address: Yup.string().required("Address is required"),
