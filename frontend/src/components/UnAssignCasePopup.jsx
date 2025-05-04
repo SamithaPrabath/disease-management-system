@@ -42,7 +42,7 @@ const UnAssignCasePopup = ({
   });
 
   useEffect(() => {
-    setUserTypeId(AllLogins.data.userTypeId);
+    setUserTypeId(AllLogins.data.userId);
 
     const fetchSingleCaseData = async () => {
       const response = await getSingleCaseData(ViewsSingleCase?.[1]);

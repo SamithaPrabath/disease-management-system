@@ -30,7 +30,7 @@ const ConfirmCasePopup = ({
   }, [ConfirmPopUp]);
 
   useEffect(() => {
-    setUserTypeId(AllLogins.data.userTypeId);
+    setUserTypeId(AllLogins.data.userId);
   }, [AllLogins]);
 
   const handleSubmit = async (values) => {

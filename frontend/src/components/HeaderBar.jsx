@@ -33,7 +33,7 @@ const HeaderBar = ({
     const fetchData = async () => {
       if (AllLogins?.data) {
         setRole(AllLogins.data.role);
-        setUserTypeId(AllLogins.data.userTypeId);
+        setUserTypeId(AllLogins.data.userId);
       }
 
       try {

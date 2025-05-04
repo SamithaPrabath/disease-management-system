@@ -120,8 +120,8 @@ const NewCase = ({ AllLogins, closeAddNewCase }) => {
   }, [messageApi]);
 
   useEffect(() => {
-    setUserTypeId(AllLogins.data.userTypeId);
-    setNotifier(AllLogins.data.userTypeId);
+    setUserTypeId(AllLogins.data.userId);
+    setNotifier(AllLogins.data.userId);
   }, [AllLogins]);
 
   const formik = useFormik({
