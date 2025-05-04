@@ -33,13 +33,23 @@ const ConfirmCasePopup = ({
     setUserTypeId(AllLogins.data.userId);
   }, [AllLogins]);
 
+  // Format date to YYYY-MM-DD for input fields
+  const formatDateForInput = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleSubmit = async (values) => {
     const submitValues = {
       natureOfConfirmation: values.natureOfConfirmation,
       remarks: remarks,
       confirmedBy: userTypeId,
       id: ConfirmPopUp?.[1],
-      confirmedDate: new Date().toISOString().split("T")[0],
+      confirmedDate: formatDateForInput(new Date()),
     };
 
     try {

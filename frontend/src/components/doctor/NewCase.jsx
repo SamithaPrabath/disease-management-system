@@ -163,11 +163,11 @@ const NewCase = ({ AllLogins, closeAddNewCase }) => {
     onSubmit: async (values, { resetForm }) => {
       const formData = new FormData();
       if (values.caseStatus === "Confirmed") {
-        const currentDate = new Date().toISOString().split("T")[0];
+        const currentDate = formatDateForInput(new Date());
         values.confirmedDate = currentDate;
       }
       if (AllLogins) {
-        const currentDate = new Date().toISOString().split("T")[0];
+        const currentDate = formatDateForInput(new Date());
         values.notifiedDate = currentDate;
       }
 
