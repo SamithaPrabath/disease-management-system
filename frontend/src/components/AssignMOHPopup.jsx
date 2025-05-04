@@ -8,6 +8,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { getSingleCaseData } from "../api/allCasesApi";
+import { getGoogleMapsConfig } from "../utils/googleMapsConfig";
+
 // Validation schema
 const assignMOHSchema = Yup.object().shape({
   assignedMoh: Yup.string().required("Please select a MOH"),
@@ -38,10 +40,7 @@ const AssignPopup = ({
 
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  });
+  const { isLoaded } = useJsApiLoader(getGoogleMapsConfig(GOOGLE_MAPS_API_KEY));
 
   useEffect(() => {
     setIsOpen(Assignmohpopup || false); // Ensure boolean fallback
@@ -59,7 +58,7 @@ const AssignPopup = ({
       });
     };
     get_location();
-  }, [ViewsSingleCase, Assignmohpopup]);
+  }, [ViewsSingleCase, Assignmohpopup, isOpen]);
 
   useEffect(() => {
     const fetchData = async () => {

@@ -340,7 +340,7 @@ export const getSingleCaseData = async (caseId) => {
       //Assigned PHI
       let assignedPhiDetails = [{}];
 
-      if (caseData.assignedPhi != "") {
+      if (caseData.assignedPhi != null) {
         assignedPhiDetails = phiResponse.filter((phi) => phi.id == caseData.assignedPhi)
           .map(({ area, moh, name, role, registrationNumber }) => ({ name, role, area, moh, registrationNumber }));
       }

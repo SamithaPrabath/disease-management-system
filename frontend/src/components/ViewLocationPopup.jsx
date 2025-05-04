@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { closePopUp } from "../redux/actions/popUpAction";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { getSingleCaseData } from "../api/allCasesApi";
+import { getGoogleMapsConfig } from "../utils/googleMapsConfig";
 
 // Map container style
 const containerStyle = {
@@ -23,10 +24,7 @@ const ViewLocationPopup = ({ AllPopup, closePopUp }) => {
 
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  });
+  const { isLoaded } = useJsApiLoader(getGoogleMapsConfig(GOOGLE_MAPS_API_KEY));
 
   useEffect(() => {
     setIsOpen(AllPopup?.isOpen || false);

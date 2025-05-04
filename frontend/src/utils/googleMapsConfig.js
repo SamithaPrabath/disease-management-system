@@ -5,4 +5,10 @@ export const GOOGLE_MAPS_CONFIG = {
     version: "weekly",
     language: "en",
     region: "US",
-}; 
+};
+
+// Helper function to create the config with API key
+export const getGoogleMapsConfig = (apiKey) => ({
+    ...GOOGLE_MAPS_CONFIG,
+    googleMapsApiKey: apiKey,
+}); 

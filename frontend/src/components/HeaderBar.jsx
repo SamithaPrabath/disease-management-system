@@ -145,7 +145,7 @@ const HeaderBar = ({
                 <button
                   className={`px-6 py-2 rounded-md
               ${
-                singleCase?.assignedMoh == ""
+                singleCase?.assignedMoh == null
                   ? "text-white bg-blue-600 cursor-pointer hover:bg-blue-400"
                   : "text-gray-400 bg-gray-300 cursor-not-allowed"
               }

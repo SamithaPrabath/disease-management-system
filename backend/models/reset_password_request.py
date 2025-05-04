@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from models.user import User
 from utils.db.query_executor import AsyncQueryExecutor
+from utils.email_service import EmailService
 
 @dataclass
 class ResetPasswordRequest:
@@ -313,3 +314,49 @@ class ResetPasswordRequest:
                 reset_requests.append(reset_request)
                 
         return reset_requests 
+
+    @staticmethod
+    async def approve_request(request_id):
+        """
+        Approve a password reset request
+        """
+        try:
+            # Get the reset request
+            reset_request = await ResetPasswordRequest.get_by_id(request_id)
+            if not reset_request:
+                return {
+                    "status": "error",
+                    "message": "Reset request not found"
+                }
+            
+            user = await User.get_user_by_username(reset_request.username)
+            if not user:
+                return {
+                    "status": "error",
+                    "message": "User not found"
+                }
+            
+            user.update_password(reset_request.username, reset_request.username)
+            
+            # Update the request to approved
+            query_executor1 = AsyncQueryExecutor()
+            updated_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            query = """
+                UPDATE reset_password_request 
+                SET is_approved = 1, updated_date = %s
+                WHERE id = %s
+            """
+            await query_executor1.execute(query, (updated_date, request_id))
+
+            EmailService.send_email(user.email, "Password Reset Request Approved", "Your password reset request has been approved. Your password: " + reset_request.username + " to login to the system.")
+            
+            return {
+                "status": "success",
+                "message": "Request approved successfully"
+            }
+                
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"Error approving request: {str(e)}"
+            }

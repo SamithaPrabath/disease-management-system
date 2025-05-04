@@ -16,4 +16,7 @@ reset_password_bp.route('/complete', methods=['POST'])(ResetPasswordController.c
 reset_password_bp.route('/all', methods=['GET'])(ResetPasswordController.get_all_reset_requests)
 
 # Route to get a password reset request by ID
-reset_password_bp.route('/<request_id>', methods=['GET'])(ResetPasswordController.get_reset_request) 
+reset_password_bp.route('/<request_id>', methods=['GET'])(ResetPasswordController.get_reset_request)
+
+# Route to approve a password reset request
+reset_password_bp.route('/approve/<request_id>', methods=['PUT'])(ResetPasswordController.approve_reset_request)

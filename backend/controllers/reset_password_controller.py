@@ -157,4 +157,21 @@ class ResetPasswordController(BaseController):
             return ResetPasswordController.success_response(formatted_requests)
             
         except Exception as e:
-            return ResetPasswordController.error_response(str(e), 500) 
+            return ResetPasswordController.error_response(str(e), 500)
+
+    @staticmethod
+    def approve_reset_request(request_id):
+        """
+        Approve a password reset request
+        """
+        try:
+            result = asyncio.run(ResetPasswordRequest.approve_request(request_id))
+            if result.get('status') == 'error':
+                return ResetPasswordController.error_response(result.get('message'), 203)
+                
+            return ResetPasswordController.success_response({
+                'message': result.get('message')
+            })
+        except Exception as e:
+            return ResetPasswordController.error_response(str(e), 500)
+        

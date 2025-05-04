@@ -158,7 +158,7 @@ const SingleCaseView = ({
                 {singleCase?.mohAssignedDate}
               </h2>
             </div>
-            {singleCase?.assignedMoh == "" ? (
+            {singleCase?.assignedMoh == null ? (
               <button
                 className={` text-white px-4 py-2 rounded text-base
               ${
@@ -203,7 +203,7 @@ const SingleCaseView = ({
                 {singleCase?.phiAssignedDate}
               </h2>
             </div>
-            {singleCase?.assignedPhi == "" ? (
+            {singleCase?.assignedPhi == null ? (
               <button
                 className={` text-white px-4 py-2 rounded text-base
               ${

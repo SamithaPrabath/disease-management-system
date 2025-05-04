@@ -15,6 +15,7 @@ import {
   useJsApiLoader,
   StandaloneSearchBox,
 } from "@react-google-maps/api";
+import { getGoogleMapsConfig } from "../../utils/googleMapsConfig";
 
 // Map container style
 const containerStyle = {
@@ -23,15 +24,8 @@ const containerStyle = {
 };
 
 const NewCase = ({ AllLogins, closeAddNewCase }) => {
-  // Define libraries array outside component to maintain reference
-  const libraries = ["places", "maps"];
-
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries,
-    id: "google-map-script",
-  });
+  const { isLoaded } = useJsApiLoader(getGoogleMapsConfig(GOOGLE_MAPS_API_KEY));
 
   const [messageApi, contextHolder] = message.useMessage();
   const [diseasesList, setDiseasesList] = useState([]);

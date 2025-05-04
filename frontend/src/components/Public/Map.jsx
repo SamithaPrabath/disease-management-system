@@ -3,6 +3,7 @@ import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import "../../App.css"
 import { getAllMarkers } from "../../api/mapApi";
 import { message } from "antd";
+import { getGoogleMapsConfig } from "../../utils/googleMapsConfig";
 
 // Map container style
 const containerStyle = {
@@ -22,10 +23,7 @@ const Map = () => {
 
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   // Load the Google Maps API
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  });
+  const { isLoaded } = useJsApiLoader(getGoogleMapsConfig(GOOGLE_MAPS_API_KEY));
 
   useEffect(() => {
     const fetchData = async () => {

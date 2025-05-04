@@ -96,12 +96,12 @@ export const approvePasswordResetRequest = async (requestId) => {
       if (response.status === 200) {
         return { 
           status: 200, 
-          message: response.data.message || "Password reset request approved successfully"
+          message: "Password reset request approved successfully"
         };
       } else {
         return { 
           status: response.status, 
-          message: response.data.message || "Failed to approve password reset request"
+          message: "Failed to approve password reset request"
         };
       }
     }
