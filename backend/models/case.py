@@ -34,10 +34,10 @@ class Case:
     remarks: str = None
     natureOfConfirmation: str = None
     labResult: str = None
-    markAsReceived: str = "false"
+    markAsReceived: str = 0
     phiAssignedDate: str = None
     assignedPhi: str = None
-    sendReport: str = "false"
+    sendReport: str = 0
     assignedMoh: str = None
     mohAssignedDate: str = None
     reportId: str = None
@@ -300,10 +300,10 @@ class Case:
         return [await Case.get_case_by_id(result[0]) for result in results] if results else []
 
     @staticmethod
-    async def update_mark_as_received(case_id: int, mark_as_received: str):
+    async def update_mark_as_received(case_id: int):
         query_executor = AsyncQueryExecutor()
-        query = "UPDATE cases SET markAsReceived = %s WHERE id = %s"
-        await query_executor.execute(query, (mark_as_received, case_id))
+        query = "UPDATE cases SET markAsReceived = 1 WHERE id = %s"
+        await query_executor.execute(query, (case_id))
         return {"message": "Case markAsReceived updated successfully", "status": "success"}
 
     @staticmethod

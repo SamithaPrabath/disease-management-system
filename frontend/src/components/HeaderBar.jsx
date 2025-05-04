@@ -284,8 +284,8 @@ const HeaderBar = ({
                     : "text-gray-400 bg-gray-300 cursor-not-allowed"
                 }
                 `}
-                onClick={() => handleMarkAsReceived(singleCase?.caseId)}
-                disabled={singleCase?.markAsReceived == true ? true : false}
+                onClick={() => handleMarkAsReceived(singleCase?.id)}
+                disabled={singleCase?.markAsReceived}
               >
                 Mark as Received
               </button>

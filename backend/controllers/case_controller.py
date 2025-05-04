@@ -115,12 +115,8 @@ class CaseController(BaseController):
     def update_mark_as_received(case_id):
         try:
             data = request.get_json()
-            mark_as_received = data.get('markAsReceived')
-            
-            if mark_as_received is None:
-                return CaseController.error_response("markAsReceived field is required", 400)
-                
-            result = asyncio.run(Case.update_mark_as_received(case_id, mark_as_received))
+              
+            result = asyncio.run(Case.update_mark_as_received(case_id))
             return CaseController.success_response(result)
         except Exception as e:
             return CaseController.error_response(str(e), 500)
