@@ -106,8 +106,11 @@ class EventController(BaseController):
             image = request.files.get('image')
             
             if image:
-                image_url = asyncio.run(upload_file(image))
-                data['image'] = image_url
+                if image.filename:
+                    image_url = asyncio.run(upload_file(image))
+                    data['image'] = image_url
+                else:
+                    data['image'] = None
 
             result = asyncio.run(Event.update_event(id, data))
             return EventController.success_response(
