@@ -139,7 +139,7 @@ const SingleCaseView = ({
             <div className="w-full flex flex-row items-center justify-between">
               <h1 className="text-base text-[#080809]">Ward</h1>
               <h2 className="text-base font-medium text-[#080809]">
-                {singleCase?.dateOfAdmission}
+                {singleCase?.notifiedDate}
               </h2>
             </div>
             <div>

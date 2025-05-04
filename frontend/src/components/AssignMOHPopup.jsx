@@ -83,11 +83,20 @@ const AssignPopup = ({
     if (isOpen) fetchData();
   }, [isOpen, Assignmohpopup?.[0]]);
 
+  const formatDateForInput = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const formik = useFormik({
     initialValues: {
       caseId: ViewsSingleCase?.[1] || Assignmohpopup?.[1] || "", // Ensure fallback if undefined
       assignedMoh: "",
-      mohAssignedDate: new Date().toISOString().split("T")[0], // Today's date
+      mohAssignedDate: formatDateForInput(new Date()), // Today's date
     },
     enableReinitialize: true, // Updates initialValues if ViewsSingleCase changes
     validationSchema: assignMOHSchema,

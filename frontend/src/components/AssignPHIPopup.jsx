@@ -80,11 +80,21 @@ const AssignPopup = ({
     if (isOpen) fetchData();
   }, [isOpen, Assignphipopup?.[0]]);
 
+  // Format date to YYYY-MM-DD for input fields
+  const formatDateForInput = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const formik = useFormik({
     initialValues: {
       caseId: ViewsSingleCase?.[1] || Assignphipopup?.[1] || "",
       assignedPhi: "",
-      phiAssignedDate: new Date().toISOString().split("T")[0],
+      phiAssignedDate: formatDateForInput(new Date()),
     },
     validationSchema: assignPHISchema,
     onSubmit: async (values, { resetForm }) => {
