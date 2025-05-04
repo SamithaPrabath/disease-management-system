@@ -19,9 +19,7 @@ const containerStyle = {
 // Validation Schema
 const UnassignSchema = Yup.object().shape({
   assignedStatus: Yup.string().required("Please select an option"),
-  remarks: Yup.string()
-    .required("Remarks are required")
-    .min(20, "Remarks must be at least 20 characters"),
+  remarks: Yup.string().required("Remarks are required")
 });
 
 const UnAssignCasePopup = ({
@@ -146,7 +144,7 @@ const UnAssignCasePopup = ({
 
                     <div className="mt-4">
                       <h2 className="text-[20px] font-medium text-gray-800 mb-2">
-                        Remarks
+                        Remarks <span className="text-red-500">*</span>
                       </h2>
                       <Field
                         as="textarea"

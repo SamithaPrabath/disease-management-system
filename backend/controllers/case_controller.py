@@ -145,10 +145,12 @@ class CaseController(BaseController):
         try:
             data = request.get_json()
             assigned_phi = data.get('assignedPhi')
-            phi_assigned_date = datetime.now().strftime('%Y-%m-%d')
+            phi_assigned_date = data.get('phiAssignedDate')
 
             if not assigned_phi:
                 assigned_phi = None
+            if not phi_assigned_date:
+                phi_assigned_date = None
             
             result = asyncio.run(Case.update_assigned_phi(case_id, assigned_phi, phi_assigned_date))
             return CaseController.success_response(result)
