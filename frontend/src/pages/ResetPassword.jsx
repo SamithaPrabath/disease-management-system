@@ -167,7 +167,7 @@ const ResetPassword = (props) => {
             
             {/* Consent Section */}
             <div className="w-[414px] mt-4 mb-2">
-              <div className="p-4 bg-gray-100 rounded-md text-[14px] text-gray-700 leading-relaxed">
+              <div className="p-4 bg-gray-100 rounded-md text-[14px] text-gray-700 leading-relaxed h-[150px] overflow-y-auto">
                 <p className="font-semibold mb-2">Welcome to Health Sentinel.</p>
                 <p className="mb-2">By proceeding, you acknowledge and agree to the following:</p>
                 <ul className="list-disc pl-6 space-y-2">

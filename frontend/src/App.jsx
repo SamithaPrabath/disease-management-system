@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Home from "./pages/PublicPage";
 import Login from "./pages/LoginPage";
 import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 import DashboardEpi from "./pages/epidemiology/Dashboard";
 import DashboardPhi from "./pages/phi/Dashboard";
@@ -45,6 +46,7 @@ const App = (props) => {
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<Home />} />
         <Route
           path="/dashboard"
