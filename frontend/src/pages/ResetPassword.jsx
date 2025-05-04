@@ -20,6 +20,7 @@ const ResetPassword = (props) => {
         isInitial: 0,
         newPassword: "",
         confirmPassword: "",
+        consentAgreed: false,
       },
       validationSchema: resetPasswordSchema,
       onSubmit: async (values) => {
@@ -70,8 +71,8 @@ const ResetPassword = (props) => {
         </div>
 
         <div
-          className="w-[510px] h-[444px] bg-white rounded-br-[25px] rounded-bl-[25px] lg:rounded-tr-[25px] lg:rounded-bl-[0] flex flex-col 
-          items-center justify-center gap-[24px]"
+          className="w-[510px] min-h-[444px] bg-white rounded-br-[25px] rounded-bl-[25px] lg:rounded-tr-[25px] lg:rounded-bl-[0] flex flex-col 
+          items-center justify-center gap-[24px] p-[20px]"
         >
           <h1 className="h-[48px] text-[32px] text-black font-medium text-center">
             Reset Password
@@ -163,10 +164,51 @@ const ResetPassword = (props) => {
                 </p>
               )}
             </div>
+            
+            {/* Consent Section */}
+            <div className="w-[414px] mt-4 mb-2">
+              <div className="p-4 bg-gray-100 rounded-md text-[14px] text-gray-700 leading-relaxed">
+                <p className="font-semibold mb-2">Welcome to Health Sentinel.</p>
+                <p className="mb-2">By proceeding, you acknowledge and agree to the following:</p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>You understand that all data accessed and entered within this system is to be used solely for the purposes of notifiable disease reporting and public health surveillance as authorized by the Ministry of Health, Sri Lanka.</li>
+                  <li>You agree not to use, disclose, or share any patient-related data accessed through this system for any purpose other than those directly related to your official duties in notifiable disease monitoring and response.</li>
+                  <li>Unauthorized use, disclosure, or manipulation of health data may result in disciplinary and/or legal action in accordance with applicable data protection and public health laws.</li>
+                </ul>
+                <p className="mt-2">Please confirm your understanding and agreement to these terms before proceeding.</p>
+              </div>
+              
+              <div className="mt-3 flex items-start">
+                <input
+                  type="checkbox"
+                  id="consentAgreed"
+                  name="consentAgreed"
+                  checked={formik.values.consentAgreed}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="mt-1 mr-2"
+                />
+                <label htmlFor="consentAgreed" className="text-[14px] text-gray-700">
+                  I have read and agree to the terms and conditions
+                </label>
+              </div>
+              {formik.errors.consentAgreed && formik.touched.consentAgreed && (
+                <p className="text-red-500 text-[12px] mt-1 flex items-center gap-1">
+                  <RiErrorWarningLine className="flex-shrink-0" />
+                  <span>{formik.errors.consentAgreed}</span>
+                </p>
+              )}
+            </div>
+            
             <input
-              className="w-[414px] h-[60px] bg-[#0866FF] rounded-[6px] text-[20px] text-white font-medium px-[32px] py-[16px] mt-[24px] cursor-pointer"
+              className={`w-[414px] h-[60px] ${
+                formik.isValid && formik.dirty && formik.values.consentAgreed
+                  ? "bg-[#0866FF] cursor-pointer"
+                  : "bg-[#0866FF] opacity-80 cursor-not-allowed"
+              } rounded-[6px] text-[20px] text-white font-medium px-[32px] py-[16px] mt-[24px]`}
               type="submit"
               value="Reset Password"
+              disabled={!(formik.isValid && formik.dirty && formik.values.consentAgreed)}
             />
           </form>
         </div>

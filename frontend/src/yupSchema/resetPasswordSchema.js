@@ -12,6 +12,9 @@ const resetPasswordSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
     .required("Confirm password is required"),
+  consentAgreed: Yup.boolean()
+    .oneOf([true], "You must agree to the terms and conditions")
+    .required("You must agree to the terms and conditions"),
 });
 
 export default resetPasswordSchema;
