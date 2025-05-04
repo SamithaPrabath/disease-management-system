@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime
 from utils.db.query_executor import AsyncQueryExecutor
 
 
@@ -60,10 +60,43 @@ class User:
         
         user = await User.get_user_by_username(self.username)
         return user
-
+        
     @staticmethod
-    async def update_password(user_id: int, new_password_hash: str):
-        query_executor = AsyncQueryExecutor()
-        query = "UPDATE users SET password_hash = %s, updated_at = NOW(), is_initial_login = 0 WHERE id = %s"
-        await query_executor.execute(query, (new_password_hash, user_id))
-        return True
+    async def update_password(username, new_password):
+        """
+        Update a user's password by username
+        
+        Args:
+            username (str): The username of the user
+            new_password (str): The new password (will be hashed)
+            
+        Returns:
+            dict: A dictionary with the update status
+        """
+        try:
+            user = await User.get_user_by_username(username)
+            if not user:
+                return {
+                    "status": "error",
+                    "message": "User not found"
+                }
+            
+            # Hash the new password
+            password_hash = generate_password_hash(new_password)
+            updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            # Update the password
+            query_executor = AsyncQueryExecutor()
+            query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 0 WHERE id = %s"
+            await query_executor.execute(query, (password_hash, updated_at, user.id))
+            
+            return {
+                "status": "success",
+                "message": "Password updated successfully"
+            }
+            
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"Error updating password: {str(e)}"
+            }

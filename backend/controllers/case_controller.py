@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import request
 from .base_controller import BaseController
 from models.case import Case
+from models.location import Location
 import asyncio
 import os
 from werkzeug.utils import secure_filename
@@ -183,5 +184,42 @@ class CaseController(BaseController):
             # Add report to case
             result = asyncio.run(Case.add_report(case_id, report_data, file_paths))
             return CaseController.success_response(result)
+        except Exception as e:
+            return CaseController.error_response(str(e), 500)
+
+    @staticmethod
+    def get_locations_for_markers():
+        """
+        Get all location details for displaying on map with markers.
+        
+        Returns:
+            A JSON response with location details including position, label, and case information.
+        """
+        try:
+            user_id = request.args.get('userID')
+            disease_name = request.args.get('diseaseName')
+            status = request.args.get('status')
+            
+            locations = asyncio.run(Case.get_locations_for_map(user_id, disease_name, status))
+            
+            # Format locations for markers
+            markers = []
+            for location in locations:
+                if location.get('latitude') and location.get('longitude'):
+                    markers.append({
+                        'id': location.get('case_id'),
+                        'position': {
+                            'lat': float(location.get('latitude')),
+                            'lng': float(location.get('longitude'))
+                        },
+                        'label': location.get('disease_name') or '',
+                        'patientName': location.get('patient_name'),
+                        'caseStatus': location.get('case_status'),
+                        'address': location.get('address'),
+                        'notifiedDate': location.get('notified_date'),
+                        'confirmedDate': location.get('confirmed_date')
+                    })
+            
+            return CaseController.success_response(markers)
         except Exception as e:
             return CaseController.error_response(str(e), 500)

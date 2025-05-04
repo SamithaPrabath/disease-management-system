@@ -396,6 +396,76 @@ class Case:
             "reportId": saved_report.id
         }
 
+    @staticmethod
+    async def get_locations_for_map(user_id=None, disease_name=None, status=None):
+        """
+        Get location data for map display, with optional filtering by user, disease, and status.
+        
+        Args:
+            user_id (str, optional): Filter cases by user ID.
+            disease_name (str, optional): Filter cases by disease name.
+            status (str, optional): Filter cases by status.
+            
+        Returns:
+            list: A list of dictionaries with location data.
+        """
+        query_executor = AsyncQueryExecutor()
+        
+        # Base query
+        query = """
+            SELECT 
+                c.id as case_id, 
+                c.patientName as patient_name,
+                c.diseaseName as disease_name,
+                c.caseStatus as case_status,
+                c.notifiedDate as notified_date,
+                c.confirmedDate as confirmed_date,
+                l.latitude, 
+                l.longitude, 
+                l.address
+            FROM cases c
+            JOIN locations l ON c.id = l.case_id
+            WHERE 1=1
+        """
+        params = []
+        
+        # Add filters if provided
+        if user_id:
+            # Check user role to determine visibility
+            user = await User.get_user_by_id(user_id)
+            if user and user.role not in ["admin", "epi"]:
+                query += " AND (c.notifier = %s OR c.confirmedBy = %s OR c.instituteId = %s OR c.assignedMoh = %s OR c.assignedPhi = %s)"
+                params.extend([user_id, user_id, user_id, user_id, user_id])
+        
+        if disease_name:
+            query += " AND c.diseaseName = %s"
+            params.append(disease_name)
+            
+        if status:
+            query += " AND c.caseStatus = %s"
+            params.append(status)
+            
+        # Get results
+        results = await query_executor.fetch_all(query, tuple(params) if params else None)
+        
+        # Format results as dictionaries
+        locations = []
+        if results:
+            for result in results:
+                location = {
+                    'case_id': result[0],
+                    'patient_name': result[1],
+                    'disease_name': result[2],
+                    'case_status': result[3],
+                    'notified_date': format_date_with_suffix(result[4]) if result[4] else None,
+                    'confirmed_date': format_date_with_suffix(result[5]) if result[5] else None,
+                    'latitude': result[6],
+                    'longitude': result[7],
+                    'address': result[8]
+                }
+                locations.append(location)
+                
+        return locations
 
 def format_date_with_suffix(date_obj):
     day = date_obj.day

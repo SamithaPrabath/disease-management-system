@@ -78,7 +78,7 @@ export const getAllMarkers = async () => {
         data: markers 
       };
     } else {
-      const response = await axios.get(`${BASE_URL}/api/markers/getAll`);
+      const response = await axios.get(`${BASE_URL}/api/cases/locations/markers`);
       if (response.status === 200) {
         return { 
           status: 200, 

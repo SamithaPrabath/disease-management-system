@@ -12,3 +12,4 @@ case_bp.route('/<case_id>/mark-received', methods=['PUT'])(CaseController.update
 case_bp.route('/<case_id>/assign-moh', methods=['PUT'])(CaseController.update_assigned_moh)
 case_bp.route('/<case_id>/assign-phi', methods=['PUT'])(CaseController.update_assigned_phi)
 case_bp.route('/add-report/<case_id>', methods=['PUT'])(CaseController.add_report)
+case_bp.route('/locations/markers', methods=['GET'])(CaseController.get_locations_for_markers)

@@ -2,88 +2,67 @@ import React, { useState, useEffect } from 'react';
 import { message } from 'antd';
 import { connect } from 'react-redux';
 import { CiSearch } from "react-icons/ci";
+import { 
+  fetchPasswordResetRequests, 
+  approvePasswordResetRequestAction, 
+  rejectPasswordResetRequestAction 
+} from '../../redux/actions/passwordResetRequestsAction';
 
 const ResetPasswordRequests = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [messageApi, contextHolder] = message.useMessage();
-  const [passwordRequests, setPasswordRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    fetchPasswordResetRequests, 
+    approvePasswordResetRequestAction, 
+    rejectPasswordResetRequestAction, 
+    passwordResetRequests 
+  } = props;
 
-  // Mock data for demonstration
-  // In a real implementation, you would fetch this from your API
+  // Fetch password reset requests on component mount
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setPasswordRequests([
-        { 
-          id: 1, 
-          userId: "USR001", 
-          username: "john.doe", 
-          requestDate: "2023-05-15T08:30:00", 
-          status: "Pending", 
-          userType: "Doctor"
-        },
-        { 
-          id: 2, 
-          userId: "USR015", 
-          username: "sarah.smith", 
-          requestDate: "2023-05-14T14:45:00", 
-          status: "Approved", 
-          userType: "PHI"
-        },
-        { 
-          id: 3, 
-          userId: "USR022", 
-          username: "robert.johnson", 
-          requestDate: "2023-05-14T09:15:00", 
-          status: "Rejected", 
-          userType: "MOH"
-        },
-        { 
-          id: 4, 
-          userId: "USR045", 
-          username: "emily.brown", 
-          requestDate: "2023-05-13T16:20:00", 
-          status: "Pending", 
-          userType: "Epidemiologist"
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    fetchPasswordResetRequests();
+  }, [fetchPasswordResetRequests]);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value.toLowerCase());
   };
 
-  const filteredRequests = passwordRequests.filter((request) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      query === "" ||
-      request.username.toLowerCase().includes(query) ||
-      request.userId.toLowerCase().includes(query) ||
-      request.userType.toLowerCase().includes(query)
-    );
-  });
+  const filteredRequests = passwordResetRequests && passwordResetRequests.data
+    ? passwordResetRequests.data.filter((request) => {
+        const query = searchQuery.toLowerCase();
+        return (
+          query === "" ||
+          request.username.toLowerCase().includes(query) ||
+          request.userId.toLowerCase().includes(query) ||
+          request.userType.toLowerCase().includes(query)
+        );
+      })
+    : [];
 
-  const handleApprove = (requestId) => {
-    // In a real implementation, you would call your API to approve the request
-    setPasswordRequests(prevRequests => 
-      prevRequests.map(request => 
-        request.id === requestId ? { ...request, status: 'Approved' } : request
-      )
-    );
-    messageApi.success('Password reset request approved');
+  const handleApprove = async (requestId) => {
+    try {
+      const response = await approvePasswordResetRequestAction(requestId);
+      if (response.status === 200) {
+        messageApi.success('Password reset request approved');
+      } else {
+        messageApi.error(response.message || 'Failed to approve request');
+      }
+    } catch (error) {
+      messageApi.error('Failed to approve request: ' + (error.message || 'Unknown error'));
+    }
   };
 
-  const handleReject = (requestId) => {
-    // In a real implementation, you would call your API to reject the request
-    setPasswordRequests(prevRequests => 
-      prevRequests.map(request => 
-        request.id === requestId ? { ...request, status: 'Rejected' } : request
-      )
-    );
-    messageApi.error('Password reset request rejected');
+  const handleReject = async (requestId) => {
+    try {
+      const response = await rejectPasswordResetRequestAction(requestId);
+      if (response.status === 200) {
+        messageApi.error('Password reset request rejected');
+      } else {
+        messageApi.error(response.message || 'Failed to reject request');
+      }
+    } catch (error) {
+      messageApi.error('Failed to reject request: ' + (error.message || 'Unknown error'));
+    }
   };
 
   const formatDate = (dateString) => {
@@ -109,7 +88,7 @@ const ResetPasswordRequests = (props) => {
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        {loading ? (
+        {passwordResetRequests && passwordResetRequests.loading ? (
           <div className="p-6 text-center">Loading password reset requests...</div>
         ) : filteredRequests.length === 0 ? (
           <div className="p-6 text-center">No password reset requests found</div>
@@ -148,21 +127,23 @@ const ResetPasswordRequests = (props) => {
                       <div className="text-sm text-gray-900">{request.username}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{request.userType}</div>
+                      <div className="text-sm text-gray-900">{request.userRole}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{formatDate(request.requestDate)}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${request.status === 'Approved' ? 'bg-green-100 text-green-800' : 
-                          request.status === 'Rejected' ? 'bg-red-100 text-red-800' : 
+                        ${request.isReset == 1 ? 'bg-green-100 text-green-800' : 
+                          request.isReset == -1 ? 'bg-red-100 text-red-800' : 
                           'bg-yellow-100 text-yellow-800'}`}>
-                        {request.status}
+                        {request.isReset == 1 ? 'Approved' : 
+                          request.isReset == -1 ? 'Rejected' : 
+                          'Pending'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {request.status === 'Pending' && (
+                      {request.isReset == 0 && (
                         <div className="flex space-x-2">
                           <button
                             onClick={() => handleApprove(request.id)}
@@ -178,7 +159,7 @@ const ResetPasswordRequests = (props) => {
                           </button>
                         </div>
                       )}
-                      {request.status !== 'Pending' && (
+                      {request.isReset != 0 && (
                         <span className="text-gray-500">Processed</span>
                       )}
                     </td>
@@ -195,8 +176,15 @@ const ResetPasswordRequests = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    // Add relevant state from your Redux store
+    passwordResetRequests: state.passwordResetRequests,
+    allLogins: state.allLogins
   };
 };
 
-export default connect(mapStateToProps)(ResetPasswordRequests); 
+const mapDispatchToProps = {
+  fetchPasswordResetRequests,
+  approvePasswordResetRequestAction,
+  rejectPasswordResetRequestAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ResetPasswordRequests); 

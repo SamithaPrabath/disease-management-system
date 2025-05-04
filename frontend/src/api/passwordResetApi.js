@@ -83,16 +83,16 @@ export const handleForgotPassword = async (name, username, email) => {
         };
       }
     } else {
-      const response = await axios.post(`${BASE_URL}/api/users/forgot-password`, {
+      const response = await axios.post(`${BASE_URL}/api/reset-password/initiate`, {
         name,
         username,
         email,
       });
       
-      if (response.status === 200) {
+      if (response.status == 200) {
         return {
           status: 200,
-          message: response.data.message || "Password reset instructions sent to your email",
+          message: "Will send password reset instructions to your email",
         };
       } else {
         return {

@@ -80,3 +80,16 @@ ADD CONSTRAINT `fk_other_contacts_report`
 ALTER TABLE `health_sentinel_db`.`house_hold_contacts` 
 ADD COLUMN `date` DATETIME NULL AFTER `disposition`;
 
+
+CREATE TABLE `health_sentinel_db`.`reset_password_request` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NULL,
+  `email` VARCHAR(45) NULL,
+  `name` VARCHAR(45) NULL,
+  `is_reset` TINYINT NULL DEFAULT 0,
+  `request_date` VARCHAR(45) NULL,
+  `updated_date` VARCHAR(45) NULL,
+  `is_user_details_correct` TINYINT NULL DEFAULT 0,
+  PRIMARY KEY (`id`));
+
+

@@ -14,6 +14,7 @@ import ViewAddNewCaseReducer from './viewAddNewCaseReducer';
 import ReportSendReducer from './reportSendReducer';
 import MarkAsReceivedReducer from './markAsRecived-reducer';
 import ReportFilesPopup from './reportfilespopup-reducer';
+import PasswordResetRequestsReducer from './passwordResetRequests-reducer';
 
 const rootReducer = combineReducers(
     {
@@ -32,6 +33,7 @@ const rootReducer = combineReducers(
         reportSend: ReportSendReducer,
         markAsReceived: MarkAsReceivedReducer,
         reportFilesPopup: ReportFilesPopup,
+        passwordResetRequests: PasswordResetRequestsReducer,
     }
 )
 
