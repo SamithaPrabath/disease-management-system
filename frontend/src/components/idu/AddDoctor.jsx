@@ -84,7 +84,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
           </div>
           {/* MOH */}
           <div>
-            <label className="block text-gray-700">MOH</label>
+            <label className="block text-gray-700">MOH <span className="text-red-500">*</span></label>
             <select
               name="moh"
               className="w-full px-4 py-2 h-[40px] bg-gray-200 rounded-md focus:outline-none"
@@ -106,7 +106,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
 
           {/* Area */}
           <div>
-            <label className="block text-gray-700">Area</label>
+            <label className="block text-gray-700">Area <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="area"
@@ -123,7 +123,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
           {/* Email & Phone Number - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Email Address</label>
+              <label className="block text-gray-700">Email Address <span className="text-red-500">*</span></label>
               <input
                 type="email"
                 name="email"
@@ -138,7 +138,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
             </div>
 
             <div>
-              <label className="block text-gray-700">Phone Number</label>
+              <label className="block text-gray-700">Phone Number <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="phoneNumber"
@@ -156,7 +156,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
           {/* Username & Password - Two-column layout */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Username</label>
+              <label className="block text-gray-700">Username <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="username"
@@ -171,7 +171,7 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
             </div>
 
             <div className="relative">
-              <label className="block text-gray-700">Password</label>
+              <label className="block text-gray-700">Password <span className="text-red-500">*</span></label>
               <input
                 type={showPassword ? "text" : "password"} // Toggle between text/password
                 name="password"
