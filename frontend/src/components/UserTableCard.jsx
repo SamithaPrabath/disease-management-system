@@ -136,9 +136,9 @@ const UserTableCard = ({ tableData, closeViewEdit }) => {
                         </td>
                       ) : null}
 
-                      {user.phoneNumber ? (
+                      {user.phone ? (
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-[#080809]">
-                          {user.phoneNumber}
+                          {user.phone}
                         </td>
                       ) : null}
 
