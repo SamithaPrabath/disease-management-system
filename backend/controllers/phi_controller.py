@@ -3,6 +3,7 @@ from flask import request
 from flask_jwt_extended import jwt_required
 from .base_controller import BaseController
 from models.phi import PHI
+from utils.email_service import EmailService
 
 
 class PHIController(BaseController):
@@ -11,8 +12,21 @@ class PHIController(BaseController):
         try:
             data = request.get_json()
             phi_user = PHI(**data)
-            phi_user = asyncio.run(PHI.add_phi_user(phi_user))
-            return PHIController.success_response(phi_user)
+            result = asyncio.run(PHI.add_phi_user(phi_user))
+            
+            # Send welcome email if the PHI was added successfully
+            if result.get("status") == 200:
+                email_result = EmailService.send_welcome_email(
+                    recipient_email=phi_user.email,
+                    name=phi_user.name,
+                    username=phi_user.username,
+                    role=phi_user.role,
+                    password=data.get("password")
+                )
+                # Add email sending result to the response
+                result['email_status'] = email_result
+                
+            return PHIController.success_response(result)
         except Exception as e:
             return PHIController.error_response(str(e))
         

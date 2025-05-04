@@ -2,6 +2,7 @@ from flask import request, jsonify
 from models.doctor import Doctor
 from controllers.base_controller import BaseController
 import asyncio
+from utils.email_service import EmailService
 
 class DoctorController(BaseController):
     
@@ -19,6 +20,19 @@ class DoctorController(BaseController):
             institute_id=data['instituteId']
         )
         result = asyncio.run(Doctor.add_doctor_user(doctor))
+        
+        # Send welcome email if the doctor was added successfully
+        if result.get('status') == 200:
+            email_result = EmailService.send_welcome_email(
+                recipient_email=doctor.email,
+                name=doctor.name,
+                username=doctor.username,
+                role=doctor.role,
+                password=data['password']
+            )
+            # Add email sending result to the response
+            result['email_status'] = email_result
+            
         return jsonify(result), result.get('status', 200)
 
     def get_all_doctors(self):

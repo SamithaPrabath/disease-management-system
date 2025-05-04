@@ -13,6 +13,7 @@ import ViewEditEvent from './viewEditEvent-reducer';
 import ViewAddNewCaseReducer from './viewAddNewCaseReducer';
 import ReportSendReducer from './reportSendReducer';
 import MarkAsReceivedReducer from './markAsRecived-reducer';
+import ReportFilesPopup from './reportfilespopup-reducer';
 
 const rootReducer = combineReducers(
     {
@@ -30,6 +31,7 @@ const rootReducer = combineReducers(
         viewAddNewCase: ViewAddNewCaseReducer,
         reportSend: ReportSendReducer,
         markAsReceived: MarkAsReceivedReducer,
+        reportFilesPopup: ReportFilesPopup,
     }
 )
 

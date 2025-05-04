@@ -3,8 +3,12 @@ from models.moh import MOH
 from models.phi import PHI
 from models.user import User
 from models.report import Report
+from models.location import Location
+from models.lab_report import LabReport
+from models.notification import Notification
 from utils.db.query_executor import AsyncQueryExecutor
-
+from datetime import datetime
+import json
 
 @dataclass
 class Case:
@@ -37,23 +41,98 @@ class Case:
     assignedMoh: str = None
     mohAssignedDate: str = None
     reportId: str = None
+    longitude: float = None
+    latitude: float = None
+    location_address: str = None
+    lab_files: list = None
     notifierDetails: dict = None # name, role
     assignedMohDetails: dict = None # name, area, registrationNumber
     assignedPhiDetails: dict = None # name, area, registrationNumber
     confirmedByDetails: dict = None # name, role
     instituteName: str = None
     report: dict = None # reportCreatedDate, ethnicGroup, dischargeDate, isolationStatus, isolationDateFrom, isolationDateTo, outcome, movementHistory, labResults, phiRemarks, householdContacts {name, age, description, date, age, disposition}, otherContacts {name, age, description, date, age, disposition} 
+    location_details: dict = None # id, case_id, longitude, latitude, address
+    lab_reports: list = None # list of lab report dictionaries
 
     async def save(self):
         query_executor = AsyncQueryExecutor()
         query = "INSERT INTO cases (patientName, guardian, age, sex, diseaseName, caseStatus, nicNo, phoneNumber, instituteId, dateOfOnset, dateOfAdmission, ward, bhtNumber, address, notifiedDate, confirmedBy, notifier, confirmedDate, remarks, natureOfConfirmation, labResult, markAsReceived) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         await query_executor.execute(query, (self.patientName, self.guardian, self.age, self.sex, self.diseaseName, self.caseStatus, self.nicNo, self.phoneNumber, self.instituteId, self.dateOfOnset, self.dateOfAdmission, self.ward, self.bhtNumber, self.address, self.notifiedDate, self.confirmedBy, self.notifier, self.confirmedDate, self.remarks, self.natureOfConfirmation, self.labResult, self.markAsReceived))
+        
+        # Get the last inserted case ID
+        query_executor1 = AsyncQueryExecutor()
+        result = await query_executor1.fetch_one("SELECT id FROM cases ORDER BY id DESC LIMIT 1")
+        self.id = result[0]
+        
+        # Save location data if available
+        if self.longitude is not None and self.latitude is not None:
+            location = Location(
+                case_id=self.id,
+                longitude=self.longitude,
+                latitude=self.latitude,
+                address=self.location_address
+            )
+            await location.save()
+        
+        # Save lab report files if available
+        if self.lab_files and len(self.lab_files) > 0:
+            await LabReport.add_lab_reports_for_case(self.id, self.lab_files)
+        
+        # Send notification to the institute
+        if self.instituteId:
+            notification_message = f"A new case for {self.patientName} with disease {self.diseaseName} has been added."
+            notification_title = f"New Case: {self.diseaseName}"
+            
+            # Use system user (1) as sender, or the notifier if available
+            sender_id = self.notifier if self.notifier else 1
+            
+            # Create notification
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=self.instituteId,
+                title=notification_title
+            )
+            
         return self
     
     async def update_conformation_details(self):
         query_executor = AsyncQueryExecutor()
         query = "UPDATE cases SET confirmedBy = %s, confirmedDate = %s, caseStatus = %s, remarks = %s, natureOfConfirmation = %s WHERE id = %s"
         await query_executor.execute(query, (self.confirmedBy, self.confirmedDate, self.caseStatus, self.remarks, self.natureOfConfirmation, self.id))
+        
+        # Send notification to the institute that created the case (notifier)
+        if self.notifier:
+            notification_message = f"Case #{self.id} for patient {self.patientName} has been confirmed."
+            notification_title = f"Case Confirmed: #{self.id}"
+            
+            # Use the confirming user as sender
+            sender_id = self.confirmedBy if self.confirmedBy else 1
+            
+            # Create notification for notifier
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=self.notifier,
+                title=notification_title
+            )
+            
+        # If institute ID is different from notifier, notify them too
+        if self.instituteId and self.instituteId != self.notifier:
+            notification_message = f"Case #{self.id} for patient {self.patientName} has been confirmed."
+            notification_title = f"Case Confirmed: #{self.id}"
+            
+            # Use the confirming user as sender
+            sender_id = self.confirmedBy if self.confirmedBy else 1
+            
+            # Create notification for institute
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=self.instituteId,
+                title=notification_title
+            )
+            
         return self
 
     @staticmethod
@@ -159,11 +238,43 @@ class Case:
                     "outcome": report.outcome,
                     "movementHistory": report.movementHistory,
                     "labResults": report.labResults,
-                    "phiRemarks": report.phiRemarks
+                    "phiRemarks": report.phiRemarks,
+                    "householdContacts": report.householdContacts,
+                    "otherContacts": report.otherContacts
                 }
             else:
                 case.report = {}
-                
+            
+            # Get location details
+            location = await Location.get_location_by_case_id(case.id)
+            if location:
+                case.longitude = location.longitude
+                case.latitude = location.latitude
+                case.location_address = location.address
+                case.location_details = {
+                    "id": location.id,
+                    "case_id": location.case_id,
+                    "longitude": location.longitude,
+                    "latitude": location.latitude,
+                    "address": location.address
+                }
+            else:
+                case.location_details = None
+            
+            # Get lab report files
+            lab_reports = await LabReport.get_lab_reports_by_case_id(case.id)
+            case.lab_files = [lab_report.file for lab_report in lab_reports] if lab_reports else []
+            case.lab_reports = [
+                {
+                    "id": lab_report.id,
+                    "case_id": lab_report.case_id,
+                    "file": {
+                        "fileName": lab_report.file,
+                        "fileUrl": f"http://localhost:5000/api/uploads/{lab_report.file}"
+                    }
+                } for lab_report in lab_reports
+            ] if lab_reports else []
+            
             return case
         return {}
     @staticmethod
@@ -200,6 +311,26 @@ class Case:
         query_executor = AsyncQueryExecutor()
         query = "UPDATE cases SET assignedMoh = %s, mohAssignedDate = %s WHERE id = %s"
         await query_executor.execute(query, (assigned_moh, moh_assigned_date, case_id))
+        
+        # Send notification to the assigned MOH
+        if assigned_moh:
+            # Get case details
+            case = await Case.get_case_by_id(case_id)
+            
+            notification_message = f"You have been assigned to case #{case_id} - Patient: {case.patientName}, Disease: {case.diseaseName}"
+            notification_title = f"Case Assignment: #{case_id}"
+            
+            # Use admin (1) as sender
+            sender_id = 1
+            
+            # Create notification
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=assigned_moh,
+                title=notification_title
+            )
+        
         return {"message": "Case assignedMoh and mohAssignedDate updated successfully", "status": "success"}
 
     @staticmethod
@@ -207,10 +338,30 @@ class Case:
         query_executor = AsyncQueryExecutor()
         query = "UPDATE cases SET assignedPhi = %s, phiAssignedDate = %s WHERE id = %s"
         await query_executor.execute(query, (assigned_phi, phi_assigned_date, case_id))
+        
+        # Send notification to the assigned PHI
+        if assigned_phi:
+            # Get case details
+            case = await Case.get_case_by_id(case_id)
+            
+            notification_message = f"You have been assigned to case #{case_id} - Patient: {case.patientName}, Disease: {case.diseaseName}"
+            notification_title = f"Case Assignment: #{case_id}"
+            
+            # Use admin (1) as sender or the MOH who assigned if available
+            sender_id = case.assignedMoh if case.assignedMoh else 1
+            
+            # Create notification
+            await Notification.create_notification(
+                message=notification_message,
+                sender=sender_id,
+                receiver=assigned_phi,
+                title=notification_title
+            )
+        
         return {"message": "Case assignedPhi and phiAssignedDate updated successfully", "status": "success"}
 
     @staticmethod
-    async def add_report(case_id: int, report_data: dict):
+    async def add_report(case_id: int, report_data: dict, file_paths: list):
         # Create new report
         report = Report(
             ethnicGroup=report_data.get('ethnicGroup'),
@@ -224,7 +375,6 @@ class Case:
             householdContacts=report_data.get('householdContacts'),
             otherContacts=report_data.get('otherContacts'),
             phiRemarks=report_data.get('phiRemarks'),
-            file=report_data.get('file'),
             reportCreatedDate=report_data.get('reportCreatedDate')
         )
         
@@ -235,6 +385,10 @@ class Case:
         query_executor1 = AsyncQueryExecutor()
         query = "UPDATE cases SET report_id = %s WHERE id = %s"
         await query_executor1.execute(query, (saved_report.id, case_id))
+
+        # Save lab report files if available
+        if file_paths and len(file_paths) > 0:
+            await LabReport.add_lab_reports_for_case(case_id, file_paths)
         
         return {
             "message": "Report added and case updated successfully",

@@ -10,7 +10,7 @@ import { addReport } from "../../api/reportApi";
 const Report = ({ viewReport, closeViewReport }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [file, setFile] = useState(null); // State to store the uploaded file
+  const [files, setFiles] = useState([]); // State to store multiple uploaded files
 
   const formik = useFormik({
     initialValues: {
@@ -39,41 +39,73 @@ const Report = ({ viewReport, closeViewReport }) => {
     onSubmit: async (values) => {
       try {
         const formData = new FormData();
-
-        // Handle regular fields
-        const regularFields = [
-          "caseId",
-          "ethnicGroup",
-          "dischargeDate",
-          "isolationStatus",
-          "isolationDateFrom",
-          "isolationDateTo",
-          "outcome",
-          "movementHistory",
-          "labResults",
-          "phiRemarks",
-        ];
-
-        regularFields.forEach((field) => {
-          formData.append(field, values[field] || "");
+        
+        // Add the case ID
+        formData.append("caseId", values.caseId);
+        
+        // Add other form fields
+        formData.append("ethnicGroup", values.ethnicGroup);
+        formData.append("dischargeDate", values.dischargeDate);
+        formData.append("isolationStatus", values.isolationStatus);
+        formData.append("isolationDateFrom", values.isolationDateFrom);
+        formData.append("isolationDateTo", values.isolationDateTo);
+        formData.append("outcome", values.outcome);
+        formData.append("movementHistory", values.movementHistory);
+        formData.append("labResults", values.labResults);
+        formData.append("phiRemarks", values.phiRemarks);
+        
+        // Handle the householdContacts array properly
+        // Filter out empty contacts
+        const filteredHouseholdContacts = values.householdContacts.filter(
+          contact => contact.name || contact.age || contact.date || contact.disposition
+        );
+        
+        // Handle each contact individually for better backend processing
+        filteredHouseholdContacts.forEach((contact, index) => {
+          if (contact.name) formData.append(`householdContacts[${index}][name]`, contact.name);
+          if (contact.age) formData.append(`householdContacts[${index}][age]`, contact.age);
+          if (contact.date) formData.append(`householdContacts[${index}][date]`, contact.date);
+          if (contact.disposition) formData.append(`householdContacts[${index}][disposition]`, contact.disposition);
+        });
+        
+        // Handle the otherContacts array properly
+        // Filter out empty contacts
+        const filteredOtherContacts = values.otherContacts.filter(
+          contact => contact.name || contact.age || contact.date || contact.disposition
+        );
+        
+        // Handle each contact individually for better backend processing
+        filteredOtherContacts.forEach((contact, index) => {
+          if (contact.name) formData.append(`otherContacts[${index}][name]`, contact.name);
+          if (contact.age) formData.append(`otherContacts[${index}][age]`, contact.age);
+          if (contact.date) formData.append(`otherContacts[${index}][date]`, contact.date);
+          if (contact.disposition) formData.append(`otherContacts[${index}][disposition]`, contact.disposition);
         });
 
-        // Convert contact arrays to JSON strings
-        formData.append(
-          "householdContacts",
-          JSON.stringify(values.householdContacts)
-        );
-        formData.append("otherContacts", JSON.stringify(values.otherContacts));
+        // Also include stringified versions as fallback
+        formData.append("householdContactsJSON", JSON.stringify(filteredHouseholdContacts));
+        formData.append("otherContactsJSON", JSON.stringify(filteredOtherContacts));
 
-        if (file) {
-          formData.append("file", file);
+        // Append all files with the same field name to allow the backend to receive them as an array
+        if (files.length > 0) {
+          files.forEach(file => {
+            formData.append("files", file);
+          });
         }
 
-        console.log(formData);
+        // For debugging - check formData content
+        console.log("Sending report data to backend:");
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ': ' + (pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1]));
+        }
 
         const response = await addReport(formData);
-        messageApi.success(response.message);
-        setTimeout(() => closeViewReport(), 1000);
+        if (response.status === 200 || response.status === 201) {
+          messageApi.success(response.message);
+          setTimeout(() => closeViewReport(), 1000);
+        } else {
+          messageApi.error(response.message || "Failed to update report. Please try again.");
+        }
       } catch (error) {
         console.error("Failed to update report:", error);
         messageApi.error("Failed to update report. Please try again.");
@@ -82,8 +114,16 @@ const Report = ({ viewReport, closeViewReport }) => {
   });
 
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
+    const selectedFiles = Array.from(event.target.files);
+    setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
+  };
+
+  const removeFile = (index) => {
+    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+  };
+
+  const clearAllFiles = () => {
+    setFiles([]);
   };
 
   return (
@@ -297,8 +337,8 @@ const Report = ({ viewReport, closeViewReport }) => {
             )}
           </div>
 
-          {/* Attach File */}
-          <div className="flex flex-col gap-2">
+          {/* Attach Files */}
+          <div className="flex flex-col gap-2 mb-4">
             <label
               htmlFor="file-upload"
               className="w-1/8 flex items-center gap-2 px-4 py-2 bg-gray-200 text-black font-medium rounded-md hover:bg-gray-300 transition duration-200 cursor-pointer"
@@ -311,8 +351,36 @@ const Report = ({ viewReport, closeViewReport }) => {
               type="file"
               className="hidden"
               onChange={handleFileChange}
+              multiple
             />
-            {file && <p className="text-sm text-gray-600">{file.name}</p>}
+            {files.length > 0 && (
+              <div className="mt-2 space-y-1">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm font-medium text-gray-700">Selected files ({files.length}):</p>
+                  <button 
+                    type="button" 
+                    className="text-blue-500 hover:text-blue-700 text-sm"
+                    onClick={clearAllFiles}
+                  >
+                    Clear All
+                  </button>
+                </div>
+                <ul className="pl-5 text-sm text-gray-600 list-disc">
+                  {files.map((file, index) => (
+                    <li key={index} className="flex items-center justify-between">
+                      <span>{file.name}</span>
+                      <button 
+                        type="button" 
+                        className="text-red-500 hover:text-red-700 ml-2"
+                        onClick={() => removeFile(index)}
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Contacts Section */}
@@ -468,8 +536,9 @@ const Report = ({ viewReport, closeViewReport }) => {
             <button
               type="submit"
               className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer"
+              disabled={formik.isSubmitting}
             >
-              Submit
+              {formik.isSubmitting ? "Submitting..." : "Submit"}
             </button>
             <button
               type="button"

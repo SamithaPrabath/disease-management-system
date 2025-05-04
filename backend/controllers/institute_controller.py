@@ -1,6 +1,7 @@
 import asyncio
 from flask import jsonify, request
 from models.institute import Institute
+from utils.email_service import EmailService
 
 class InstituteController:
     @staticmethod
@@ -51,7 +52,7 @@ class InstituteController:
                     }), 400
 
             # Create the institute
-            institute_id = asyncio.run(Institute.create_institute(
+            result = asyncio.run(Institute.create_institute(
                 name=data['name'],
                 registration_number=data['registrationNumber'],
                 email=data['email'],
@@ -62,11 +63,29 @@ class InstituteController:
                 username=data['username'],
                 password=data['password']
             ))
+            
+            # Send welcome email if institute was created successfully
+            if result.get("status") != "error":
+                email_result = EmailService.send_welcome_email(
+                    recipient_email=data['email'],
+                    name=data['name'],
+                    username=data['username'],
+                    role="institute",
+                    password=data['password']
+                )
+                # Include email status in response
+                response = {
+                    "status": "success",
+                    "message": "Institute created successfully",
+                    "email_status": email_result
+                }
+            else:
+                response = {
+                    "status": "error",
+                    "message": result.get("message", "Failed to create institute")
+                }
 
-            return jsonify({
-                "status": "success",
-                "message": "Institute created successfully",
-            }), 200
+            return jsonify(response), 200 if response["status"] == "success" else 400
 
         except Exception as e:
             return jsonify({

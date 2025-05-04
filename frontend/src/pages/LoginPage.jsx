@@ -7,6 +7,7 @@ import { fetchLogin } from "../redux/actions/loginAction";
 import { connect } from "react-redux";
 import { message } from "antd";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 const LoginPage = (props) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -131,6 +132,15 @@ const LoginPage = (props) => {
                 {formik.errors.password}
                 </p>
               )}
+            </div>
+            
+            <div className="w-full text-right mb-2">
+              <Link 
+                to="/forgot-password" 
+                className="text-[14px] text-[#0866FF] hover:underline"
+              >
+                Forgot Password?
+              </Link>
             </div>
 
             <input

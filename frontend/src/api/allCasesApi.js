@@ -206,21 +206,32 @@ export const getAllCases = async (userID) => {
   }
 };
 
-export const addNewCase = async (newCase) => {
+export const addNewCase = async (formData) => {
   try {
     if (IS_BACKEND == "false") {
       const newCaseId =
         "C" + (allCasesResponse.length + 1).toString().padStart(3, "0");
-      const caseToAdd = { ...newCase, caseId: newCaseId };
+      const caseToAdd = { ...formData, caseId: newCaseId };
       allCasesResponse.push(caseToAdd);
       return { message: "Case added successfully", case: caseToAdd };
     } else {
-      console.log(newCase);
-      const response = await axios.post(`${BASE_URL}/api/cases/add`, newCase, {
+      // Log the FormData contents for debugging
+      console.log("Files being sent:");
+      for (let pair of formData.getAll('files[]')) {
+        console.log('File:', pair.name);
+      }
+
+      const response = await axios.post(`${BASE_URL}/api/cases/add`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
         },
+        // Add timeout and max content length settings
+        timeout: 30000, // 30 seconds
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
       });
+      
       if (response.status === 200) {
         return { status: 200, message: "Case added successfully", data: response.data };
       }
@@ -571,3 +582,83 @@ export const mark_AsReceived = async (value) => {
     throw error;
   }
 }
+
+// Mock response for report files
+const reportFilesResponse = [
+  {
+    caseId: "C001",
+    files: [
+      {
+        fileName: "Lab Test Results.pdf",
+        fileUrl: "/files/lab-results.pdf",
+        uploadDate: "2023-11-14"
+      },
+      {
+        fileName: "Patient History.pdf",
+        fileUrl: "/files/patient-history.pdf", 
+        uploadDate: "2023-11-15"
+      },
+      {
+        fileName: "X-Ray Report.pdf",
+        fileUrl: "/files/xray-report.pdf",
+        uploadDate: "2023-11-16"
+      }
+    ]
+  }
+];
+
+export const getReportFiles = async (caseId) => {
+  try {
+    // Check if caseId is valid
+    if (!caseId) {
+      console.error("Invalid caseId provided:", caseId);
+      // For testing, return default files even if caseId is invalid
+      return { 
+        status: 200, 
+        message: "Using fallback files (invalid caseId)", 
+        data: [
+          {
+            fileName: "Fallback Test File.pdf",
+            fileUrl: "/files/fallback-file.pdf",
+            uploadDate: "2023-12-01"
+          }
+        ] 
+      };
+    }
+
+    if (IS_BACKEND == "false") {
+      // Return mock data
+      const caseFiles = reportFilesResponse.find(
+        (item) => item.caseId === caseId
+      );
+      
+      if (caseFiles) {
+        return { status: 200, message: "Files fetched successfully", data: caseFiles.files };
+      } else {
+        // For development, return default files even if case not found
+        console.log("Case not found in mock data, using default files");
+        return { 
+          status: 200, 
+          message: "Using default files", 
+          data: reportFilesResponse[0]?.files || [] 
+        };
+      }
+    } else {
+      // Use actual backend API
+      const response = await axios.get(`${BASE_URL}/api/cases/${caseId}`);
+      
+      if (response.status === 200) {
+        let files = []; 
+        for (let i = 0; i < response.data.data.lab_reports.length; i++) {
+          const file = response.data.data.lab_reports[i].file;
+          files.push(file);
+        }
+        return { status: 200, message: "Files fetched successfully", data: files };
+      }
+      return { status: 200, message: "No files found", data: [] };
+    }
+  } catch (error) {
+    console.error("Error fetching report files:", error);
+    return { status: 500, message: "Error fetching files", data: [] };
+  }
+};

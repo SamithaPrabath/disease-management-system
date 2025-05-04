@@ -7,8 +7,7 @@ import { message } from "antd";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { GOOGLE_MAPS_CONFIG } from "../utils/googleMapsConfig";
-
+import { getSingleCaseData } from "../api/allCasesApi";
 // Validation schema
 const assignPHISchema = Yup.object().shape({
   assignedPhi: Yup.string().required("Please select a PHI"),
@@ -20,12 +19,6 @@ const containerStyle = {
   height: "200px", // Adjust height as needed
 };
 
-// Colombo, Sri Lanka coordinates
-const center = {
-  lat: 6.9271, // Latitude of Colombo
-  lng: 79.8612, // Longitude of Colombo
-};
-
 const AssignPopup = ({
   Assignphipopup,
   ViewsSingleCase,
@@ -35,13 +28,16 @@ const AssignPopup = ({
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [phiList, setPhiList] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-
+  const [location, setLocation] = useState({
+    address: "Colombo, Sri Lanka",
+    coordinates: {
+      lat: 6.9271, // Latitude of Colombo
+      lng: 79.8612, // Longitude of Colombo
+    },
+  });
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded } = useJsApiLoader({
-    ...GOOGLE_MAPS_CONFIG,
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
 
@@ -79,6 +75,20 @@ const AssignPopup = ({
   useEffect(() => {
     setIsOpen(Assignphipopup || false); // Ensure boolean fallback
   }, [Assignphipopup]);
+
+  useEffect(() => {
+    const get_location = async () => {
+      const response = await getSingleCaseData(ViewsSingleCase?.[1]);
+      setLocation({
+        address: response?.data?.location_address,
+        coordinates: {
+          lat: response?.data?.location_details?.latitude,
+          lng: response?.data?.location_details?.longitude,
+        },
+      });
+    };
+    get_location();
+  }, [ViewsSingleCase]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -176,18 +186,15 @@ const AssignPopup = ({
 
                 {/* Location Section with Map */}
                 <div className="mt-4 text-gray-700">
-                  <p className="mb-2">
-                    Location: {selectedDistrict || "Colombo"}
-                  </p>
+                  <p className="mb-2">Location: {location.address}</p>
                   {isLoaded ? (
                     <GoogleMap
                       mapContainerStyle={containerStyle}
-                      center={selectedLocation || center}
-                      zoom={13}
-                      onClick={handleMapClick}
+                      center={location.coordinates}
+                      zoom={13} // Adjust zoom level as needed
                     >
-                      {/* Add a marker for selected location or default Colombo */}
-                      <Marker position={selectedLocation || center} />
+                      {/* Add a marker for Colombo */}
+                      <Marker position={location.coordinates} />
                     </GoogleMap>
                   ) : (
                     <div className="flex items-center justify-center h-[200px] bg-gray-100">

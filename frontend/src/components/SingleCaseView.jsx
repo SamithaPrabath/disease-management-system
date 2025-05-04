@@ -10,6 +10,24 @@ import { viewConfirmPopUp } from "../redux/actions/confirmCasePopUpAction";
 import { viewAssignPHIPopUp } from "../redux/actions/assginPHIPopupAction";
 import { viewAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
 import { closeAssignMOHPopUp } from "../redux/actions/assignMOHPopupAction";
+import { viewReportFilesPopUp } from "../redux/actions/reportFilesPopUpAction";
+import ViewReportFilesPopup from "./ViewReportFilesPopup";
+
+// Helper function to parse contact data
+const parseContactsData = (data) => {
+  if (!data) return [];
+  
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch (error) {
+      console.error("Error parsing contacts data:", error);
+      return [];
+    }
+  }
+  
+  return Array.isArray(data) ? data : [];
+};
 
 const SingleCaseView = ({
   AllLogins,
@@ -23,6 +41,7 @@ const SingleCaseView = ({
   Assignmohpopup,
   Assignphipopup,
   ConfirmPopUp,
+  viewReportFilesPopUp,
 }) => {
   const [singleCase, setSingleCase] = useState([]);
   const [role, setRole] = useState("");
@@ -30,6 +49,11 @@ const SingleCaseView = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!patientId) {
+          console.error("PatientId is undefined");
+          return;
+        }
+        
         const response = await getSingleCaseData(patientId);
         setSingleCase(response.data);
       } catch (error) {
@@ -47,14 +71,25 @@ const SingleCaseView = ({
     Assignmohpopup,
     Assignphipopup,
     ConfirmPopUp,
+    patientId,
   ]);
 
   useEffect(() => {
     setRole(AllLogins.data.role);
-  }, [singleCase]);
+    console.log(role === "idu");
+  }, [singleCase, AllLogins.data.role]);
 
   const handlePopUpOpen = () => {
     openPopUp(patientId);
+  };
+
+  const viewReportFiles = (caseId) => {
+    console.log("Opening report files for case ID:", caseId);
+    if (caseId) {
+      viewReportFilesPopUp(caseId);
+    } else {
+      console.error("Cannot view report files: No case ID provided");
+    }
   };
 
   return (
@@ -226,6 +261,31 @@ const SingleCaseView = ({
               )}
             </div>
           </div>
+
+          {/* Report Files Card */}
+          <div className="w-[400px] h-[154px] rounded-[8px] p-[16px] bg-white shadow-lg flex flex-col items-start justify-between">
+            <div className="w-full flex flex-row items-center justify-between">
+              <h1 className="text-base text-[#080809]">Report Files</h1>
+              <h2 className="text-base font-medium text-[#080809]">
+                {singleCase?.reportFilesUpdatedDate}
+              </h2>
+            </div>
+            <div className="w-full">
+              {singleCase?.lab_files && Array.isArray(singleCase.lab_files) && singleCase.lab_files.length > 0 ? (
+                <div className="flex flex-col">
+                  <p className="text-xl font-medium mb-2">{singleCase.lab_files.length} Files Attached</p>
+                  <button
+                    className="text-white bg-blue-600 px-4 py-2 rounded text-base cursor-pointer hover:bg-blue-700 transition"
+                    onClick={() => viewReportFiles(patientId || singleCase?.caseId)}
+                  >
+                    View Files
+                  </button>
+                </div>
+              ) : (
+                <p className="text-xl font-medium text-gray-500">No files attached</p>
+              )}
+            </div>
+          </div>
         </div>
 
         {(singleCase?.markAsReceived == true ||
@@ -342,7 +402,7 @@ const SingleCaseView = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {singleCase?.report?.householdContacts?.map(
+                      {parseContactsData(singleCase?.report?.householdContacts).map(
                         (contact, index) => (
                           <tr
                             key={index}
@@ -380,7 +440,7 @@ const SingleCaseView = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {singleCase?.report?.otherContacts?.map(
+                      {parseContactsData(singleCase?.report?.otherContacts).map(
                         (contact, index) => (
                           <tr
                             key={index}
@@ -518,7 +578,7 @@ const SingleCaseView = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {singleCase?.report?.householdContacts?.map(
+                        {parseContactsData(singleCase?.report?.householdContacts).map(
                           (contact, index) => (
                             <tr
                               key={index}
@@ -560,7 +620,7 @@ const SingleCaseView = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {singleCase?.report?.otherContacts?.map(
+                        {parseContactsData(singleCase?.report?.otherContacts).map(
                           (contact, index) => (
                             <tr
                               key={index}
@@ -592,6 +652,7 @@ const SingleCaseView = ({
       </div>
       <ViewLocationPopup cardId={singleCase?.cardId} />
       <ConfirmCasePopup />
+      <ViewReportFilesPopup />
     </>
   );
 };
@@ -612,6 +673,7 @@ const mapDispatchToProps = (dispatch) => ({
   viewAssignPHIPopUp: () => dispatch(viewAssignPHIPopUp()),
   viewAssignMOHPopUp: () => dispatch(viewAssignMOHPopUp()),
   closeAssignMOHPopUp: () => dispatch(closeAssignMOHPopUp()),
+  viewReportFilesPopUp: (cardId) => dispatch(viewReportFilesPopUp(cardId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleCaseView);

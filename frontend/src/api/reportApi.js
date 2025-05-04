@@ -87,9 +87,8 @@ export const addReport = async (reportData) => {
         householdContacts: parseContacts("householdContacts"),
         otherContacts: parseContacts("otherContacts"),
         phiRemarks: reportData.get("phiRemarks"),
-        file: reportData.get("file"), // File object if present
+        files: reportData.getAll("files"), // Get all files from the FormData
         reportCreatedDate: new Date().toISOString().split("T")[0],
-
       };
     } else {
       report = reportData; // Plain object case
