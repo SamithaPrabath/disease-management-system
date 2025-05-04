@@ -20,12 +20,7 @@ const containerStyle = {
 };
 
 
-const AssignPopup = ({
-  Assignmohpopup,
-  ViewsSingleCase,
-  closeAssignMOHPopUp,
-  AllLogins,
-}) => {
+const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [mohList, setMohList] = useState([]);
@@ -40,39 +35,9 @@ const AssignPopup = ({
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
-
-  const handleMapClick = async (event) => {
-    const lat = event.latLng.lat();
-    const lng = event.latLng.lng();
-    setSelectedLocation({ lat, lng });
-
-    try {
-      const geocoder = new window.google.maps.Geocoder();
-      const response = await geocoder.geocode({ location: { lat, lng } });
-
-      if (response.results[0]) {
-        // Find the district from address components
-        const addressComponents = response.results[0].address_components;
-        const district = addressComponents.find(
-          (component) =>
-            component.types.includes("administrative_area_level_2") ||
-            component.types.includes("sublocality_level_1")
-        );
-
-        if (district) {
-          setSelectedDistrict(district.short_name);
-        } else {
-          console.log(
-            `Selected coordinates (${lat}, ${lng}) but couldn't determine district`
-          );
-        }
-      }
-    } catch (error) {
-      console.error("Error getting district name:", error);
-    }
-  };
 
   useEffect(() => {
     setIsOpen(Assignmohpopup || false); // Ensure boolean fallback
@@ -96,9 +61,7 @@ const AssignPopup = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getMohListByLocation(
-          selectedDistrict || "Colombo"
-        );
+        const response = await getMohListByLocation();
         setMohList(response.data || []);
       } catch (error) {
         console.error("Error fetching MOH list:", error);
@@ -106,11 +69,11 @@ const AssignPopup = ({
       }
     };
     if (isOpen) fetchData();
-  }, [isOpen, selectedDistrict, Assignmohpopup?.[0]]);
+  }, [isOpen, messageApi]);
 
   const formik = useFormik({
     initialValues: {
-      caseId: ViewsSingleCase?.[1] || Assignmohpopup?.[1] || "", // Ensure fallback if undefined
+      caseId: ViewsSingleCase?.[1] || "", // Ensure fallback if undefined
       assignedMoh: "",
       mohAssignedDate: new Date().toISOString().split("T")[0], // Today's date
     },
@@ -129,9 +92,7 @@ const AssignPopup = ({
         }
       } catch (error) {
         console.error("Error during MOH assignment:", error);
-        messageApi.error(
-          error.message || "An error occurred during MOH assignment"
-        );
+        messageApi.error(error.message || "An error occurred during MOH assignment");
       } finally {
         setSubmitting(false);
       }
@@ -143,7 +104,7 @@ const AssignPopup = ({
       {contextHolder}
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
-          <div className="bg-white w-[400px] min-h-[500px] max-h-[95vh] overflow-y-auto rounded-[8px] shadow-sm flex flex-col">
+          <div className="bg-white w-[400px] h-[500px] rounded-[8px] shadow-sm flex flex-col">
             {/* Header Section */}
             <div className="h-[56px] px-[16px] py-[8px] flex items-center justify-between border-b border-[#E2E5E9]">
               <h1 className="w-full text-center text-[24px] font-medium">
@@ -180,9 +141,7 @@ const AssignPopup = ({
                     ))}
                   </select>
                   {formik.touched.assignedMoh && formik.errors.assignedMoh && (
-                    <p className="text-red-500 text-sm">
-                      {formik.errors.assignedMoh}
-                    </p>
+                    <p className="text-red-500 text-sm">{formik.errors.assignedMoh}</p>
                   )}
                 </div>
 
@@ -228,7 +187,6 @@ const AssignPopup = ({
 const mapStateToProps = (state) => ({
   Assignmohpopup: state.assignmohpopup,
   ViewsSingleCase: state.viewsSingleCase,
-  AllLogins: state.allLogins,
 });
 
 const mapDispatchToProps = (dispatch) => ({
