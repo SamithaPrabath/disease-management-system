@@ -427,7 +427,7 @@ const NewCase = ({ AllLogins, closeAddNewCase }) => {
             <div className="space-y-4">
               <div className="flex flex-col gap-3">
                 <label className="block text-gray-700">
-                  Nature of Confirmation*
+                  Nature of Confirmation<span className="text-red-500">*</span>
                 </label>
                 <div className="space-y-2">
                   {[
@@ -551,7 +551,9 @@ const NewCase = ({ AllLogins, closeAddNewCase }) => {
             </div>
 
             <div className="w-1/4 flex flex-col gap-3">
-              <label className="block text-gray-700">Date of Onset</label>
+              <label className="block text-gray-700">
+                Date of Onset<span className="text-red-500">*</span>.
+              </label>
               <input
                 type="date"
                 name="dateOfOnset"
