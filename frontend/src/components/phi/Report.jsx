@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { reportSchema } from "../../yupSchema/reportSchema"; // Importing validation schema
 import { FaPaperclip } from "react-icons/fa";
@@ -39,10 +39,10 @@ const Report = ({ viewReport, closeViewReport }) => {
     onSubmit: async (values) => {
       try {
         const formData = new FormData();
-        
+
         // Add the case ID
         formData.append("caseId", values.caseId);
-        
+
         // Add other form fields
         formData.append("ethnicGroup", values.ethnicGroup);
         formData.append("dischargeDate", values.dischargeDate);
@@ -53,42 +53,64 @@ const Report = ({ viewReport, closeViewReport }) => {
         formData.append("movementHistory", values.movementHistory);
         formData.append("labResults", values.labResults);
         formData.append("phiRemarks", values.phiRemarks);
-        
+
         // Handle the householdContacts array properly
         // Filter out empty contacts
         const filteredHouseholdContacts = values.householdContacts.filter(
-          contact => contact.name || contact.age || contact.date || contact.disposition
+          (contact) =>
+            contact.name || contact.age || contact.date || contact.disposition
         );
-        
+
         // Handle each contact individually for better backend processing
         filteredHouseholdContacts.forEach((contact, index) => {
-          if (contact.name) formData.append(`householdContacts[${index}][name]`, contact.name);
-          if (contact.age) formData.append(`householdContacts[${index}][age]`, contact.age);
-          if (contact.date) formData.append(`householdContacts[${index}][date]`, contact.date);
-          if (contact.disposition) formData.append(`householdContacts[${index}][disposition]`, contact.disposition);
+          if (contact.name)
+            formData.append(`householdContacts[${index}][name]`, contact.name);
+          if (contact.age)
+            formData.append(`householdContacts[${index}][age]`, contact.age);
+          if (contact.date)
+            formData.append(`householdContacts[${index}][date]`, contact.date);
+          if (contact.disposition)
+            formData.append(
+              `householdContacts[${index}][disposition]`,
+              contact.disposition
+            );
         });
-        
+
         // Handle the otherContacts array properly
         // Filter out empty contacts
         const filteredOtherContacts = values.otherContacts.filter(
-          contact => contact.name || contact.age || contact.date || contact.disposition
+          (contact) =>
+            contact.name || contact.age || contact.date || contact.disposition
         );
-        
+
         // Handle each contact individually for better backend processing
         filteredOtherContacts.forEach((contact, index) => {
-          if (contact.name) formData.append(`otherContacts[${index}][name]`, contact.name);
-          if (contact.age) formData.append(`otherContacts[${index}][age]`, contact.age);
-          if (contact.date) formData.append(`otherContacts[${index}][date]`, contact.date);
-          if (contact.disposition) formData.append(`otherContacts[${index}][disposition]`, contact.disposition);
+          if (contact.name)
+            formData.append(`otherContacts[${index}][name]`, contact.name);
+          if (contact.age)
+            formData.append(`otherContacts[${index}][age]`, contact.age);
+          if (contact.date)
+            formData.append(`otherContacts[${index}][date]`, contact.date);
+          if (contact.disposition)
+            formData.append(
+              `otherContacts[${index}][disposition]`,
+              contact.disposition
+            );
         });
 
         // Also include stringified versions as fallback
-        formData.append("householdContactsJSON", JSON.stringify(filteredHouseholdContacts));
-        formData.append("otherContactsJSON", JSON.stringify(filteredOtherContacts));
+        formData.append(
+          "householdContactsJSON",
+          JSON.stringify(filteredHouseholdContacts)
+        );
+        formData.append(
+          "otherContactsJSON",
+          JSON.stringify(filteredOtherContacts)
+        );
 
         // Append all files with the same field name to allow the backend to receive them as an array
         if (files.length > 0) {
-          files.forEach(file => {
+          files.forEach((file) => {
             formData.append("files", file);
           });
         }
@@ -96,7 +118,11 @@ const Report = ({ viewReport, closeViewReport }) => {
         // For debugging - check formData content
         console.log("Sending report data to backend:");
         for (let pair of formData.entries()) {
-          console.log(pair[0] + ': ' + (pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1]));
+          console.log(
+            pair[0] +
+              ": " +
+              (pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1])
+          );
         }
 
         const response = await addReport(formData);
@@ -104,7 +130,9 @@ const Report = ({ viewReport, closeViewReport }) => {
           messageApi.success(response.message);
           setTimeout(() => closeViewReport(), 1000);
         } else {
-          messageApi.error(response.message || "Failed to update report. Please try again.");
+          messageApi.error(
+            response.message || "Failed to update report. Please try again."
+          );
         }
       } catch (error) {
         console.error("Failed to update report:", error);
@@ -113,13 +141,21 @@ const Report = ({ viewReport, closeViewReport }) => {
     },
   });
 
+  // Add effect to clear isolation dates when Not Isolated is selected
+  useEffect(() => {
+    if (formik.values.isolationStatus === "Not Isolated") {
+      formik.setFieldValue("isolationDateFrom", "");
+      formik.setFieldValue("isolationDateTo", "");
+    }
+  }, [formik.values.isolationStatus]);
+
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
   const removeFile = (index) => {
-    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   const clearAllFiles = () => {
@@ -138,7 +174,7 @@ const Report = ({ viewReport, closeViewReport }) => {
           {/* Ethnic Group */}
           <div className="mb-4">
             <label className="block text-gray-700">
-              Ethnic Group of the Patient*
+              Ethnic Group of the Patient<span className="text-red-500">*</span>
             </label>
             <select
               name="ethnicGroup"
@@ -165,7 +201,9 @@ const Report = ({ viewReport, closeViewReport }) => {
 
           {/* Date of Discharge */}
           <div className="mb-4">
-            <label className="block text-gray-700">Date of Discharge*</label>
+            <label className="block text-gray-700">
+              Date of Discharge<span className="text-red-500">*</span>
+            </label>
             <input
               type="date"
               name="dischargeDate"
@@ -185,7 +223,7 @@ const Report = ({ viewReport, closeViewReport }) => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-4">
             <div className="w-full md:w-1/3">
               <label className="block text-gray-700 font-medium mb-2">
-                Where Isolated*
+                Where Isolated<span className="text-red-500">*</span>
               </label>
               <div className="flex flex-wrap gap-4">
                 <label className="flex items-center space-x-2">
@@ -194,7 +232,9 @@ const Report = ({ viewReport, closeViewReport }) => {
                     name="isolationStatus"
                     value="Home"
                     className="accent-blue-600"
-                    onChange={formik.handleChange}
+                    onChange={(e) => {
+                      formik.handleChange(e);
+                    }}
                   />
                   <span>Home</span>
                 </label>
@@ -204,7 +244,9 @@ const Report = ({ viewReport, closeViewReport }) => {
                     name="isolationStatus"
                     value="Hospital"
                     className="accent-blue-600"
-                    onChange={formik.handleChange}
+                    onChange={(e) => {
+                      formik.handleChange(e);
+                    }}
                   />
                   <span>Hospital</span>
                 </label>
@@ -214,7 +256,9 @@ const Report = ({ viewReport, closeViewReport }) => {
                     name="isolationStatus"
                     value="Not Isolated"
                     className="accent-blue-600"
-                    onChange={formik.handleChange}
+                    onChange={(e) => {
+                      formik.handleChange(e);
+                    }}
                   />
                   <span>Not Isolated</span>
                 </label>
@@ -229,26 +273,45 @@ const Report = ({ viewReport, closeViewReport }) => {
 
             {/* Isolation Date */}
             <div className="w-full md:w-1/3">
-              <label className="block text-gray-700 font-medium mb-2">
-                Isolation Date*
+              <label
+                className={`block text-gray-700 font-medium mb-2 ${
+                  formik.values.isolationStatus === "Not Isolated"
+                    ? "opacity-50"
+                    : ""
+                }`}
+              >
+                Isolation Date
+                {formik.values.isolationStatus !== "Not Isolated" && (
+                  <span className="text-red-500">*</span>
+                )}
               </label>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="date"
                   name="isolationDateFrom"
-                  className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    formik.values.isolationStatus === "Not Isolated"
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.isolationDateFrom}
+                  disabled={formik.values.isolationStatus === "Not Isolated"}
                 />
                 to
                 <input
                   type="date"
                   name="isolationDateTo"
-                  className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    formik.values.isolationStatus === "Not Isolated"
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.isolationDateTo}
+                  disabled={formik.values.isolationStatus === "Not Isolated"}
                 />
               </div>
               <div className="">
@@ -270,7 +333,7 @@ const Report = ({ viewReport, closeViewReport }) => {
             {/* Outcome */}
             <div className="w-full md:w-1/3">
               <label className="block text-gray-700 font-medium mb-2">
-                Outcome*
+                Outcome<span className="text-red-500">*</span>
               </label>
               <div className="flex flex-wrap gap-4">
                 <label className="flex items-center space-x-2">
@@ -303,7 +366,8 @@ const Report = ({ viewReport, closeViewReport }) => {
           {/* Movement History */}
           <div className="mb-4">
             <label className="block text-gray-700">
-              Patient's movement during three weeks prior to onset*
+              Patient's movement during three weeks prior to onset
+              <span className="text-red-500">*</span>
             </label>
             <textarea
               name="movementHistory"
@@ -356,9 +420,11 @@ const Report = ({ viewReport, closeViewReport }) => {
             {files.length > 0 && (
               <div className="mt-2 space-y-1">
                 <div className="flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-700">Selected files ({files.length}):</p>
-                  <button 
-                    type="button" 
+                  <p className="text-sm font-medium text-gray-700">
+                    Selected files ({files.length}):
+                  </p>
+                  <button
+                    type="button"
                     className="text-blue-500 hover:text-blue-700 text-sm"
                     onClick={clearAllFiles}
                   >
@@ -367,10 +433,13 @@ const Report = ({ viewReport, closeViewReport }) => {
                 </div>
                 <ul className="pl-5 text-sm text-gray-600 list-disc">
                   {files.map((file, index) => (
-                    <li key={index} className="flex items-center justify-between">
+                    <li
+                      key={index}
+                      className="flex items-center justify-between"
+                    >
                       <span>{file.name}</span>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         className="text-red-500 hover:text-red-700 ml-2"
                         onClick={() => removeFile(index)}
                       >
@@ -518,7 +587,9 @@ const Report = ({ viewReport, closeViewReport }) => {
 
           {/* PHI Remarks */}
           <div className="mb-4">
-            <label className="block text-gray-700">PHI Remarks*</label>
+            <label className="block text-gray-700">
+              PHI Remarks<span className="text-red-500">*</span>
+            </label>
             <textarea
               name="phiRemarks"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
