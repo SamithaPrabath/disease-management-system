@@ -90,7 +90,7 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
         {userData ? (
           <form className="space-y-4" onSubmit={formik.handleSubmit}>
             <div>
-              <label className="block text-gray-700">Disease Code</label>
+              <label className="block text-gray-700">Disease Code {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <input
                 type="text"
                 name="id"
@@ -101,7 +101,7 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
             </div>
 
             <div>
-              <label className="block text-gray-700">Disease Name</label>
+              <label className="block text-gray-700">Disease Name {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <input
                 type="text"
                 name="diseaseName"
@@ -122,7 +122,7 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700">Category</label>
+                <label className="block text-gray-700">Category {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
                 <select
                   name="category"
                   className={`w-full px-4 py-2 rounded-md focus:outline-none ${
@@ -147,7 +147,7 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
               </div>
 
               <div>
-                <label className="block text-gray-700">Mode of Transmission</label>
+                <label className="block text-gray-700">Mode of Transmission {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
                 <input
                   type="text"
                   name="modeOfTransmission"
@@ -168,7 +168,7 @@ const EditDiseases = ({ AllViewEditReducer, viewEdit }) => {
             </div>
 
             <div>
-              <label className="block text-gray-700">Description</label>
+              <label className="block text-gray-700">Description {!isEnableEdit ? <span className="text-red-500">*</span> : ""}</label>
               <textarea
                 name="description"
                 className={`w-full px-4 py-2 rounded-md focus:outline-none ${

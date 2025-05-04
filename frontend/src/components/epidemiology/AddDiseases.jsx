@@ -44,7 +44,7 @@ const AddDiseases = ({ handleBack }) => {
 
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
           <div>
-            <label className="block text-gray-700">Disease Name</label>
+            <label className="block text-gray-700">Disease Name <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="diseaseName"
@@ -60,7 +60,7 @@ const AddDiseases = ({ handleBack }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700">Category</label>
+              <label className="block text-gray-700">Category <span className="text-red-500">*</span></label>
               <select
                 name="category"
                 className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
@@ -81,7 +81,7 @@ const AddDiseases = ({ handleBack }) => {
 
             <div>
               <label className="block text-gray-700">
-                Mode of Transmission
+                Mode of Transmission <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -101,7 +101,7 @@ const AddDiseases = ({ handleBack }) => {
           </div>
 
           <div>
-            <label className="block text-gray-700">Description</label>
+            <label className="block text-gray-700">Description <span className="text-red-500">*</span></label>
             <textarea
               name="description"
               className="w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none"
