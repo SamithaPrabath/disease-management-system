@@ -283,7 +283,11 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
                       <div className="font-medium">{notification.title}</div>
                       <div className="text-gray-600">{notification.message}</div>
                       <div className="text-[12px] text-gray-400 mt-1">
-                        {new Date(notification.update_time).toLocaleString()}
+                        {new Date(notification.update_time).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit'
+                        })}
                       </div>
                     </div>
                   ))}
@@ -292,7 +296,6 @@ const Navbar = ({ AllLogins, Sections, onNavClick, activeId }) => {
                     <div className="p-2 text-center">
                       <button 
                         className="text-blue-500 text-[14px] hover:underline"
-                        onClick={() => navigate("/notifications")}
                       >
                         View all notifications
                       </button>
