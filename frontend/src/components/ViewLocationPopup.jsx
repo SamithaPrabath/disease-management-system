@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { closePopUp } from "../redux/actions/popUpAction";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { getSingleCaseData } from "../api/allCasesApi";
-import { GOOGLE_MAPS_CONFIG } from "../utils/googleMapsConfig";
 
 // Map container style
 const containerStyle = {
@@ -25,7 +24,7 @@ const ViewLocationPopup = ({ AllPopup, closePopUp }) => {
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded } = useJsApiLoader({
-    ...GOOGLE_MAPS_CONFIG,
+    id: "google-map-script",
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
 
@@ -43,14 +42,13 @@ const ViewLocationPopup = ({ AllPopup, closePopUp }) => {
         if (AllPopup?.cardId) {
           const response = await getSingleCaseData(AllPopup.cardId);
           setLocation({
-          address: response?.data?.location_address,
-          coordinates: {
-            lat: response?.data?.location_details?.latitude,
-            lng: response?.data?.location_details?.longitude,
+            address: response?.data?.location_address,
+            coordinates: {
+              lat: response?.data?.location_details?.latitude,
+              lng: response?.data?.location_details?.longitude,
             },
           });
-        }
-        else {
+        } else {
           setLocation({
             address: "",
             coordinates: {

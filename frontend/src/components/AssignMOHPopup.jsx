@@ -19,8 +19,12 @@ const containerStyle = {
   height: "200px", // Adjust height as needed
 };
 
-
-const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) => {
+const AssignPopup = ({
+  Assignmohpopup,
+  ViewsSingleCase,
+  closeAssignMOHPopUp,
+  AllLogins,
+}) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [mohList, setMohList] = useState([]);
@@ -47,16 +51,15 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
     const get_location = async () => {
       const response = await getSingleCaseData(ViewsSingleCase?.[1]);
       setLocation({
-      address: response?.data?.location_address,
-      coordinates: {
-        lat: response?.data?.location_details?.latitude,
-        lng: response?.data?.location_details?.longitude,
+        address: response?.data?.location_address,
+        coordinates: {
+          lat: response?.data?.location_details?.latitude,
+          lng: response?.data?.location_details?.longitude,
         },
       });
     };
     get_location();
-  }, [ViewsSingleCase]);
-  
+  }, [ViewsSingleCase, Assignmohpopup]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,11 +72,11 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
       }
     };
     if (isOpen) fetchData();
-  }, [isOpen, messageApi]);
+  }, [isOpen, Assignmohpopup?.[0]]);
 
   const formik = useFormik({
     initialValues: {
-      caseId: ViewsSingleCase?.[1] || "", // Ensure fallback if undefined
+      caseId: ViewsSingleCase?.[1] || Assignmohpopup?.[1] || "", // Ensure fallback if undefined
       assignedMoh: "",
       mohAssignedDate: new Date().toISOString().split("T")[0], // Today's date
     },
@@ -92,7 +95,9 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
         }
       } catch (error) {
         console.error("Error during MOH assignment:", error);
-        messageApi.error(error.message || "An error occurred during MOH assignment");
+        messageApi.error(
+          error.message || "An error occurred during MOH assignment"
+        );
       } finally {
         setSubmitting(false);
       }
@@ -104,7 +109,7 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
       {contextHolder}
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#080809]/80 z-50">
-          <div className="bg-white w-[400px] h-[500px] rounded-[8px] shadow-sm flex flex-col">
+          <div className="bg-white w-[400px] min-h-[500px] max-h-[95vh] overflow-y-auto rounded-[8px] shadow-sm flex flex-col">
             {/* Header Section */}
             <div className="h-[56px] px-[16px] py-[8px] flex items-center justify-between border-b border-[#E2E5E9]">
               <h1 className="w-full text-center text-[24px] font-medium">
@@ -141,7 +146,9 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
                     ))}
                   </select>
                   {formik.touched.assignedMoh && formik.errors.assignedMoh && (
-                    <p className="text-red-500 text-sm">{formik.errors.assignedMoh}</p>
+                    <p className="text-red-500 text-sm">
+                      {formik.errors.assignedMoh}
+                    </p>
                   )}
                 </div>
 
@@ -187,6 +194,7 @@ const AssignPopup = ({ Assignmohpopup, ViewsSingleCase, closeAssignMOHPopUp }) =
 const mapStateToProps = (state) => ({
   Assignmohpopup: state.assignmohpopup,
   ViewsSingleCase: state.viewsSingleCase,
+  AllLogins: state.allLogins,
 });
 
 const mapDispatchToProps = (dispatch) => ({
