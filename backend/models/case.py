@@ -366,8 +366,8 @@ class Case:
         report = Report(
             ethnicGroup=report_data.get('ethnicGroup'),
             dischargeDate=report_data.get('dischargeDate'),
-            isolationDateFrom=report_data.get('isolationDateFrom'),
-            isolationDateTo=report_data.get('isolationDateTo'),
+            isolationDateFrom=report_data.get('isolationDateFrom') if report_data.get('isolationDateFrom') else None,
+            isolationDateTo=report_data.get('isolationDateTo') if report_data.get('isolationDateTo') else None,
             movementHistory=report_data.get('movementHistory'),
             isolationStatus=report_data.get('isolationStatus'),
             outcome=report_data.get('outcome'),
