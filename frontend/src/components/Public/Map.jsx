@@ -56,32 +56,6 @@ const Map = () => {
           for more details.
         </p>
       </div>
-      <form className="flex flex-row gap-[26px]">
-        <select
-          name="disease"
-          id="disease"
-          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
-        >
-          <option value="disease">Disease</option>
-        </select>
-
-        <select
-          name="date"
-          id="date"
-          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
-        >
-          <option value="date">Date</option>
-        </select>
-
-        <select
-          name="affectedArea"
-          id="affectedArea"
-          className="custom-select w-[186px] h-[40px] px-[16px] py-[8px] bg-[#E2E5E9] rounded-[8px]"
-        >
-          <option value="affectedArea">Affected area</option>
-        </select>
-      </form>
-
       {/* Google Map */}
       <div className="w-full h-[400px]">
         {isLoaded ? (

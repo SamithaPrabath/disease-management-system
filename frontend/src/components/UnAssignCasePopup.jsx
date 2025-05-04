@@ -34,6 +34,13 @@ const UnAssignCasePopup = ({
   const [messageApi, contextHolder] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [userTypeId, setUserTypeId] = useState("");
+  const [location, setLocation] = useState({
+    address: "Colombo, Sri Lanka",
+    coordinates: {
+      lat: 6.9271, // Latitude of Colombo
+      lng: 79.8612, // Longitude of Colombo
+    },
+  });
 
   // Load the Google Maps API
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -45,15 +52,19 @@ const UnAssignCasePopup = ({
     const fetchSingleCaseData = async () => {
       const response = await getSingleCaseData(ViewsSingleCase?.[1]);
       setSingleCaseData(response.data);
+      if (response.data.location_details) {
+        setLocation({
+          address: response?.data?.location_address,
+          coordinates: {
+            lat: response?.data?.location_details?.latitude,
+            lng: response?.data?.location_details?.longitude,
+          },
+        });
+      }
     };
 
     fetchSingleCaseData();
   }, [AllLogins, ViewsSingleCase]);
-
-  const location = {
-    lat: singleCaseData?.lat,
-    lng: singleCaseData?.lng,
-  };
 
   useEffect(() => {
     setIsOpen(UnassigncasepopupReducer);
@@ -156,14 +167,15 @@ const UnAssignCasePopup = ({
                     </div>
 
                     <div className="mt-4 text-gray-700">
-                      <p className="mb-2">Location: Colombo</p>
+                    <p className="mb-2">Location: {location.address}</p>
                       {isLoaded ? (
                         <GoogleMap
                           mapContainerStyle={containerStyle}
-                          center={location}
-                          zoom={13}
+                          center={location.coordinates}
+                          zoom={13} // Adjust zoom level as needed
                         >
-                          <Marker position={location} />
+                          {/* Add a marker for Colombo */}
+                          <Marker position={location.coordinates} />
                         </GoogleMap>
                       ) : (
                         <div className="flex items-center justify-center h-[200px] bg-gray-100">
