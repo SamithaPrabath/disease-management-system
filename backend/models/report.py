@@ -116,8 +116,8 @@ class Report:
         await query_executor.execute(query, (
             self.ethnicGroup, self.dischargeDate, self.isolationDateFrom,
             self.isolationDateTo, self.movementHistory, self.isolationStatus,
-            self.outcome, self.labResults, self.householdContacts,
-            self.otherContacts, self.phiRemarks, self.file, self.reportCreatedDate
+            self.outcome, self.labResults, None,
+            None, self.phiRemarks, self.file, self.reportCreatedDate
         ))
         
         # Get the last inserted ID

@@ -372,8 +372,8 @@ class Case:
             isolationStatus=report_data.get('isolationStatus'),
             outcome=report_data.get('outcome'),
             labResults=report_data.get('labResults'),
-            householdContacts=report_data.get('householdContacts'),
-            otherContacts=report_data.get('otherContacts'),
+            householdContacts=json.loads(report_data.get('householdContactsJSON')),
+            otherContacts=json.loads(report_data.get('otherContactsJSON')),
             phiRemarks=report_data.get('phiRemarks'),
             reportCreatedDate=report_data.get('reportCreatedDate')
         )
