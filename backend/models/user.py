@@ -49,7 +49,7 @@ class User:
     @staticmethod
     async def get_user_by_username(username):
         query_executor = AsyncQueryExecutor()
-        query = "SELECT id FROM users WHERE BINARY username = %s"
+        query = "SELECT id FROM users WHERE username = %s"
         result = await query_executor.fetch_one(query, (username,))
         if result:
             return await User.get_user_by_id(result[0])
@@ -84,15 +84,12 @@ class User:
                     "message": "User not found"
                 }
             
+            updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             if new_password:
-                # Hash the new password
-                password_hash = generate_password_hash(new_password)
-                updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                
                 # Update the password
                 query_executor = AsyncQueryExecutor()
                 query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 0 WHERE id = %s"
-                await query_executor.execute(query, (password_hash, updated_at, user.id))
+                await query_executor.execute(query, (new_password, updated_at, user.id))
             else:
                 password_hash = generate_password_hash(username)
                 query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 1 WHERE id = %s"

@@ -13,6 +13,6 @@ class UserController:
             return {"error": "User not found"}, 404
     
         new_password_hash = generate_password_hash(new_password)
-        asyncio.run(User.update_password(user_id, new_password_hash))
+        asyncio.run(User.update_password(user.username, new_password_hash))
         return {"message": "Password updated successfully"}, 200
     

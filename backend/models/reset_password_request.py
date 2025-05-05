@@ -355,7 +355,7 @@ class ResetPasswordRequest:
                 name=user.name if user.name else reset_request.name,
                 username=reset_request.username,
                 role=user.role,
-                password=new_password
+                password=reset_request.username
             )
             
             return {
