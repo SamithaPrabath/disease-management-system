@@ -91,11 +91,11 @@ class User:
                 
                 # Update the password
                 query_executor = AsyncQueryExecutor()
-                query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 1 WHERE id = %s"
+                query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 0 WHERE id = %s"
                 await query_executor.execute(query, (password_hash, updated_at, user.id))
             else:
                 password_hash = generate_password_hash(username)
-                query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 0 WHERE id = %s"
+                query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 1 WHERE id = %s"
                 await query_executor.execute(query, (password_hash, updated_at, user.id))
             
             return {
