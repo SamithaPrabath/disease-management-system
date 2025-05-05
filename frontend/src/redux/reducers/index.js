@@ -15,6 +15,7 @@ import ReportSendReducer from './reportSendReducer';
 import MarkAsReceivedReducer from './markAsRecived-reducer';
 import ReportFilesPopup from './reportfilespopup-reducer';
 import PasswordResetRequestsReducer from './passwordResetRequests-reducer';
+import ViewEditEpidemiologyUserReducer from './viewEditEpidemiologyUserReducer';
 
 const rootReducer = combineReducers(
     {
@@ -34,6 +35,7 @@ const rootReducer = combineReducers(
         markAsReceived: MarkAsReceivedReducer,
         reportFilesPopup: ReportFilesPopup,
         passwordResetRequests: PasswordResetRequestsReducer,
+        viewEditEpidemiologyUser: ViewEditEpidemiologyUserReducer,
     }
 )
 

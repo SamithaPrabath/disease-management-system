@@ -3,39 +3,45 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { message } from 'antd';
 import { connect } from 'react-redux';
-
+import { addEpidemiologyUnitUser } from '../../api/epidemiologyUnitUsersApi';
 const AddEpidemiologicalUnit = ({ onCancel }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const validationSchema = Yup.object({
     name: Yup.string().required('Unit name is required'),
-    code: Yup.string().required('Unit code is required'),
-    region: Yup.string().required('Region is required'),
+    district: Yup.string().required('District is required'),
     address: Yup.string().required('Address is required'),
-    contactPerson: Yup.string().required('Contact person name is required'),
     email: Yup.string()
       .email('Invalid email address')
       .required('Email is required'),
     phone: Yup.string()
       .matches(/^\d{10}$/, 'Phone number must be 10 digits')
       .required('Phone number is required'),
+    username: Yup.string().required('Username is required'),
+    password: Yup.string().required('Password is required'),
   });
 
   const formik = useFormik({
     initialValues: {
       name: '',
-      code: '',
-      region: '',
+      district: '',
       address: '',
-      contactPerson: '',
       email: '',
       phone: '',
+      username: '',
+      password: '',
     },
     validationSchema,
     onSubmit: async (values) => {
       try {
-        // In a real implementation, you would call your API here
         console.log('Submitting:', values);
+        const response = await addEpidemiologyUnitUser(values);
+        if (response.status === 200) {
+          messageApi.success('Epidemiological unit added successfully');
+          if (onCancel) onCancel(); // Go back to the list view after successful submission
+        } else {
+          messageApi.error('Failed to add epidemiological unit');
+        }
         
         // Simulate API response
         setTimeout(() => {
@@ -65,11 +71,10 @@ const AddEpidemiologicalUnit = ({ onCancel }) => {
       </div>
 
       <form onSubmit={formik.handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Unit Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Unit Name
+              Unit Name (Epidemiological Unit) <span className="text-red-500">*</span>
             </label>
             <input
               id="name"
@@ -87,53 +92,31 @@ const AddEpidemiologicalUnit = ({ onCancel }) => {
             )}
           </div>
 
-          {/* Unit Code */}
-          <div>
-            <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
-              Unit Code
-            </label>
-            <input
-              id="code"
-              name="code"
-              type="text"
-              value={formik.values.code}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none ${
-                formik.touched.code && formik.errors.code ? 'border border-red-500' : ''
-              }`}
-            />
-            {formik.touched.code && formik.errors.code && (
-              <p className="mt-1 text-sm text-red-500">{formik.errors.code}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Region */}
+        {/* District */}
         <div>
-          <label htmlFor="region" className="block text-sm font-medium text-gray-700 mb-1">
-            Region/District
+          <label htmlFor="district" className="block text-sm font-medium text-gray-700 mb-1">
+            District <span className="text-red-500">*</span>
           </label>
           <input
-            id="region"
-            name="region"
+            id="district"
+            name="district"
             type="text"
-            value={formik.values.region}
+            value={formik.values.district}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none ${
-              formik.touched.region && formik.errors.region ? 'border border-red-500' : ''
+              formik.touched.district && formik.errors.district ? 'border border-red-500' : ''
             }`}
           />
-          {formik.touched.region && formik.errors.region && (
-            <p className="mt-1 text-sm text-red-500">{formik.errors.region}</p>
+          {formik.touched.district && formik.errors.district && (
+            <p className="mt-1 text-sm text-red-500">{formik.errors.district}</p>
           )}
         </div>
 
         {/* Address */}
         <div>
           <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-            Address
+            Address <span className="text-red-500">*</span>
           </label>
           <textarea
             id="address"
@@ -148,35 +131,14 @@ const AddEpidemiologicalUnit = ({ onCancel }) => {
           />
           {formik.touched.address && formik.errors.address && (
             <p className="mt-1 text-sm text-red-500">{formik.errors.address}</p>
-          )}
-        </div>
-
-        {/* Contact Person */}
-        <div>
-          <label htmlFor="contactPerson" className="block text-sm font-medium text-gray-700 mb-1">
-            Contact Person
-          </label>
-          <input
-            id="contactPerson"
-            name="contactPerson"
-            type="text"
-            value={formik.values.contactPerson}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className={`w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none ${
-              formik.touched.contactPerson && formik.errors.contactPerson ? 'border border-red-500' : ''
-            }`}
-          />
-          {formik.touched.contactPerson && formik.errors.contactPerson && (
-            <p className="mt-1 text-sm text-red-500">{formik.errors.contactPerson}</p>
-          )}
-        </div>
+            )}
+          </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               id="email"
@@ -197,7 +159,7 @@ const AddEpidemiologicalUnit = ({ onCancel }) => {
           {/* Phone */}
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number
+              Phone Number <span className="text-red-500">*</span>
             </label>
             <input
               id="phone"
@@ -215,6 +177,51 @@ const AddEpidemiologicalUnit = ({ onCancel }) => {
             )}
           </div>
         </div>
+        {/* Username and Password */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Username */}
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+              Username <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className={`w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none ${
+                formik.touched.username && formik.errors.username ? 'border border-red-500' : ''
+              }`}
+            />
+            {formik.touched.username && formik.errors.username && (
+              <p className="mt-1 text-sm text-red-500">{formik.errors.username}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className={`w-full px-4 py-2 bg-gray-200 rounded-md focus:outline-none ${
+                formik.touched.password && formik.errors.password ? 'border border-red-500' : ''
+              }`}
+            />
+            {formik.touched.password && formik.errors.password && (
+              <p className="mt-1 text-sm text-red-500">{formik.errors.password}</p>
+            )}
+          </div>
+        </div>
+        
 
         <div className="flex justify-end space-x-3 mt-6">
           {onCancel && (

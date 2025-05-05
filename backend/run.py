@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import Config
-from routes import auth_bp, case_bp, phi_bp, moh_bp, disease_bp, institute_bp, doctor_bp, event_bp, upload_bp, notification_bp, user_bp, reset_password_bp
+from routes import auth_bp, case_bp, phi_bp, moh_bp, disease_bp, institute_bp, doctor_bp, event_bp, upload_bp, notification_bp, user_bp, reset_password_bp, epidemology_bp
 import os
 
 def create_app():
@@ -33,6 +33,7 @@ def create_app():
     app.register_blueprint(notification_bp, url_prefix='/api/notifications')
     app.register_blueprint(user_bp, url_prefix='/api/users')
     app.register_blueprint(reset_password_bp, url_prefix='/api/reset-password')
+    app.register_blueprint(epidemology_bp, url_prefix='/api/epidemology')
     
     return app
 

@@ -10,5 +10,6 @@ from .upload_routes import upload_bp
 from .notification_routes import notification_bp
 from .user_routes import user_bp
 from .reset_password_routes import reset_password_bp
+from .epidemology_routes import epidemology_bp
 
-__all__ = ['auth_bp', 'case_bp', 'phi_bp', 'moh_bp', 'disease_bp', 'institute_bp', 'doctor_bp', 'event_bp', 'upload_bp', 'notification_bp', 'user_bp', 'reset_password_bp'] 
+__all__ = ['auth_bp', 'case_bp', 'phi_bp', 'moh_bp', 'disease_bp', 'institute_bp', 'doctor_bp', 'event_bp', 'upload_bp', 'notification_bp', 'user_bp', 'reset_password_bp', 'epidemology_bp'] 

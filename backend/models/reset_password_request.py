@@ -336,19 +336,28 @@ class ResetPasswordRequest:
                     "message": "User not found"
                 }
             
-            user.update_password(reset_request.username, reset_request.username)
+            # Set a new password (username as password)
+            new_password = reset_request.username
+            await user.update_password(reset_request.username, new_password)
             
             # Update the request to approved
             query_executor1 = AsyncQueryExecutor()
             updated_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             query = """
                 UPDATE reset_password_request 
-                SET is_approved = 1, updated_date = %s
+                SET is_reset = 1, updated_date = %s
                 WHERE id = %s
             """
             await query_executor1.execute(query, (updated_date, request_id))
 
-            EmailService.send_email(user.email, "Password Reset Request Approved", "Your password reset request has been approved. Your password: " + reset_request.username + " to login to the system.")
+            # Send password reset email
+            EmailService.send_password_reset_email(
+                recipient_email=user.email if user.email else reset_request.email,
+                name=user.name if user.name else reset_request.name,
+                username=reset_request.username,
+                role=user.role,
+                password=new_password
+            )
             
             return {
                 "status": "success",

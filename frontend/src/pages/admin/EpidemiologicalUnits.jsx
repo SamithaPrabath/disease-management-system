@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';;
 import { connect } from 'react-redux';
 import { CiSearch } from "react-icons/ci";
 import AddEpidemiologicalUnit from '../../components/admin/AddEpidemiologicalUnit';
+import { getAllEpidemiologyUnitUsers } from '../../api/epidemiologyUnitUsersApi';
 
 const EpidemiologicalUnits = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,42 +14,9 @@ const EpidemiologicalUnits = (props) => {
   // In a real implementation, you would fetch this from your API
   useEffect(() => {
     // Simulate API call
-    setTimeout(() => {
-      setUnits([
-        { 
-          id: 1, 
-          name: 'Central Epidemiology Unit', 
-          code: 'CEU-001',
-          region: 'Colombo',
-          address: '123 Main St, Colombo',
-          contactPerson: 'Dr. Samantha Perera',
-          email: 'central.epi@health.gov.lk',
-          phone: '0112345678',
-          status: 'Active'
-        },
-        { 
-          id: 2, 
-          name: 'Southern Province Epi Unit', 
-          code: 'SEU-002',
-          region: 'Galle',
-          address: '45 Hospital Road, Galle',
-          contactPerson: 'Dr. Nimal Silva',
-          email: 'south.epi@health.gov.lk',
-          phone: '0912345678',
-          status: 'Active'
-        },
-        { 
-          id: 3, 
-          name: 'Northern Surveillance Unit', 
-          code: 'NEU-003',
-          region: 'Jaffna',
-          address: '78 Temple Road, Jaffna',
-          contactPerson: 'Dr. Kumari Navaratne',
-          email: 'north.epi@health.gov.lk',
-          phone: '0212345678',
-          status: 'Inactive'
-        },
-      ]);
+    setTimeout(async () => {
+      const response = await getAllEpidemiologyUnitUsers();
+      setUnits(response.data);
       setLoading(false);
     }, 1000);
   }, []);
@@ -120,16 +88,16 @@ const EpidemiologicalUnits = (props) => {
                         Name
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Region
+                        District
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Contact Person
+                        Address
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Email/Phone
+                        Email
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        Phone
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
@@ -140,26 +108,22 @@ const EpidemiologicalUnits = (props) => {
                     {filteredUnits.map((unit) => (
                       <tr key={unit.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{unit.code}</div>
+                          <div className="text-sm font-medium text-gray-900">{unit.id}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{unit.name}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{unit.region}</div>
+                          <div className="text-sm text-gray-900">{unit.district}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{unit.contactPerson}</div>
+                          <div className="text-sm text-gray-900">{unit.address}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{unit.email}</div>
-                          <div className="text-sm text-gray-500">{unit.phone}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            ${unit.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                            {unit.status}
-                          </span>
+                          <div className="text-sm text-gray-900">{unit.phone}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
