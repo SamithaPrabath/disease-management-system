@@ -38,7 +38,7 @@ const EditInstitutes = ({ AllViewEditReducer, viewEdit }) => {
     initialValues: {
       name: userData?.name || "",
       email: userData?.email || "",
-      phoneNumber: userData?.phoneNumber || "",
+      phoneNumber: userData?.phone || "",
       address: userData?.address || "",
       province: userData?.province || "",
       city: userData?.city || "",
