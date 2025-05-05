@@ -41,7 +41,7 @@ class InstituteController:
     def create_institute():
         try:
             data = request.get_json()
-            required_fields = ['name', 'registrationNumber', 'email', 'phone', 'address', 'city', 'province', 'username', 'password']
+            required_fields = ['name', 'registrationNumber', 'email', 'phoneNumber', 'address', 'city', 'province', 'username', 'password']
             
             # Validate required fields
             for field in required_fields:
@@ -56,7 +56,7 @@ class InstituteController:
                 name=data['name'],
                 registration_number=data['registrationNumber'],
                 email=data['email'],
-                phone_number=data['phone'],
+                phone_number=data['phoneNumber'],
                 address=data['address'],
                 city=data['city'],
                 province=data['province'],
@@ -111,7 +111,7 @@ class InstituteController:
                 id=institute_id,
                 name=data.get('name'),
                 email=data.get('email'),
-                phone_number=data.get('phone'),
+                phone_number=data.get('phoneNumber'),
                 address=data.get('address'),
                 city=data.get('city'),
                 province=data.get('province')

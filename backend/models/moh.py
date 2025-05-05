@@ -16,7 +16,6 @@ class MOH():
     username: str = None
     role: str = "moh"
 
-    
     @staticmethod
     async def add_moh_user(self):
         created_at = datetime.now()

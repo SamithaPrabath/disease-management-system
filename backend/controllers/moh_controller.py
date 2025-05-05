@@ -12,7 +12,15 @@ class MOHController(BaseController):
     def add_moh_user():
         try:
             data = request.get_json()
-            moh_user = MOH(**data)
+            moh_user = MOH(
+                area=data.get("area"),
+                email=data.get("email"),
+                name=data.get("name"),
+                username=data.get("username"),
+                password=data.get("password"),
+                role=data.get("role"),
+                phone=data.get("phoneNumber")
+            )
             result = asyncio.run(MOH.add_moh_user(moh_user))
             
             # Send welcome email if the MOH user was added successfully
