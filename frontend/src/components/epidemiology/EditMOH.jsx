@@ -33,7 +33,7 @@ const EditMOH = ({ AllViewEditReducer, viewEdit }) => {
       name: userData?.name || "",
       area: userData?.area || "",
       email: userData?.email || "",
-      phoneNumber: userData?.phoneNumber || "",
+      phoneNumber: userData?.phone || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes
     validationSchema: mohEditSchema,
