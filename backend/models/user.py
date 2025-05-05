@@ -24,7 +24,7 @@ class User:
     reg_number: str = None
     address: str = None
     district: str = None
-    
+
     @staticmethod
     async def get_user_by_id(id):
         query_executor = AsyncQueryExecutor()
@@ -65,7 +65,7 @@ class User:
         return user
         
     @staticmethod
-    async def update_password(username, new_password):
+    async def update_password(username, new_password=None):
         """
         Update a user's password by username
         
@@ -84,14 +84,19 @@ class User:
                     "message": "User not found"
                 }
             
-            # Hash the new password
-            password_hash = generate_password_hash(new_password)
-            updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            
-            # Update the password
-            query_executor = AsyncQueryExecutor()
-            query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 1 WHERE id = %s"
-            await query_executor.execute(query, (password_hash, updated_at, user.id))
+            if new_password:
+                # Hash the new password
+                password_hash = generate_password_hash(new_password)
+                updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                
+                # Update the password
+                query_executor = AsyncQueryExecutor()
+                query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 1 WHERE id = %s"
+                await query_executor.execute(query, (password_hash, updated_at, user.id))
+            else:
+                password_hash = generate_password_hash(username)
+                query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 0 WHERE id = %s"
+                await query_executor.execute(query, (password_hash, updated_at, user.id))
             
             return {
                 "status": "success",

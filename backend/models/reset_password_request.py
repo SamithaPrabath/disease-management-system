@@ -337,8 +337,7 @@ class ResetPasswordRequest:
                 }
             
             # Set a new password (username as password)
-            new_password = reset_request.username
-            await user.update_password(reset_request.username, new_password)
+            await user.update_password(reset_request.username)
             
             # Update the request to approved
             query_executor1 = AsyncQueryExecutor()
