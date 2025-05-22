@@ -44,7 +44,7 @@ class HouseholdContact:
                 name=result[2],
                 age=result[3],
                 disposition=result[4],
-                date=result[5] if len(result) > 5 else None
+                date=format_date_with_suffix(result[5]) if len(result) > 5 else None
             ) for result in results]
         return []
 
@@ -82,7 +82,7 @@ class OtherContact:
                 name=result[2],
                 age=result[3],
                 disposition=result[4],
-                date=result[5]
+                date=format_date_with_suffix(result[5]) if len(result) > 5 else None
             ) for result in results]
         return []
 
