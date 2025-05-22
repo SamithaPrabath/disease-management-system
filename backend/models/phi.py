@@ -118,7 +118,7 @@ class PHI():
         updated_at = datetime.now()
         await query_executor.execute(
             user_update_query, 
-            (data.get('name'), data.get('phone'), updated_at, id)
+            (data.get('name'), data.get('phoneNumber'), updated_at, id)
         )
         
         query_executor1 = AsyncQueryExecutor()
