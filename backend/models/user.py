@@ -85,10 +85,9 @@ class User:
                 }
             
             updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(new_password)
+            query_executor = AsyncQueryExecutor()
             if new_password is not None:
                 # Update the password
-                query_executor = AsyncQueryExecutor()
                 query = "UPDATE users SET password_hash = %s, updated_at = %s, is_initial_login = 0 WHERE id = %s"
                 await query_executor.execute(query, (new_password, updated_at, user.id))
             else:
