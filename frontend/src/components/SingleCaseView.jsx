@@ -187,9 +187,6 @@ const SingleCaseView = ({
                         : ""}
                     </p>
                   </div>
-                  <p className="text-base text-[#65686C]">
-                    {singleCase?.assignedMohDetails?.registrationNumber}
-                  </p>
                 </div>
               </>
             )}
@@ -299,7 +296,7 @@ const SingleCaseView = ({
           <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
             <div className="flex flex-row items-center justify-between">
               <h1 className="text-2xl font-medium">
-                Communicable Disease report
+                Communicable Disease Report
               </h1>
               <p className="text-base font-medium">
                 {singleCase?.report?.reportCreatedDate}
@@ -472,7 +469,7 @@ const SingleCaseView = ({
             <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
               <div className="flex flex-row items-center justify-between">
                 <h1 className="text-2xl font-medium">
-                  Communicable Disease report
+                  Communicable Disease Report
                 </h1>
                 <p className="text-base font-medium">
                   {singleCase?.report.reportCreatedDate}

@@ -39,7 +39,7 @@ const EditPHI = ({ AllViewEditReducer, viewEdit }) => {
       moh: userData?.moh || "",
       area: userData?.area || "",
       email: userData?.email || "",
-      phoneNumber: userData?.phoneNumber || "",
+      phoneNumber: userData?.phone || "",
       moh_id: userData?.moh_id || "",
     },
     enableReinitialize: true, // Reinitialize when userData changes

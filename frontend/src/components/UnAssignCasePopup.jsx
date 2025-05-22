@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IoIosCloseCircle } from "react-icons/io";
 import { connect } from "react-redux";
 import { closeUnAssignCasePopUp } from "../redux/actions/unAssignCasePopupAction";
+import { closeSingleCase } from "../redux/actions/viewSingleCaseAction";
 import { message } from "antd";
 import { unAssignedPhi } from "../api/assignedPhiApi";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
@@ -26,6 +27,7 @@ const UnAssignCasePopup = ({
   AllLogins,
   UnassigncasepopupReducer,
   closeUnAssignCasePopUp,
+  closeSingleCase,
   ViewsSingleCase,
 }) => {
   const [singleCaseData, setSingleCaseData] = useState(null);
@@ -80,7 +82,10 @@ const UnAssignCasePopup = ({
 
       if (response && response.message) {
         messageApi.success(response.message);
-        setTimeout(() => closeUnAssignCasePopUp(), 1000);
+        setTimeout(() => {
+          closeUnAssignCasePopUp();
+          closeSingleCase();
+        }, 1000);
       } else {
         messageApi.error("Unassigned failed");
       }
@@ -208,6 +213,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   closeUnAssignCasePopUp: () => dispatch(closeUnAssignCasePopUp()),
+  closeSingleCase: () => dispatch(closeSingleCase()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UnAssignCasePopup);

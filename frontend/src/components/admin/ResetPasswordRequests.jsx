@@ -44,6 +44,8 @@ const ResetPasswordRequests = (props) => {
       const response = await approvePasswordResetRequestAction(requestId);
       if (response.status === 200) {
         messageApi.success('Password reset request approved');
+        // Refresh the list after successful approval
+        fetchPasswordResetRequests();
       } else {
         messageApi.error(response.message || 'Failed to approve request');
       }
@@ -56,7 +58,9 @@ const ResetPasswordRequests = (props) => {
     try {
       const response = await rejectPasswordResetRequestAction(requestId);
       if (response.status === 200) {
-        messageApi.error('Password reset request rejected');
+        messageApi.success('Password reset request rejected');
+        // Refresh the list after successful rejection
+        fetchPasswordResetRequests();
       } else {
         messageApi.error(response.message || 'Failed to reject request');
       }

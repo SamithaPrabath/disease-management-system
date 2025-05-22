@@ -58,7 +58,9 @@ const EditDoctor = ({ AllViewEditReducer, viewEdit }) => {
         const response = await updateDoctor(id, values);
         if (response && response.message) {
           messageApi.success(response.message);
-          setTimeout(() => viewEdit(), 1000);
+          setTimeout(() => {
+            viewEdit();
+          }, 1000);
         } else {
           messageApi.error("Registration failed");
         }

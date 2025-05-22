@@ -10,10 +10,11 @@ const Doctor = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(true);
   const [viewEdit, setViewEdit] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const [doctorData, setDoctorData] = useState([]);
 
-  // Fetch data when the component mounts
+  // Fetch data when the component mounts or when viewEdit changes
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,7 +26,7 @@ const Doctor = (props) => {
     };
 
     fetchData();
-  }, [setIsOpen, setViewEdit]);
+  }, [refreshTrigger, viewEdit]);
 
   const handleSearchChange = (e) =>
     setSearchQuery(e.target.value.toLowerCase());
@@ -49,8 +50,12 @@ const Doctor = (props) => {
     setIsOpen(false);
   };
 
-  const handleBack = () => {
+  const handleBack = (shouldRefresh = false) => {
     setIsOpen(true);
+    if (shouldRefresh) {
+      // Trigger a refresh when a new doctor is added
+      setRefreshTrigger(prev => prev + 1);
+    }
   };
 
   useEffect(() => {
@@ -59,6 +64,10 @@ const Doctor = (props) => {
       props.AllViewEditReducer.length > 0
     ) {
       setViewEdit(props.AllViewEditReducer[0]);
+      // Trigger a refresh when returning from edit view
+      if (props.AllViewEditReducer[0] === true) {
+        setRefreshTrigger(prev => prev + 1);
+      }
     }
   }, [props.AllViewEditReducer]);
 

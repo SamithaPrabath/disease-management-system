@@ -34,7 +34,7 @@ class DoctorController(BaseController):
                 # Add email sending result to the response
                 result['email_status'] = email_result
                 
-            return jsonify(result), result.get('status', 200)
+            return {"message": "Doctor added successfully", "status": 200}
         except Exception as e:
             return DoctorController.error_response(str(e), 500)
 

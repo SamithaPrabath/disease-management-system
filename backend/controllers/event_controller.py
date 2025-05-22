@@ -40,7 +40,7 @@ class EventController(BaseController):
             # Get the base URL from the request
             base_url = request.host_url.rstrip('/')
             # Combine base URL with image path
-            event_dict['image'] = f"{base_url}/api{event_dict['image']}"
+            event_dict['image'] = f"{base_url}/api/{event_dict['image']}"
         return event_dict
 
     @staticmethod

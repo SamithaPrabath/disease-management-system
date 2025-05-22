@@ -44,9 +44,9 @@ const AddDoctor = ({ handleBack, AllLogins }) => {
         const response = await registerDoctor(values);
 
         if (response && response.message) {
-          messageApi.success(response.message);
+          messageApi.success(response.message || "Doctor added successfully!");
           setTimeout(() => {
-            handleBack();
+            handleBack(true);
           }, 1000);
         } else {
           messageApi.error("Registration failed");

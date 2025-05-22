@@ -127,7 +127,7 @@ const HeaderBar = ({
                   : ""}
               </h5>
               <p className="text-[16px] text-[#65686C] font-normal">
-                {singleCase?.caseId} | {singleCase?.sex} | {singleCase?.age}{" "}
+                {singleCase?.id} | {singleCase?.sex} | {singleCase?.age}{" "}
                 Years
               </p>
               <p className="text-[16px] text-[#65686C] font-normal">
@@ -193,7 +193,10 @@ const HeaderBar = ({
                               : "text-white bg-blue-600 cursor-pointer"
                           }
                         `}
-                    onClick={() => viewReport(singleCase?.caseId)}
+                    onClick={() => {
+                      console.log("Sending caseId to viewReport:", singleCase?.id);
+                      viewReport(singleCase?.id);
+                    }}
                     disabled={Object.keys(singleCase?.report ?? {}).length > 0}
                   >
                     Add Report

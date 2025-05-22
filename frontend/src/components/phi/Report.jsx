@@ -11,10 +11,19 @@ const Report = ({ viewReport, closeViewReport }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [files, setFiles] = useState([]); // State to store multiple uploaded files
+  
+  // Add debugging to see what's in viewReport
+  console.log("ViewReport data received:", viewReport);
+  
+  // Extract caseId properly - the viewReport action returns [true, caseId]
+  // So we need to access the second element (index 1) if it's an array
+  const caseId = Array.isArray(viewReport) ? viewReport[1] : '';
+  
+  console.log("Extracted caseId:", caseId);
 
   const formik = useFormik({
     initialValues: {
-      caseId: viewReport?.[1],
+      caseId: caseId,
       ethnicGroup: "",
       dischargeDate: "",
       isolationStatus: "",
@@ -38,6 +47,9 @@ const Report = ({ viewReport, closeViewReport }) => {
     validationSchema: reportSchema,
     onSubmit: async (values) => {
       try {
+        console.log("Submitting report with values:", values);
+        console.log("CaseId being submitted:", values.caseId);
+        
         const formData = new FormData();
 
         // Add the case ID
@@ -140,6 +152,14 @@ const Report = ({ viewReport, closeViewReport }) => {
       }
     },
   });
+
+  // Update caseId when viewReport changes
+  useEffect(() => {
+    if (Array.isArray(viewReport) && viewReport[1]) {
+      console.log("Updating form caseId from viewReport change:", viewReport[1]);
+      formik.setFieldValue('caseId', viewReport[1]);
+    }
+  }, [viewReport]);
 
   // Add effect to clear isolation dates when Not Isolated is selected
   useEffect(() => {
