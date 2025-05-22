@@ -45,6 +45,12 @@ const SingleCaseView = ({
 }) => {
   const [singleCase, setSingleCase] = useState([]);
   const [role, setRole] = useState("");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Function to refresh the SingleCaseView data
+  const refreshSingleCaseView = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +78,7 @@ const SingleCaseView = ({
     Assignphipopup,
     ConfirmPopUp,
     patientId,
+    refreshTrigger,
   ]);
 
   useEffect(() => {
@@ -94,7 +101,11 @@ const SingleCaseView = ({
 
   return (
     <>
-      <HeaderBar handleBack={closeSingleCase} patientId={patientId} />
+      <HeaderBar 
+        handleBack={closeSingleCase} 
+        patientId={patientId} 
+        refreshSingleCaseView={refreshSingleCaseView} 
+      />
       <div className="flex flex-col gap-[32px]">
         {/* Header Information */}
         <div className="flex flex-wrap items-center justify-evenly gap-4">
@@ -291,7 +302,7 @@ const SingleCaseView = ({
           role == "moh" ||
           role == "phi" ||
           role == "doctor" ||
-          role == "epidemiologist") &&
+          role == "epi") &&
         Object.keys(singleCase?.report || {}).length > 0 ? (
           <div className="bg-white p-[32px] flex flex-col rounded-[8px] drop-shadow shadow-[#E2E5E9] gap-[32px]">
             <div className="flex flex-row items-center justify-between">

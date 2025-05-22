@@ -24,6 +24,7 @@ const HeaderBar = ({
   UnAssignCasePopUp,
   markAsReceived,
   markAsReceivedButtonClicked,
+  refreshSingleCaseView,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [singleCase, setSingleCase] = useState(null);
@@ -84,6 +85,9 @@ const HeaderBar = ({
 
       if (response.status === 200 && response.message) {
         messageApi.success(response.message);
+        setTimeout(() => {
+          refreshSingleCaseView();
+        }, 1500);
       } else {
         throw new Error(response.message || "Failed to send final report");
       }
