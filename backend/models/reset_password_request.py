@@ -350,13 +350,14 @@ class ResetPasswordRequest:
             await query_executor1.execute(query, (updated_date, request_id))
 
             # Send password reset email
-            EmailService.send_password_reset_email(
+            res = EmailService.send_password_reset_email(
                 recipient_email=user.email if user.email else reset_request.email,
                 name=user.name if user.name else reset_request.name,
                 username=reset_request.username,
                 role=user.role,
                 password=reset_request.username
             )
+            print(res)
             
             return {
                 "status": "success",
