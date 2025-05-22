@@ -99,8 +99,8 @@ class EmailService:
             # Get email configuration from environment variables
             smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
             smtp_port = int(os.environ.get('SMTP_PORT', 587))
-            sender_email = EMAIL_USER
-            sender_password = EMAIL_PASSWORD
+            sender_email = Config.EMAIL_USER
+            sender_password = Config.EMAIL_PASSWORD
             
             # Check if email configuration is available
             if not sender_email or not sender_password:
@@ -175,8 +175,8 @@ class EmailService:
             # Get email configuration from environment variables
             smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
             smtp_port = int(os.environ.get('SMTP_PORT', 587))
-            sender_email = os.environ.get('EMAIL_USER')
-            sender_password = os.environ.get('EMAIL_PASSWORD')
+            sender_email = Config.EMAIL_USER
+            sender_password = Config.EMAIL_PASSWORD
             
             # Check if email configuration is available
             if not sender_email or not sender_password:
