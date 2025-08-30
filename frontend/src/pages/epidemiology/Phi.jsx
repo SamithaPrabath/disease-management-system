@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from "react";
+import { CiSearch } from "react-icons/ci";
+import AddPHI from "../../components/epidemiology/AddPHI";
+import UserTableCard from "../../components/UserTableCard";
+import { connect } from "react-redux";
+import EditPHI from "../../components/epidemiology/EditPHI";
+import { getAllPhiData } from "../../api/phiApi";
+
+const Phi = (props) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(true);
+  const [viewEdit, setViewEdit] = useState(true);
+
+  const [phiData, setPhiData] = useState([]);
+
+  // Fetch data when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllPhiData();
+        if (response.status == 200) {
+          setPhiData(response.data);
+        } else {
+          console.error("Failed to fetch PHI data:", response.message);
+        }
+      } catch (error) {
+        console.error("Failed to fetch PHI data:", error);
+      }
+    };
+
+    fetchData();
+  }, [isOpen, viewEdit]);
+
+  const handleSearchChange = (e) =>
+    setSearchQuery(e.target.value.toLowerCase());
+
+  const tableData = [
+    {
+      tableHeaders: [
+        "ID",
+        "Name",
+        "Email",
+        "Phone Number",
+        "Actions",
+      ],
+      tableData: phiData,
+      searchQuery: searchQuery,
+      mode: "phi",
+    },
+  ];
+
+  const handlePopUpOpen = () => {
+    setIsOpen(false);
+  };
+
+  const handleBack = () => {
+    setIsOpen(true);
+  };
+
+  useEffect(() => {
+    if (
+      props.AllViewEditReducer != null &&
+      props.AllViewEditReducer.length > 0
+    ) {
+      setViewEdit(props.AllViewEditReducer[0]);
+    }
+  }, [props.AllViewEditReducer]);
+
+  return (
+    <>
+      {viewEdit ? (
+        <div className="Phi w-full min-w-[870px] min-h-[500px] flex flex-col items-center justify-start gap-[32px]">
+          {isOpen ? (
+            <div className="w-full min-h-[200px] bg-white flex flex-col p-[32px] gap-[24px]">
+              <div className="w-full flex flex-row items-center justify-between">
+                {/* Heading */}
+                <h2 className="w-full text-[32px] font-medium text-[#080809] text-left">
+                  Registered PHI
+                </h2>
+
+                <div className="flex flex-row gap-3">
+                  <button
+                    className="w-[100px] text-white text-[16px] font-medium rounded-[8px] bg-[#0866FF] p-[8px] cursor-pointer"
+                    onClick={handlePopUpOpen}
+                  >
+                    Add PHI
+                  </button>
+                  <div className="relative">
+                    <input
+                      className="bg-[#E2E5E9] w-[250px] h-[50px] rounded-[8px] px-[16px] py-[14px] text-black placeholder-gray-600 focus:outline-none"
+                      type="text"
+                      placeholder="Search By Name"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
+                    <CiSearch className="absolute right-[16px] top-1/2 transform -translate-y-1/2 text-gray-500 text-xl" />
+                  </div>
+                </div>
+              </div>
+
+              <UserTableCard tableData={tableData} />
+            </div>
+          ) : (
+            <AddPHI handleBack={handleBack} />
+          )}
+        </div>
+      ) : (
+        <EditPHI />
+      )}
+    </>
+  );
+};
+
+const mapStateToProps = (state) => {
+  return {
+    AllViewEditReducer: state.allViewEditReducer,
+  };
+};
+
+export default connect(mapStateToProps, null)(Phi);
